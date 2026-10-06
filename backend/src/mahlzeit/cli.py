@@ -19,7 +19,7 @@ from mahlzeit.domain import accounts
 from mahlzeit.domain.errors import DomainError
 from mahlzeit.security.crypto import new_key
 from mahlzeit.security.vapid import new_vapid_keys
-from mahlzeit.services import admin, auth, invites
+from mahlzeit.services import admin, auth, invites, seed
 
 app = typer.Typer(help="Mahlzeit admin commands.", no_args_is_help=True, add_completion=False)
 
@@ -160,7 +160,9 @@ def migrate() -> None:
         finally:
             conn.execute(text("SELECT pg_advisory_unlock(:k)"), {"k": MIGRATION_LOCK})
             conn.commit()
-    typer.echo("Database is up to date.")
+    with session() as db:
+        count = seed.load_generic_foods(db)
+    typer.echo(f"Database is up to date; {count} generic foods loaded.")
 
 
 if __name__ == "__main__":

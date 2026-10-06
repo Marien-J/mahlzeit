@@ -1,0 +1,249 @@
+bls_code,category,name_nl,tracking,favourite
+G312100,produce,Broccoli,counted,1
+G710100,produce,Sperziebonen,counted,1
+G543100,produce,Rode paprika,counted,1
+G541100,produce,Groene paprika,counted,0
+G542100,produce,Gele paprika,counted,0
+G561100,produce,Tomaat,counted,1
+G520100,produce,Komkommer,counted,1
+G620100,produce,Wortel,counted,0
+G480100,produce,Ui,counted,0
+G490100,produce,Knoflook,counted,0
+K110100,produce,Aardappel,counted,1
+K420100,produce,Zoete aardappel,counted,0
+G582100,produce,Courgette,counted,0
+G510100,produce,Aubergine,counted,0
+G311100,produce,Bloemkool,counted,0
+G331100,produce,Koolrabi,counted,0
+G470100,produce,Prei,counted,0
+G211100,produce,Spinazie,counted,0
+G103100,produce,IJsbergsla,counted,0
+G104100,produce,Veldsla,counted,0
+G130100,produce,Rucola,counted,0
+G105100,produce,Kropsla,counted,0
+G341100,produce,Rodekool,counted,0
+G342100,produce,Witte kool,counted,0
+G343100,produce,Savooiekool,counted,0
+G332100,produce,Spruitjes,counted,0
+G322100,produce,Boerenkool,counted,0
+K701100,produce,Champignons,counted,0
+G220100,produce,Bleekselderij,counted,0
+G660100,produce,Knolselderij,counted,0
+G430100,produce,Venkel,counted,0
+G450100,produce,Asperges (wit),counted,0
+G760100,produce,Doperwten,counted,0
+G570100,produce,Suikermais,counted,0
+G691100,produce,Radijs,counted,0
+G613100,produce,Rode biet,counted,0
+G581000,produce,Pompoen,counted,0
+G554100,produce,Rode peper,counted,0
+R211200,produce,Gember,counted,0
+F502100,produce,Avocado,counted,1
+G482100,produce,Lente-ui,counted,0
+G250100,produce,Peterselie,status,0
+G061000,produce,Basilicum,status,0
+G081100,produce,Bieslook,status,0
+G230100,produce,Snijbiet,counted,0
+G324100,produce,Paksoi,counted,0
+G680100,produce,Rammenas,counted,0
+G640100,produce,Pastinaak,counted,0
+G750100,produce,Edamame,counted,0
+F110100,produce,Appel,counted,0
+F503100,produce,Banaan,counted,1
+F130100,produce,Peer,counted,0
+F603100,produce,Sinaasappel,counted,0
+F606100,produce,Mandarijn,counted,0
+F601100,produce,Citroen,counted,0
+F602100,produce,Limoen,counted,0
+F310100,produce,Druiven,counted,0
+F301100,produce,Aardbeien,counted,0
+F302100,produce,Frambozen,counted,1
+F304100,produce,Blauwe bessen,counted,1
+F303100,produce,Bramen,counted,0
+F535100,produce,Watermeloen,counted,1
+F533100,produce,Honingmeloen,counted,0
+F501100,produce,Ananas,counted,0
+F516100,produce,Mango,counted,0
+F514100,produce,Kiwi,counted,0
+F203100,produce,Perzik,counted,0
+F202100,produce,Nectarine,counted,0
+F220100,produce,Pruim,counted,0
+F211100,produce,Kersen,counted,0
+F201100,produce,Abrikoos,counted,0
+F604100,produce,Grapefruit,counted,0
+F506100,produce,Granaatappel,counted,0
+F321100,produce,Rode bessen,counted,0
+F504400,dry_goods,Dadels (gedroogd),counted,0
+F840100,dry_goods,Rozijnen,counted,0
+F505400,dry_goods,Vijgen (gedroogd),counted,0
+F201400,dry_goods,Abrikozen (gedroogd),counted,0
+F414400,dry_goods,Cranberries (gedroogd),counted,0
+B511000,bakery,Witte bol,counted,1
+B401000,bakery,Volkoren bol,counted,0
+B314000,bakery,Witbrood (casino/toast),counted,0
+B111200,bakery,Volkoren toastbrood,counted,0
+B311000,bakery,Witbrood,counted,0
+B111000,bakery,Volkorenbrood (tarwe),counted,0
+B121000,bakery,Roggebrood (volkoren),counted,0
+B271000,bakery,Gemengd roggebrood,counted,0
+B251000,bakery,Gemengd tarwebrood,counted,0
+B780500,bakery,Pumpernickel,counted,0
+B723000,bakery,Pretzel (laugenbrezel),counted,0
+D771600,bakery,Croissant,counted,0
+B6A2000,bakery,Knäckebröd,counted,0
+D038000,bakery,Beschuit,counted,0
+B783012,bakery,Wrap (tarwetortilla),counted,0
+B782100,bakery,Pitabrood,counted,0
+B291000,bakery,Meergranenbrood,counted,0
+C352000,dry_goods,Witte rijst (droog),counted,1
+C351000,dry_goods,Zilvervliesrijst (droog),counted,0
+E401000,dry_goods,Pasta (droog),counted,1
+E510000,dry_goods,Volkorenpasta (droog),counted,0
+E432000,dry_goods,Eiernoedels (droog),counted,0
+C133000,dry_goods,Havermout,counted,1
+C214100,dry_goods,Tarwebloem (type 405),status,0
+C211000,dry_goods,Volkorenmeel,status,0
+C515400,dry_goods,Cornflakes,counted,0
+C512300,dry_goods,Muesli (ongezoet),counted,0
+C538000,dry_goods,Muesli (gezoet),counted,0
+C119200,dry_goods,Couscous (droog),counted,0
+C119100,dry_goods,Bulgur (droog),counted,0
+C118000,dry_goods,Quinoa (droog),counted,0
+H730000,dry_goods,Rode linzen (droog),counted,0
+H725100,dry_goods,Linzen (droog),counted,0
+G770400,dry_goods,Kikkererwten (droog),counted,0
+H742902,canned,Kidneybonen (blik),counted,1
+H720902,canned,Kikkererwten (blik),counted,0
+C219300,dry_goods,Griesmeel (harde tarwe),counted,0
+C346000,dry_goods,Maïsgriesmeel (polenta),counted,0
+C322000,dry_goods,Boekweit,counted,0
+C332000,dry_goods,Gierst,counted,0
+C532800,dry_goods,Rijstwafels,counted,0
+H210100,dry_goods,Amandelen,counted,0
+H120100,dry_goods,Walnoten,counted,0
+H130100,dry_goods,Hazelnoten,counted,0
+H170100,dry_goods,Cashewnoten,counted,0
+H110600,dry_goods,Pinda's,counted,0
+H880200,dry_goods,Pindakaas,counted,0
+H430100,dry_goods,Zonnebloempitten,counted,0
+H310100,dry_goods,Pompoenpitten,counted,0
+H480100,dry_goods,Chiazaad,counted,0
+H410100,dry_goods,Lijnzaad,counted,0
+H420100,dry_goods,Sesamzaad,counted,0
+H861000,dairy_eggs,Tofu,counted,0
+M111300,dairy_eggs,Volle melk,counted,1
+M111200,dairy_eggs,Halfvolle melk,counted,0
+M111100,dairy_eggs,Magere melk,counted,1
+M150000,dairy_eggs,Karnemelk,counted,0
+M141300,dairy_eggs,Volle yoghurt,counted,0
+M141200,dairy_eggs,Halfvolle yoghurt,counted,0
+M710100,dairy_eggs,Skyr,counted,1
+M713100,dairy_eggs,Magere kwark,counted,0
+M713300,dairy_eggs,Halfvolle kwark,counted,0
+M711100,dairy_eggs,Hüttenkäse,counted,0
+M173800,dairy_eggs,Slagroom,counted,0
+M172500,dairy_eggs,Zure room,counted,0
+M176800,dairy_eggs,Crème fraîche,counted,0
+Q630000,oils_fats,Roomboter,counted,0
+M402600,dairy_eggs,Goudse kaas,counted,1
+M401700,dairy_eggs,Edammer kaas,counted,0
+M304600,dairy_eggs,Emmentaler,counted,0
+M032100,dairy_eggs,Mozzarella,counted,0
+M012200,dairy_eggs,Feta,counted,0
+M306400,dairy_eggs,Parmezaanse kaas,counted,0
+M602600,dairy_eggs,Camembert,counted,0
+M710800,dairy_eggs,Roomkaas,counted,0
+M130300,dairy_eggs,Kefir,counted,0
+C660000,dairy_eggs,Haverdrank (ongezoet),counted,0
+H841100,dairy_eggs,Sojadrank (ongezoet),counted,0
+E111100,dairy_eggs,Ei,counted,1
+E113100,dairy_eggs,Eiwit,counted,0
+E112100,dairy_eggs,Eigeel,counted,0
+M887000,dairy_eggs,Weipoeder,counted,0
+V416100,meat_fish,Kipfilet,counted,1
+V4B5100,meat_fish,Kippendij,counted,0
+V486100,meat_fish,Kalkoenfilet,counted,0
+U622100,meat_fish,Varkenskarbonade,counted,1
+U611100,meat_fish,Varkenshaas,counted,0
+U020100,meat_fish,Varkensgehakt,counted,0
+U010100,meat_fish,Rundergehakt,counted,0
+U175100,meat_fish,Entrecote/lende (rund),counted,1
+U235100,meat_fish,Ribeye (rund),counted,1
+U211100,meat_fish,Ossenhaas,counted,0
+U284100,meat_fish,Rundersteak (heup),counted,0
+U151100,meat_fish,Runderstoofvlees,counted,0
+U867100,meat_fish,Lamsschouder,counted,0
+W411300,meat_fish,Ontbijtspek,counted,0
+W424000,meat_fish,Gekookte ham,counted,0
+W442000,meat_fish,Rauwe ham,counted,0
+W140000,meat_fish,Salami,counted,0
+W327000,meat_fish,Leverworst,counted,0
+W222100,meat_fish,Braadworst,counted,0
+W874300,meat_fish,Knakworstjes,counted,0
+W234000,meat_fish,Vleesworst,counted,0
+W561000,meat_fish,Kalkoenfilet (beleg),counted,0
+T410100,meat_fish,Zalm,counted,1
+T410600,meat_fish,Gerookte zalm,counted,0
+T121902,canned,Tonijn in water (blik),counted,1
+T121100,meat_fish,Tonijn,counted,0
+T204100,meat_fish,Kabeljauw,counted,0
+T213100,meat_fish,Koolvis,counted,0
+T753100,meat_fish,Garnalen,counted,0
+T422100,meat_fish,Forel,counted,0
+T102100,meat_fish,Haring,counted,0
+T107600,meat_fish,Gerookte makreel,counted,0
+T817900,canned,Sardines (blik),counted,0
+T930100,frozen,Vissticks,counted,0
+Q120000,oils_fats,Olijfolie,status,1
+Q180000,oils_fats,Raapzaadolie,status,0
+Q320000,oils_fats,Zonnebloemolie,status,0
+Q550000,oils_fats,Kokosolie,status,0
+Q400000,oils_fats,Margarine,counted,0
+R114000,spices_condiments,Zout (gejodeerd),status,0
+S111000,spices_condiments,Suiker,status,0
+S112000,spices_condiments,Bruine suiker,status,0
+S120000,spices_condiments,Honing,status,1
+S132000,spices_condiments,Jam,counted,1
+S145000,spices_condiments,Hazelnootpasta,counted,0
+S151100,spices_condiments,Ahornsiroop,status,0
+R141100,spices_condiments,Ketchup,status,0
+Q991000,spices_condiments,Mayonaise,status,0
+R132000,spices_condiments,Mosterd,status,0
+R143000,spices_condiments,Sojasaus,status,0
+R125000,spices_condiments,Balsamicoazijn,status,0
+R121000,spices_condiments,Azijn,status,0
+R160000,canned,Tomatenpuree,counted,0
+G560900,canned,Tomaten uit blik,counted,0
+X372012,canned,Pesto,counted,0
+X416243,spices_condiments,Bouillon,status,0
+R258100,spices_condiments,Zwarte peper,status,0
+R421100,spices_condiments,Bakpoeder,status,0
+R459000,spices_condiments,Gist,status,0
+S713000,spices_condiments,Cacaopoeder,status,0
+S570000,sweets_snacks,Pure chocolade,counted,0
+S530000,sweets_snacks,Melkchocolade,counted,0
+S361000,sweets_snacks,Winegums/gombeertjes,counted,0
+K280100,sweets_snacks,Chips,counted,0
+D064000,sweets_snacks,Zoute stokjes,counted,0
+D630400,sweets_snacks,Biscuits,counted,0
+S241000,frozen,Vanille-ijs,counted,0
+C519000,sweets_snacks,Popcorn,counted,0
+S420000,sweets_snacks,Marsepein,counted,0
+N110000,drinks,Water,counted,0
+N410100,drinks,Koffie,counted,0
+N630000,drinks,Zwarte thee,counted,0
+F603600,drinks,Sinaasappelsap,counted,0
+F110600,drinks,Appelsap,counted,0
+N330000,drinks,Cola,counted,0
+N331000,drinks,Cola zero,counted,0
+P163000,drinks,Bier (pils),counted,0
+P163100,drinks,Alcoholvrij bier,counted,0
+P2A3000,drinks,Rode wijn,counted,0
+P210000,drinks,Witte wijn,counted,0
+X654042,frozen,Friet (oven),counted,0
+X912033,frozen,Pizza margherita,counted,0
+G760200,frozen,Doperwten (diepvries),counted,0
+G211200,frozen,Spinazie (diepvries),counted,0
+X1A2000,other,Aardappelsalade,counted,0
+H960000,other,Hummus,counted,0
+S830000,sweets_snacks,Mueslireep,counted,0

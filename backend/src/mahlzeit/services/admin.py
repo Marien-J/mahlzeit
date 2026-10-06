@@ -2,15 +2,17 @@
 
 from __future__ import annotations
 
+import uuid
+
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from mahlzeit.domain import accounts
 from mahlzeit.domain.errors import Conflict
 from mahlzeit.domain.permissions import Client
-from mahlzeit.models import Household, Profile, User
+from mahlzeit.models import Favourite, Household, Item, Profile, User
 from mahlzeit.security import passwords
-from mahlzeit.services import audit
+from mahlzeit.services import audit, seed
 from mahlzeit.services.auth import actor_for
 
 
@@ -32,6 +34,7 @@ def create_admin(
     accounts.check_time_zone(time_zone)
     if db.scalar(select(func.count()).where(User.email == email)):
         raise Conflict("email_taken")
+    first_user = not db.scalar(select(func.count()).select_from(User))
     household = Household(name=accounts.clean_household_name(household_name or display_name))
     db.add(household)
     db.flush()
@@ -47,6 +50,8 @@ def create_admin(
     db.add(user)
     db.flush()
     db.add(Profile(user_id=user.id))
+    if first_user:
+        _favourite_staples(db, user.id)
     actor = actor_for(user, Client.CLI)
     audit.record(
         db,
@@ -66,6 +71,15 @@ def create_admin(
     )
     db.commit()
     return user
+
+
+def _favourite_staples(db: Session, user_id: uuid.UUID) -> None:
+    """The brief's staple foods become the first person's favourites."""
+    wanted = seed.favourite_seed_ids()
+    items = db.scalars(select(Item).where(Item.household_id.is_(None)))
+    for item in items:
+        if (item.source, item.source_id) in wanted:
+            db.add(Favourite(user_id=user_id, item_id=item.id))
 
 
 def list_users(db: Session) -> list[tuple[User, Household]]:

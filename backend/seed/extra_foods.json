@@ -1,0 +1,16 @@
+[
+  {
+    "source": "mahlzeit",
+    "source_id": "whey-protein",
+    "names": {
+      "de": "Whey-Proteinpulver (generisch)",
+      "en": "Whey protein powder (generic)",
+      "nl": "Wei-eiwitpoeder (generiek)"
+    },
+    "category": "dry_goods",
+    "tracking_mode": "counted",
+    "nutrients": {"kcal": 380, "protein": 78, "carbs": 6, "sugar": 4, "fat": 5, "sat_fat": 3, "fibre": 0, "salt": 0.4},
+    "note": "Typical values of plain whey concentrate; scan your product's barcode to replace it.",
+    "favourite": true
+  }
+]
