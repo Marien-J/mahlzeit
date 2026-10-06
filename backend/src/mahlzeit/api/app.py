@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Awaitable, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
 
-from mahlzeit import __version__
+from mahlzeit import __version__, logfilter
 from mahlzeit.api import errors
 from mahlzeit.api.routes import (
     auth,
@@ -24,6 +25,7 @@ from mahlzeit.api.routes import (
     targets,
 )
 from mahlzeit.config import get_settings, require_valid_settings
+from mahlzeit.connector.server import ConnectorApp, build_session_manager
 
 UNSAFE = {"POST", "PUT", "PATCH", "DELETE"}
 
@@ -32,7 +34,18 @@ def create_app() -> FastAPI:
     require_valid_settings()
     settings = get_settings()
     logging.basicConfig(level=settings.log_level)
+    logfilter.install()
+
+    @asynccontextmanager
+    async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        # A fresh session manager per start: run() may only be entered once per instance.
+        app.state.mcp_manager = build_session_manager()
+        async with app.state.mcp_manager.run():
+            yield
+        app.state.mcp_manager = None
+
     app = FastAPI(
+        lifespan=lifespan,
         title="Mahlzeit",
         version=__version__,
         openapi_url="/api/openapi.json",
@@ -50,6 +63,8 @@ def create_app() -> FastAPI:
         origin = request.headers.get("origin")
         if (
             request.method in UNSAFE
+            # The connector authenticates by its URL, not by cookies, so CSRF does not apply.
+            and not request.url.path.startswith("/mcp/")
             and origin is not None
             and origin.rstrip("/") not in get_settings().allowed_origins
         ):
@@ -72,4 +87,5 @@ def create_app() -> FastAPI:
         connector.router,
     ):
         app.include_router(router, prefix="/api")
+    app.mount("/mcp", ConnectorApp())
     return app
