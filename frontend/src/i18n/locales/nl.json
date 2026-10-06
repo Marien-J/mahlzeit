@@ -188,6 +188,20 @@
     "item_read_only": "Algemene levensmiddelen kun je niet wijzigen. Maak een eigen product aan.",
     "barcode_taken": "Barcode {{barcode}} hoort al bij een ander product.",
     "off_unavailable": "Open Food Facts is nu niet bereikbaar. Vul het etiket zelf in.",
-    "external_rate_limited": "Te veel online zoekopdrachten. Probeer het over {{seconds}} seconden opnieuw."
+    "external_rate_limited": "Te veel online zoekopdrachten. Probeer het over {{seconds}} seconden opnieuw.",
+    "target_invalid": "Dit doel valt buiten het mogelijke bereik.",
+    "day_type_required": "Kies trainingsdagen, rustdagen of beide.",
+    "week_pattern_invalid": "Het weekpatroon heeft zeven dagen nodig.",
+    "entry_not_found": "Deze invoer bestaat niet (meer).",
+    "entry_not_yours": "Je kunt alleen je eigen invoer wijzigen.",
+    "serving_unknown": "Dit product heeft geen portie ‘{{serving}}’.",
+    "amount_required": "Vul een hoeveelheid in.",
+    "quick_add_invalid": "Snel invoeren heeft een naam en calorieën nodig.",
+    "entry_empty": "Voeg minstens één product toe.",
+    "saved_meal_not_found": "Deze opgeslagen maaltijd bestaat niet (meer).",
+    "portions_invalid": "Vul tussen 0 en 20 porties in.",
+    "nothing_to_copy": "Er is op die dag niets om te kopiëren.",
+    "saved_meal_empty": "Een opgeslagen maaltijd heeft minstens één product uit de catalogus nodig.",
+    "saved_meal_name_required": "Geef de maaltijd een naam."
   }
 }

@@ -6,10 +6,11 @@ from dataclasses import dataclass
 from itertools import count
 
 from fastapi.testclient import TestClient
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from mahlzeit.domain.permissions import Actor
-from mahlzeit.models import User
+from mahlzeit.models import Item, User
 from mahlzeit.services import admin, auth, invites
 
 PASSWORD = "correct horse battery"
@@ -58,3 +59,8 @@ def signed_in(client: TestClient, member: Member) -> str:
     token: str = response.json()["csrf_token"]
     client.headers["X-CSRF-Token"] = token
     return token
+
+
+def generic(db: Session, actor: Actor, bls_code: str) -> Item:
+    """A generic seed food by its BLS code."""
+    return db.scalars(select(Item).where(Item.source == "bls", Item.source_id == bls_code)).one()

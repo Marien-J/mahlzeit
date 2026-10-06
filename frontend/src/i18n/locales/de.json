@@ -188,6 +188,20 @@
     "item_read_only": "Allgemeine Lebensmittel können nicht geändert werden. Lege stattdessen ein eigenes an.",
     "barcode_taken": "Der Barcode {{barcode}} gehört schon zu einem anderen Lebensmittel.",
     "off_unavailable": "Open Food Facts ist gerade nicht erreichbar. Gib das Etikett selbst ein.",
-    "external_rate_limited": "Zu viele Online-Abfragen. Versuche es in {{seconds}} Sekunden erneut."
+    "external_rate_limited": "Zu viele Online-Abfragen. Versuche es in {{seconds}} Sekunden erneut.",
+    "target_invalid": "Dieses Ziel liegt außerhalb des möglichen Bereichs.",
+    "day_type_required": "Wähle Trainingstage, Ruhetage oder beides.",
+    "week_pattern_invalid": "Das Wochenmuster braucht sieben Tage.",
+    "entry_not_found": "Diesen Eintrag gibt es nicht (mehr).",
+    "entry_not_yours": "Du kannst nur deine eigenen Einträge ändern.",
+    "serving_unknown": "Dieses Lebensmittel hat keine Portion „{{serving}}“.",
+    "amount_required": "Gib eine Menge ein.",
+    "quick_add_invalid": "Schnelleintrag braucht einen Namen und Kalorien.",
+    "entry_empty": "Füge mindestens ein Lebensmittel hinzu.",
+    "saved_meal_not_found": "Diese gespeicherte Mahlzeit gibt es nicht (mehr).",
+    "portions_invalid": "Gib zwischen 0 und 20 Portionen ein.",
+    "nothing_to_copy": "An diesem Tag gibt es nichts zu kopieren.",
+    "saved_meal_empty": "Eine gespeicherte Mahlzeit braucht mindestens ein Lebensmittel aus dem Katalog.",
+    "saved_meal_name_required": "Gib der Mahlzeit einen Namen."
   }
 }

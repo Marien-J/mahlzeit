@@ -188,6 +188,20 @@
     "item_read_only": "Generic foods cannot be changed. Create your own item instead.",
     "barcode_taken": "Barcode {{barcode}} already belongs to another item.",
     "off_unavailable": "Open Food Facts cannot be reached right now. Enter the label yourself.",
-    "external_rate_limited": "Too many online lookups. Try again in {{seconds}} seconds."
+    "external_rate_limited": "Too many online lookups. Try again in {{seconds}} seconds.",
+    "target_invalid": "That target is out of range.",
+    "day_type_required": "Choose training days, rest days or both.",
+    "week_pattern_invalid": "The week pattern needs seven days.",
+    "entry_not_found": "This entry does not exist (any more).",
+    "entry_not_yours": "You can only change your own entries.",
+    "serving_unknown": "This item has no serving called “{{serving}}”.",
+    "amount_required": "Enter an amount.",
+    "quick_add_invalid": "Quick add needs a name and calories.",
+    "entry_empty": "Add at least one food.",
+    "saved_meal_not_found": "This saved meal does not exist (any more).",
+    "portions_invalid": "Enter between 0 and 20 portions.",
+    "nothing_to_copy": "There is nothing to copy on that day.",
+    "saved_meal_empty": "A saved meal needs at least one food from the catalogue.",
+    "saved_meal_name_required": "Give the meal a name."
   }
 }
