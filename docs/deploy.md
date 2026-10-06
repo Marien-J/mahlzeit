@@ -17,7 +17,6 @@ Needs Docker with Compose v2. Ports 80 (and 443) must be free, or set `HTTP_PORT
 
 ```bash
 scripts/init-env.sh                      # builds the app image, writes .env with fresh secrets
-# edit .env: VAPID_SUBJECT=mailto:you@example.org
 docker compose up -d --build --wait
 MAHLZEIT_PASSWORD='choose a long password' \
   docker compose exec -T -e MAHLZEIT_PASSWORD app \
@@ -39,7 +38,7 @@ outbound HTTPS. 2 vCPU / 4 GB RAM is comfortable.
 ```bash
 git clone <repo> mahlzeit && cd mahlzeit
 scripts/init-env.sh mahlzeit.example.org   # sets SITE_ADDRESS and BASE_URL=https://...
-# edit .env: VAPID_SUBJECT, optional SMTP_*, BACKUP_AGE_RECIPIENT (see Backups)
+# optional in .env: SMTP_*, VAPID_SUBJECT, BACKUP_AGE_RECIPIENT (see Backups)
 docker compose up -d --build --wait
 ```
 
@@ -54,7 +53,9 @@ git pull && docker compose up -d --build --wait
 
 ### Settings that matter
 
-- `SITE_ADDRESS`: `http://localhost` (plain HTTP) or a bare domain (automatic HTTPS).
+- `SITE_ADDRESS`: `http://localhost, http://127.0.0.1` (plain HTTP, local) or a bare domain
+  (automatic HTTPS).
+- `VAPID_SUBJECT`: optional contact for push services; defaults to `BASE_URL` when it is https.
 - `BASE_URL`: the public URL; used in invite and reset links, cookies (`Secure` when https),
   push and, from M1, the connector.
 - `ENCRYPTION_KEY`: encrypts push subscriptions and, later, API keys. Losing it makes those

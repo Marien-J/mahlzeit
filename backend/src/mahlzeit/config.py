@@ -50,6 +50,10 @@ class Settings(BaseSettings):
     def allowed_origins(self) -> set[str]:
         parts = urlsplit(self.base_url)
         origins = {f"{parts.scheme}://{parts.netloc}"}
+        if parts.hostname == "localhost":
+            # Local use: the same server is also reached as 127.0.0.1.
+            port = f":{parts.port}" if parts.port else ""
+            origins.add(f"{parts.scheme}://127.0.0.1{port}")
         origins |= {o.strip().rstrip("/") for o in self.extra_origins.split(",") if o.strip()}
         return origins
 
@@ -59,7 +63,16 @@ class Settings(BaseSettings):
 
     @property
     def push_enabled(self) -> bool:
-        return bool(self.vapid_private_key and self.vapid_public_key and self.vapid_subject)
+        return bool(self.vapid_private_key and self.vapid_public_key)
+
+    @property
+    def vapid_contact(self) -> str:
+        """Contact sent to push services: VAPID_SUBJECT, else the public https URL."""
+        if self.vapid_subject:
+            return self.vapid_subject
+        if self.base_url.startswith("https://"):
+            return self.base_url.rstrip("/")
+        return "mailto:mahlzeit@localhost"
 
     def problems(self) -> list[str]:
         """Configuration mistakes that would break a deployment, as readable sentences."""
@@ -72,9 +85,8 @@ class Settings(BaseSettings):
             found.append(f"{err} (generate one with `mahlzeit gen-secrets`)")
         if not self.base_url.startswith(("http://", "https://")):
             found.append("BASE_URL must start with http:// or https://")
-        vapid = (self.vapid_private_key, self.vapid_public_key, self.vapid_subject)
-        if any(vapid) and not all(vapid):
-            found.append("set all of VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY, VAPID_SUBJECT, or none")
+        if bool(self.vapid_private_key) != bool(self.vapid_public_key):
+            found.append("set both VAPID_PRIVATE_KEY and VAPID_PUBLIC_KEY, or neither")
         if self.smtp_host and not self.smtp_from:
             found.append("SMTP_HOST is set but SMTP_FROM is not")
         return found

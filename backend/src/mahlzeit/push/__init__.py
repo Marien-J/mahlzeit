@@ -28,7 +28,7 @@ class WebPushSender:
                 subscription_info=subscription,
                 data=json.dumps(message),
                 vapid_private_key=s.vapid_private_key,
-                vapid_claims={"sub": s.vapid_subject},
+                vapid_claims={"sub": s.vapid_contact},
                 ttl=24 * 3600,
                 timeout=15,
             )

@@ -19,4 +19,4 @@ if [ -n "$domain" ]; then
 fi
 rm -f .env.bak
 chmod 600 .env
-echo "Wrote .env. Set VAPID_SUBJECT (mailto:you@example.org) and, for backups, BACKUP_AGE_RECIPIENT."
+echo "Wrote .env. Optional: VAPID_SUBJECT (mailto:you@example.org), SMTP_*, and BACKUP_AGE_RECIPIENT for encrypted backups."

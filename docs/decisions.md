@@ -58,6 +58,8 @@ One line per decision the brief leaves open. Newest at the bottom of each sectio
 - 2026-10-06 · Service worker built with vite-plugin-pwa (`injectManifest`), precaching the app shell; push and notification-click handlers live in the same worker.
 - 2026-10-06 · The web manifest uses relative URLs, so `BASE_URL` only needs to reach the server-side parts (emails, push, connector metadata).
 - 2026-10-06 · Push messages are sent from the worker through the job queue; subscriptions answering 404 or 410 are deleted.
+- 2026-10-06 · `VAPID_SUBJECT` is optional: the push contact defaults to `BASE_URL` when it is https (else `mailto:mahlzeit@localhost`), so a freshly generated `.env` starts without edits.
+- 2026-10-06 · Locally the site answers on both `localhost` and `127.0.0.1`; with a localhost `BASE_URL`, `127.0.0.1` is also an allowed origin.
 - 2026-10-06 · A push subscription belongs to whoever last signed in on that browser; at most 10 devices per user, oldest dropped.
 - 2026-10-06 · Offline, the app shows the last signed-in user from localStorage (without the CSRF token) until the server answers; signing out or a 401 clears it.
 - 2026-10-06 · Caddy sends `no-cache` for everything except hashed `/assets/*` (immutable, 1 year), so updates arrive on the next open.
