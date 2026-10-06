@@ -14,3 +14,8 @@ def test_uuid7_is_time_ordered_and_unique() -> None:
     assert len(set(values)) == len(values)
     stamps = [v.int >> 80 for v in values]
     assert stamps == sorted(stamps)
+
+
+def test_uuid7_increases_within_one_millisecond() -> None:
+    values = [uuid7() for _ in range(5000)]
+    assert values == sorted(values)
