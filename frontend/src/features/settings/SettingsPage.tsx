@@ -9,6 +9,7 @@ import { LanguageSelect } from '../../components/LanguageSelect'
 import { timeZones } from '../../i18n/format'
 import { useInstallPrompt } from '../../pwa/install'
 import { signedIn, signedOut, useMe } from '../auth/session'
+import { ConnectorSettings } from './ConnectorSettings'
 import { PushSettings } from './PushSettings'
 
 export function SettingsPage() {
@@ -18,10 +19,15 @@ export function SettingsPage() {
   return (
     <section className="stack">
       <h1>{t('settings.title')}</h1>
+      <nav className="stack links">
+        <Link to="/targets">{t('settings.targets')}</Link>
+        <Link to="/foods">{t('settings.foods')}</Link>
+      </nav>
       <AccountSettings me={me} />
       <SharingSettings me={me} />
       <h2>{t('settings.notifications')}</h2>
       <PushSettings me={me} />
+      <ConnectorSettings />
       <InstallSettings />
       <PasswordSettings />
       <div className="row spread">

@@ -6,9 +6,9 @@ import { JoinPage } from '../features/auth/JoinPage'
 import { LoginPage } from '../features/auth/LoginPage'
 import { ForgotPage, ResetPage } from '../features/auth/PasswordPages'
 import { useMe } from '../features/auth/session'
+import { DayPage } from '../features/day/DayPage'
 import { HouseholdPage } from '../features/household/HouseholdPage'
 import { SettingsPage } from '../features/settings/SettingsPage'
-import { TodayPage } from '../features/today/TodayPage'
 import { Shell } from './Shell'
 
 function Root() {
@@ -53,7 +53,22 @@ export const routes = [
       {
         element: <RequireAuth />,
         children: [
-          { path: '/', element: <TodayPage /> },
+          { path: '/', element: <DayPage /> },
+          { path: '/day/:day', element: <DayPage /> },
+          {
+            path: '/add',
+            lazy: () => import('../features/log/AddPage').then((m) => ({ Component: m.AddPage })),
+          },
+          {
+            path: '/foods',
+            lazy: () =>
+              import('../features/catalogue/FoodsPage').then((m) => ({ Component: m.FoodsPage })),
+          },
+          {
+            path: '/targets',
+            lazy: () =>
+              import('../features/targets/TargetsPage').then((m) => ({ Component: m.TargetsPage })),
+          },
           { path: '/household', element: <HouseholdPage /> },
           { path: '/settings', element: <SettingsPage /> },
           { path: '/about', element: <AboutPage /> },

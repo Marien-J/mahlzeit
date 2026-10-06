@@ -105,7 +105,7 @@ describe('joining by invite', () => {
     await user.type(screen.getByLabelText('Passwort'), 'a long password')
     await user.click(screen.getByRole('button', { name: 'Konto anlegen' }))
     await waitFor(() => expect(router.state.location.pathname).toBe('/'))
-    expect(await screen.findByRole('heading', { name: 'Hallo, Sam' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Heute' })).toBeInTheDocument()
     const body = server.calls.find((c) => c.path === '/api/invites/accept')?.body as Record<
       string,
       unknown
@@ -190,7 +190,7 @@ describe('offline start', () => {
     localStorage.setItem('mahlzeit.me', JSON.stringify({ ...ME, csrf_token: undefined }))
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
     renderApp('/')
-    expect(await screen.findByRole('heading', { name: 'Hallo, Jonas' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Heute' })).toBeInTheDocument()
     localStorage.clear()
   })
 

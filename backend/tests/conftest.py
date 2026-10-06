@@ -55,6 +55,10 @@ def engine() -> Iterator[Engine]:
     with eng.begin() as conn:
         cfg.attributes["connection"] = conn
         command.upgrade(cfg, "head")
+    from mahlzeit.services.seed import load_generic_foods
+
+    with Session(bind=eng) as seed_session:
+        load_generic_foods(seed_session)
     yield eng
     eng.dispose()
 

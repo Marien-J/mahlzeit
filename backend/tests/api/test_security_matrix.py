@@ -8,14 +8,19 @@ from __future__ import annotations
 import re
 import uuid
 from collections.abc import Callable
+from datetime import date
 from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
+from mahlzeit.domain.day import Slot
 from mahlzeit.main import app
-from mahlzeit.services import invites
+from mahlzeit.services import day, invites, items, saved_meals
+from mahlzeit.services.day import ComponentInput, EntryInput
+from mahlzeit.services.items import ItemInput
+from mahlzeit.services.saved_meals import Ingredient
 from tests import factories
 
 UNSAFE = {"post", "put", "patch", "delete"}
@@ -91,19 +96,61 @@ def test_foreign_origins_are_rejected(
 # --- Household isolation --------------------------------------------------------------------
 # Every route with a path parameter that names a household-owned row needs a case here.
 
-CrossCase = Callable[[Session, factories.Member], dict[str, Any]]
+CrossCase = Callable[[Session, factories.Member], tuple[dict[str, Any], dict[str, Any]]]
+"""Builds a row in another household; returns (path params, valid request body)."""
 
 
-def _other_households_invite(db: Session, other: factories.Member) -> dict[str, Any]:
-    return {"invite_id": invites.create_partner_invite(db, other.actor).invite.id}
+def _invite(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[str, Any]]:
+    return {"invite_id": invites.create_partner_invite(db, other.actor).invite.id}, {}
+
+
+def _item(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[str, Any]]:
+    item = items.create(db, other.actor, ItemInput(names={"de": "Geheim"}))
+    return {"item_id": item.id}, {"names": {"de": "Gestohlen"}, "on": True}
+
+
+def _entry(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[str, Any]]:
+    entry = day.log_food(
+        db,
+        other.actor,
+        EntryInput(
+            day=date(2026, 10, 1),
+            slot=Slot.LUNCH,
+            components=[ComponentInput(quick_name="Soup", kcal=300)],
+        ),
+    )
+    return {"entry_id": entry.id}, {"state": "skipped", "day": "2026-10-02", "name": "x"}
+
+
+def _saved_meal(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[str, Any]]:
+    oats = factories.generic(db, other.actor, "C133000")
+    meal = saved_meals.create(db, other.actor, name="Theirs", ingredients=[Ingredient(oats.id, 50)])
+    return {"meal_id": meal.id}, {"name": "Mine now"}
 
 
 CROSS_HOUSEHOLD: dict[tuple[str, str], CrossCase] = {
-    ("delete", "/api/household/invites/{invite_id}"): _other_households_invite,
+    ("delete", "/api/household/invites/{invite_id}"): _invite,
+    ("get", "/api/items/{item_id}"): _item,
+    ("put", "/api/items/{item_id}"): _item,
+    ("put", "/api/items/{item_id}/favourite"): _item,
+    ("patch", "/api/entries/{entry_id}"): _entry,
+    ("delete", "/api/entries/{entry_id}"): _entry,
+    ("post", "/api/entries/{entry_id}/state"): _entry,
+    ("post", "/api/entries/{entry_id}/copy"): _entry,
+    ("post", "/api/entries/{entry_id}/save-as-meal"): _entry,
+    ("patch", "/api/saved-meals/{meal_id}"): _saved_meal,
+    ("delete", "/api/saved-meals/{meal_id}"): _saved_meal,
 }
 
-# Path parameters that are not household-scoped ids (public lookups by secret key).
-NOT_SCOPED = {("get", "/api/invites/{key}")}
+# Path parameters that are not household-owned ids: lookups by secret key or by value,
+# answered for the caller's own household only (tested in test_flows_m1.py).
+NOT_SCOPED = {
+    ("get", "/api/invites/{key}"),
+    ("get", "/api/barcodes/{code}"),
+    ("get", "/api/days/{day_}"),
+    ("post", "/api/days/{day_}/copy"),
+    ("put", "/api/days/{day_}/day-type"),
+}
 
 
 def test_every_parametrised_route_has_a_cross_household_case() -> None:
@@ -117,10 +164,10 @@ def test_cannot_reach_another_households_rows(
 ) -> None:
     mine, _ = factories.household(db)
     theirs, _ = factories.household(db)
-    params = CROSS_HOUSEHOLD[(method, path)](db, theirs)
+    params, body = CROSS_HOUSEHOLD[(method, path)](db, theirs)
     client = make_client()
     factories.signed_in(client, mine)
-    response = client.request(method, path.format(**params), json={})
+    response = client.request(method, path.format(**params), json=body if method != "get" else None)
     assert response.status_code == 404, response.text
 
 

@@ -39,6 +39,12 @@ class Settings(BaseSettings):
     smtp_from: str = ""
     smtp_security: Literal["starttls", "ssl", "none"] = "starttls"
 
+    # Open Food Facts asks for "AppName/Version (contact)" in the User-Agent; defaults to BASE_URL.
+    off_contact: str = ""
+    off_enabled: bool = True
+    off_base_url: str = "https://world.openfoodfacts.org"
+    off_search_url: str = "https://search.openfoodfacts.org"
+
     files_dir: str = "/data/files"
     worker_poll_seconds: float = Field(default=2.0, gt=0)
 

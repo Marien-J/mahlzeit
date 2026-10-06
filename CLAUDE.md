@@ -7,18 +7,21 @@ Ask before changing the stack, a core entity or a milestone's scope.
 ## Layout
 
 ```
-backend/   FastAPI app + worker (Python 3.13, uv)
+backend/   FastAPI app + worker (Python 3.13, uv); seed/ = BLS selection, scripts/build_bls_seed.py
   src/mahlzeit/domain     pure rules, no I/O (tests first)
   src/mahlzeit/services   the only layer that writes: transactions, permissions, change records
   src/mahlzeit/api        REST adapter (thin)          jobs/  worker adapter (thin)
+  src/mahlzeit/tools      tool registry (thin)         connector/  MCP server at /mcp/<token>
   src/mahlzeit/models     SQLAlchemy tables            migrations/  Alembic
 frontend/  React PWA (Vite, TypeScript 5.9, TanStack Query, i18next)
 deploy/    Caddy image (serves the built PWA) and backup image
-scripts/   backup, restore, restore drill, e2e, client generation, env setup
-compose.yaml   the one stack: caddy, app, worker, db (+ backup "ops", devdb "dev" profiles)
+scripts/   backup, restore, restore drill, e2e (+ OFF stub), checks, client generation, env setup
+compose.yaml   the one stack: caddy, app, worker, db (+ backup "ops", devdb "dev", offstub "e2e" profiles)
 ```
 
 ## Commands
+
+`scripts/check.sh` runs every check a commit must pass (backend and frontend, API client freshness).
 
 Development database (Postgres on localhost:5433, in memory):
 
@@ -58,7 +61,7 @@ scripts/init-env.sh             # once: .env with generated secrets
 docker compose up -d --build    # http://localhost
 docker compose exec -T -e MAHLZEIT_PASSWORD app mahlzeit create-admin --email you@example.org --name You
 docker compose exec app mahlzeit --help    # invite-household, reset-password, list-users, ...
-scripts/e2e.sh                  # Playwright smoke test on a phone viewport (stack must run)
+scripts/e2e.sh                  # Playwright on a phone viewport; restarts the stack with the OFF stub
 scripts/backup.sh               # encrypted backup into ./backups
 scripts/restore.sh <file> <age key>
 scripts/restore-drill.sh        # full backup/wipe/restore check in a separate Compose project
@@ -89,6 +92,11 @@ Playwright needs `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium`.
   back transaction per test (`tests/conftest.py`). Use `tests/factories.py` to build households.
 - **Secrets** come only from the environment; never log them or put them in change records.
   `.env` is never committed; `.env.example` lists every variable.
+- **Tools** are registered with `@tool` in `src/mahlzeit/tools/`; every tool needs a case in
+  `tests/tools/test_registry.py` (and a cross-household case if it takes ids). The MCP connector
+  serves the registry as is.
+- **Open Food Facts** is reached only through `off_client` behind `services.items` (rate limit,
+  cache); tests use `tests/fakes.FakeOff`, end-to-end tests `scripts/offstub.py`.
 - **Definition of done** for a feature: UI path, registered tools (from M1), tests for both,
   strings in de, en and nl, a line in `docs/decisions.md` for anything the brief left open.
 - **Commits** are small and green: run backend lint, mypy, tests and frontend lint, typecheck,
