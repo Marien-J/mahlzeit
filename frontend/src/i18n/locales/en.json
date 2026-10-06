@@ -300,10 +300,10 @@
   },
   "serving": {
     "egg": "1 egg",
-    "label": "1 serving (label)",
     "portion": "1 portion",
     "roll": "1 roll",
-    "scoop": "1 scoop"
+    "scoop": "1 scoop",
+    "serving": "1 serving (package)"
   },
   "scan": {
     "camera": "Point the camera at the barcode",

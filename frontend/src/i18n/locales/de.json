@@ -300,10 +300,10 @@
   },
   "serving": {
     "egg": "1 Ei",
-    "label": "1 Portion (Packung)",
     "portion": "1 Portion",
     "roll": "1 Brötchen",
-    "scoop": "1 Messlöffel"
+    "scoop": "1 Messlöffel",
+    "serving": "1 Portion (Packung)"
   },
   "scan": {
     "camera": "Kamera auf den Strichcode richten",

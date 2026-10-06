@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 /**
- * M0 smoke test on a phone viewport: a new household joins by invite, the partner joins by
+ * Smoke test on a phone viewport: a new household joins by invite, the partner joins by
  * link, both use the app in their language, and the PWA is installable and opens offline.
  */
 const code = process.env.E2E_INVITE_CODE ?? ''
@@ -32,7 +32,7 @@ test('two people join, switch language, and the app opens offline', async ({ bro
   await a.getByLabel('Passwort').fill(password)
   await a.getByLabel('Name des Haushalts').fill(`Zuhause ${run}`)
   await a.getByRole('button', { name: 'Konto anlegen' }).click()
-  await expect(a.getByRole('heading', { name: 'Hallo, Jonas' })).toBeVisible()
+  await expect(a.getByRole('heading', { name: 'Heute' })).toBeVisible()
   await shot(a, '1-jonas-today-de')
 
   // --- Jonas invites a partner ---
@@ -52,7 +52,7 @@ test('two people join, switch language, and the app opens offline', async ({ bro
   await b.getByLabel('E-mail').fill(sam.email)
   await b.getByLabel('Wachtwoord').fill(password)
   await b.getByRole('button', { name: 'Account aanmaken' }).click()
-  await expect(b.getByRole('heading', { name: 'Hallo, Sam' })).toBeVisible()
+  await expect(b.getByRole('heading', { name: 'Vandaag' })).toBeVisible()
   await expect(b.getByRole('link', { name: 'Vandaag' })).toBeVisible()
   await shot(b, '3-sam-today-nl')
 
@@ -76,7 +76,7 @@ test('two people join, switch language, and the app opens offline', async ({ bro
   await a.getByLabel('E-Mail').fill(jonas.email)
   await a.getByLabel('Passwort').fill(password)
   await a.getByRole('button', { name: 'Anmelden' }).click()
-  await expect(a.getByRole('heading', { name: 'Hallo, Jonas' })).toBeVisible()
+  await expect(a.getByRole('heading', { name: 'Heute' })).toBeVisible()
 
   // --- The service worker takes control after the first load ---
   await a.evaluate(() => navigator.serviceWorker.ready)
@@ -87,7 +87,7 @@ test('two people join, switch language, and the app opens offline', async ({ bro
   await jonasContext.setOffline(true)
   await a.reload()
   await expect(a.getByText('Du bist offline.')).toBeVisible()
-  await expect(a.getByRole('heading', { name: 'Hallo, Jonas' })).toBeVisible()
+  await expect(a.getByRole('heading', { name: 'Heute' })).toBeVisible()
   await shot(a, '5-jonas-offline')
   await jonasContext.setOffline(false)
 

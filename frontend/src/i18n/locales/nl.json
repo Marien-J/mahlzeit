@@ -300,10 +300,10 @@
   },
   "serving": {
     "egg": "1 ei",
-    "label": "1 portie (verpakking)",
     "portion": "1 portie",
     "roll": "1 broodje",
-    "scoop": "1 schepje"
+    "scoop": "1 schepje",
+    "serving": "1 portie (verpakking)"
   },
   "scan": {
     "camera": "Richt de camera op de streepjescode",

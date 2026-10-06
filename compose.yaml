@@ -2,6 +2,7 @@
 #   docker compose up -d --build        start or update
 #   scripts/backup.sh / restore.sh      backup service (profile "ops")
 #   docker compose --profile dev up -d devdb   Postgres for local development and tests
+#   scripts/e2e.sh                             end-to-end tests (profile "e2e": Open Food Facts stub)
 name: mahlzeit
 
 x-app-env: &app-env
@@ -20,6 +21,10 @@ x-app-env: &app-env
   SMTP_PASSWORD: ${SMTP_PASSWORD:-}
   SMTP_FROM: ${SMTP_FROM:-}
   SMTP_SECURITY: ${SMTP_SECURITY:-starttls}
+  OFF_ENABLED: ${OFF_ENABLED:-true}
+  OFF_CONTACT: ${OFF_CONTACT:-}
+  OFF_BASE_URL: ${OFF_BASE_URL:-https://world.openfoodfacts.org}
+  OFF_SEARCH_URL: ${OFF_SEARCH_URL:-https://search.openfoodfacts.org}
 
 x-db-env: &db-env
   POSTGRES_USER: ${POSTGRES_USER:-mahlzeit}
@@ -123,6 +128,21 @@ services:
       interval: 2s
       timeout: 3s
       retries: 30
+
+  # End-to-end tests only: a stand-in for Open Food Facts. Start the stack with
+  # OFF_BASE_URL=http://offstub:8080 OFF_SEARCH_URL=http://offstub:8080 --profile e2e.
+  offstub:
+    profiles: ["e2e"]
+    image: mahlzeit-app:${MAHLZEIT_TAG:-local}
+    command: ["python", "/offstub.py"]
+    volumes:
+      - ./scripts/offstub.py:/offstub.py:ro
+      - ./backend/tests/fixtures:/fixtures:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
 volumes:
   db:
