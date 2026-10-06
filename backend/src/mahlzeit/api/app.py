@@ -11,12 +11,13 @@ from fastapi.responses import JSONResponse
 from mahlzeit import __version__
 from mahlzeit.api import errors
 from mahlzeit.api.routes import auth, household, invites, me, push, system
-from mahlzeit.config import get_settings
+from mahlzeit.config import get_settings, require_valid_settings
 
 UNSAFE = {"POST", "PUT", "PATCH", "DELETE"}
 
 
 def create_app() -> FastAPI:
+    require_valid_settings()
     settings = get_settings()
     logging.basicConfig(level=settings.log_level)
     app = FastAPI(

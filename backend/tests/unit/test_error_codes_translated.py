@@ -6,7 +6,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 SRC = ROOT / "backend" / "src" / "mahlzeit"
-RAISED = re.compile(r"\b(?:Invalid|NotFound|Forbidden|Unauthorized|Conflict|RateLimited)\(\s*\"([a-z_]+)\"")
+KINDS = "Invalid|NotFound|Forbidden|Unauthorized|Conflict|RateLimited"
+RAISED = re.compile(rf"\b(?:{KINDS})\(\s*\"([a-z_]+)\"")
 EXTRA = {"not_found", "forbidden", "not_authenticated", "origin_not_allowed", "validation_error"}
 
 

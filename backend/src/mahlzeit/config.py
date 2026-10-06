@@ -61,6 +61,34 @@ class Settings(BaseSettings):
     def push_enabled(self) -> bool:
         return bool(self.vapid_private_key and self.vapid_public_key and self.vapid_subject)
 
+    def problems(self) -> list[str]:
+        """Configuration mistakes that would break a deployment, as readable sentences."""
+        from mahlzeit.security.crypto import EncryptionKeyMissing, _key
+
+        found: list[str] = []
+        try:
+            _key(self.encryption_key)
+        except EncryptionKeyMissing as err:
+            found.append(f"{err} (generate one with `mahlzeit gen-secrets`)")
+        if not self.base_url.startswith(("http://", "https://")):
+            found.append("BASE_URL must start with http:// or https://")
+        vapid = (self.vapid_private_key, self.vapid_public_key, self.vapid_subject)
+        if any(vapid) and not all(vapid):
+            found.append("set all of VAPID_PRIVATE_KEY, VAPID_PUBLIC_KEY, VAPID_SUBJECT, or none")
+        if self.smtp_host and not self.smtp_from:
+            found.append("SMTP_HOST is set but SMTP_FROM is not")
+        return found
+
+
+def require_valid_settings() -> None:
+    """Refuse to start a production process with a broken configuration."""
+    settings = get_settings()
+    if settings.env != "production":
+        return
+    problems = settings.problems()
+    if problems:
+        raise SystemExit("Configuration problems:\n- " + "\n- ".join(problems))
+
 
 @lru_cache
 def get_settings() -> Settings:

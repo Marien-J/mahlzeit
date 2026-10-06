@@ -10,7 +10,7 @@ from types import FrameType
 from sqlalchemy.orm import Session
 
 from mahlzeit import clock
-from mahlzeit.config import get_settings
+from mahlzeit.config import get_settings, require_valid_settings
 from mahlzeit.db import new_session
 from mahlzeit.jobs.registry import HANDLERS, RECURRING, Deps
 from mahlzeit.services import queue
@@ -48,6 +48,7 @@ def run_one(db: Session, deps: Deps) -> bool:
 
 
 def main() -> None:
+    require_valid_settings()
     settings = get_settings()
     logging.basicConfig(
         level=settings.log_level, format="%(asctime)s %(levelname)s %(name)s %(message)s"

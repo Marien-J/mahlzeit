@@ -24,7 +24,10 @@ def _key(raw: str | None = None) -> bytes:
     value = raw if raw is not None else get_settings().encryption_key
     if not value:
         raise EncryptionKeyMissing("ENCRYPTION_KEY is not set")
-    key = base64.urlsafe_b64decode(value + "=" * (-len(value) % 4))
+    try:
+        key = base64.urlsafe_b64decode(value + "=" * (-len(value) % 4))
+    except ValueError:
+        key = b""
     if len(key) != 32:
         raise EncryptionKeyMissing("ENCRYPTION_KEY must be 32 bytes, base64url encoded")
     return key
