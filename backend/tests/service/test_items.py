@@ -69,6 +69,16 @@ class TestSearch:
         assert hits[0].item.name_de == "Skyr Natur"
         assert hits[0].item.household_id == jonas.user.household_id
 
+    def test_own_lists_only_the_households_items(self, db: Session) -> None:
+        mine, _ = factories.household(db)
+        theirs, _ = factories.household(db)
+        items.create(db, mine.actor, SKYR)
+        items.create(db, theirs.actor, SKYR)
+        own = items.search(db, mine.actor, "", own=True)
+        assert [h.item.household_id for h in own] == [mine.user.household_id]
+        assert items.search(db, mine.actor, "hähnchen", own=True) == []
+        assert names(items.search(db, mine.actor, "skir", own=True)) == ["Skyr Natur"]
+
     def test_never_shows_another_households_items(self, db: Session) -> None:
         mine, _ = factories.household(db)
         theirs, _ = factories.household(db)

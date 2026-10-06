@@ -410,7 +410,10 @@ export interface paths {
       path?: never
       cookie?: never
     }
-    /** Search Items */
+    /**
+     * Search Items
+     * @description `own=true`: only the household's own items (the foods page).
+     */
     get: operations['search_items_api_items_get']
     put?: never
     /** Create Item */
@@ -2270,6 +2273,7 @@ export interface operations {
       query?: {
         q?: string
         limit?: number
+        own?: boolean
       }
       header?: never
       path?: never

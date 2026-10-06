@@ -3241,6 +3241,7 @@
     },
     "/api/items": {
       "get": {
+        "description": "`own=true`: only the household's own items (the foods page).",
         "operationId": "search_items_api_items_get",
         "parameters": [
           {
@@ -3260,10 +3261,20 @@
             "required": false,
             "schema": {
               "default": 25,
-              "maximum": 50,
+              "maximum": 200,
               "minimum": 1,
               "title": "Limit",
               "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "own",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Own",
+              "type": "boolean"
             }
           }
         ],

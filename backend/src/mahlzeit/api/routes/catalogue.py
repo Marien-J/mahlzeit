@@ -20,9 +20,11 @@ def search_items(
     current: Current,
     db: Db,
     q: Annotated[str, Query(max_length=100)] = "",
-    limit: Annotated[int, Query(ge=1, le=50)] = 25,
+    limit: Annotated[int, Query(ge=1, le=200)] = 25,
+    own: bool = False,
 ) -> list[views.ItemOut]:
-    hits = items.search(db, current.actor, q, limit=limit)
+    """`own=true`: only the household's own items (the foods page)."""
+    hits = items.search(db, current.actor, q, limit=limit, own=own)
     favs = {h.item.id for h in hits if h.favourite}
     return [views.item(h.item, current.user.language, favs) for h in hits]
 

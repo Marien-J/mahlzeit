@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Any
 
-from sqlalchemy import Float, case, cast, exists, func, literal, or_, select
+from sqlalchemy import Float, case, cast, exists, func, literal, or_, select, true
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy.sql.elements import ColumnElement
 
@@ -98,9 +98,12 @@ def favourite_ids(db: Session, actor: Actor) -> set[uuid.UUID]:
     return set(db.scalars(select(Favourite.item_id).where(Favourite.user_id == actor.user_id)))
 
 
-def search(db: Session, actor: Actor, query: str, *, limit: int = SEARCH_LIMIT) -> list[Hit]:
+def search(
+    db: Session, actor: Actor, query: str, *, limit: int = SEARCH_LIMIT, own: bool = False
+) -> list[Hit]:
     """Typo-tolerant search over all three languages. The household's own and often used
-    items rank first, then generic foods. With an empty query: favourites and recent items."""
+    items rank first, then generic foods. With an empty query: favourites and recent items.
+    With `own`, only the household's items, and an empty query lists all of them."""
     q = normalize(query)
     since = clock.now().date() - timedelta(days=90)
     uses = (
@@ -120,7 +123,8 @@ def search(db: Session, actor: Actor, query: str, *, limit: int = SEARCH_LIMIT) 
         match = or_(sim >= 0.3, Item.search_text.like(f"%{q}%"))
     else:
         sim = cast(literal(0.0), Float)
-        match = or_(is_fav, used > 0)
+        match = true() if own else or_(is_fav, used > 0)
+    visible = Item.household_id == actor.household_id if own else _visible(actor)
     score = (
         sim
         + func.least(func.ln(1 + used) * 0.08, 0.3)
@@ -130,7 +134,7 @@ def search(db: Session, actor: Actor, query: str, *, limit: int = SEARCH_LIMIT) 
     rows = db.execute(
         select(Item, is_fav, used)
         .outerjoin(uses, uses.c.item_id == Item.id)
-        .where(_visible(actor), match)
+        .where(visible, match)
         .order_by(score.desc(), Item.search_text)
         .limit(limit)
         .options(selectinload(Item.servings), selectinload(Item.barcodes))

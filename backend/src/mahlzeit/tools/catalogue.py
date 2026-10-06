@@ -21,6 +21,10 @@ class SearchItemsIn(BaseModel):
         max_length=100, description="Food name in German, English or Dutch. Typos are fine."
     )
     limit: int = Field(default=10, ge=1, le=50)
+    own_only: bool = Field(
+        default=False,
+        description="Only the household's own items; with an empty query, lists all of them.",
+    )
 
 
 class ItemIdIn(BaseModel):
@@ -53,7 +57,7 @@ class FavouriteIn(BaseModel):
     writes=False,
 )
 def search_items(ctx: ToolContext, args: SearchItemsIn) -> list[views.ItemOut]:
-    hits = items.search(ctx.db, ctx.actor, args.query, limit=args.limit)
+    hits = items.search(ctx.db, ctx.actor, args.query, limit=args.limit, own=args.own_only)
     favs = {h.item.id for h in hits if h.favourite}
     return [views.item(h.item, ctx.language, favs) for h in hits]
 
