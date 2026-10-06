@@ -207,7 +207,17 @@
     "nothing_to_copy": "An diesem Tag gibt es nichts zu kopieren.",
     "saved_meal_empty": "Eine gespeicherte Mahlzeit braucht mindestens ein Lebensmittel aus dem Katalog.",
     "saved_meal_name_required": "Gib der Mahlzeit einen Namen.",
-    "nothing_to_set": "Gib mindestens ein Ziel oder ein Wochenmuster an."
+    "nothing_to_set": "Gib mindestens ein Ziel oder ein Wochenmuster an.",
+    "category_unknown": "Diese Abteilung gibt es nicht.",
+    "id_invalid": "Diese Kennung ist ungültig.",
+    "list_field_unknown": "Diese Änderung enthält ein Feld, das die Liste nicht kennt.",
+    "list_item_not_found": "Dieser Eintrag ist nicht mehr auf der Liste.",
+    "list_text_empty": "Gib ein, was du brauchst.",
+    "store_builtin": "Vorgegebene Geschäfte können nicht gelöscht werden.",
+    "store_name_empty": "Gib dem Geschäft einen Namen.",
+    "store_name_taken": "Es gibt schon ein Geschäft namens {{name}}.",
+    "store_not_found": "Dieses Geschäft gibt es nicht.",
+    "too_many_operations": "Zu viele Änderungen auf einmal (höchstens {{max}})."
   },
   "day": {
     "today": "Heute",

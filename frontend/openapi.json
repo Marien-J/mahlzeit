@@ -1293,6 +1293,377 @@
         "title": "ItemOut",
         "type": "object"
       },
+      "ListFieldsIn": {
+        "description": "Only the fields that are sent are changed; send null to clear quantity or store.",
+        "properties": {
+          "category": {
+            "anyOf": [
+              {
+                "maxLength": 20,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "checked": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked"
+          },
+          "item_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Id"
+          },
+          "parse": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "On add: split a quantity such as '2' or '500 g' off the text.",
+            "title": "Parse"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "store_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Id"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          }
+        },
+        "title": "ListFieldsIn",
+        "type": "object"
+      },
+      "ListItemOut": {
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "checked": {
+            "title": "Checked",
+            "type": "boolean"
+          },
+          "checked_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked At"
+          },
+          "checked_by": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked By"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "item_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Id"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "store_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Id"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "text",
+          "item_id",
+          "quantity",
+          "store_id",
+          "category",
+          "checked",
+          "checked_at",
+          "checked_by",
+          "created_by",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ListItemOut",
+        "type": "object"
+      },
+      "ListMemoryOut": {
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "item_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Id"
+          },
+          "store_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Id"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "uses": {
+            "title": "Uses",
+            "type": "integer"
+          }
+        },
+        "required": ["text", "item_id", "category", "store_id", "uses"],
+        "title": "ListMemoryOut",
+        "type": "object"
+      },
+      "ListOpIn": {
+        "properties": {
+          "at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "When the change was made.",
+            "title": "At"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/ListFieldsIn"
+          },
+          "id": {
+            "description": "The list item's id, made by the client on add.",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": ["add", "update", "remove"],
+            "title": "Kind",
+            "type": "string"
+          }
+        },
+        "required": ["kind", "id"],
+        "title": "ListOpIn",
+        "type": "object"
+      },
+      "ListOpResultOut": {
+        "properties": {
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "status": {
+            "enum": ["applied", "unchanged", "removed", "not_found", "invalid"],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": ["id", "status", "code"],
+        "title": "ListOpResultOut",
+        "type": "object"
+      },
+      "ListOpsIn": {
+        "properties": {
+          "ops": {
+            "items": {
+              "$ref": "#/components/schemas/ListOpIn"
+            },
+            "maxItems": 200,
+            "title": "Ops",
+            "type": "array"
+          }
+        },
+        "required": ["ops"],
+        "title": "ListOpsIn",
+        "type": "object"
+      },
+      "ListOpsOut": {
+        "properties": {
+          "list": {
+            "$ref": "#/components/schemas/ListOut"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/ListOpResultOut"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": ["results", "list"],
+        "title": "ListOpsOut",
+        "type": "object"
+      },
+      "ListOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ListItemOut"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "server_time": {
+            "format": "date-time",
+            "title": "Server Time",
+            "type": "string"
+          },
+          "stores": {
+            "items": {
+              "$ref": "#/components/schemas/StoreOut"
+            },
+            "title": "Stores",
+            "type": "array"
+          }
+        },
+        "required": ["items", "stores", "server_time"],
+        "title": "ListOut",
+        "type": "object"
+      },
       "LoginIn": {
         "properties": {
           "email": {
@@ -2029,6 +2400,56 @@
         },
         "required": ["label", "amount"],
         "title": "ServingOut",
+        "type": "object"
+      },
+      "StoreIn": {
+        "properties": {
+          "name": {
+            "maxLength": 80,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": ["name"],
+        "title": "StoreIn",
+        "type": "object"
+      },
+      "StoreOut": {
+        "properties": {
+          "custom": {
+            "title": "Custom",
+            "type": "boolean"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          }
+        },
+        "required": ["id", "key", "name", "custom"],
+        "title": "StoreOut",
         "type": "object"
       },
       "TargetPlanOut": {
@@ -2991,6 +3412,22 @@
         "tags": ["day"]
       }
     },
+    "/api/events": {
+      "get": {
+        "description": "Server-sent events for the household: `change` with the kind of thing that changed\n(`{\"entity\": \"list_item\"}`, `\"*\"` for everything). The app refetches what it shows.",
+        "operationId": "event_stream_api_events_get",
+        "responses": {
+          "200": {
+            "content": {
+              "text/event-stream": {}
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Event Stream",
+        "tags": ["events"]
+      }
+    },
     "/api/health": {
       "get": {
         "operationId": "health_api_health_get",
@@ -3479,6 +3916,89 @@
         "tags": ["catalogue"]
       }
     },
+    "/api/list": {
+      "get": {
+        "operationId": "get_list_api_list_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get List",
+        "tags": ["shopping list"]
+      }
+    },
+    "/api/list/history": {
+      "get": {
+        "description": "What the household has put on the list before, most used first.",
+        "operationId": "list_history_api_list_history_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/ListMemoryOut"
+                  },
+                  "title": "Response List History Api List History Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List History",
+        "tags": ["shopping list"]
+      }
+    },
+    "/api/list/ops": {
+      "post": {
+        "description": "Apply changes in order, made online or queued offline. Each change carries the item's\nclient-made id and the time it was made, so sending the same batch twice is harmless.\nAnswers with each change's outcome and the list as it is now.",
+        "operationId": "apply_list_ops_api_list_ops_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListOpsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListOpsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Apply List Ops",
+        "tags": ["shopping list"]
+      }
+    },
     "/api/me": {
       "patch": {
         "operationId": "update_me_api_me_patch",
@@ -3844,6 +4364,79 @@
         },
         "summary": "Update Saved Meal",
         "tags": ["saved meals"]
+      }
+    },
+    "/api/stores": {
+      "post": {
+        "operationId": "create_store_api_stores_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StoreIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Store",
+        "tags": ["shopping list"]
+      }
+    },
+    "/api/stores/{store_id}": {
+      "delete": {
+        "operationId": "delete_store_api_stores__store_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "store_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Store Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Store",
+        "tags": ["shopping list"]
       }
     },
     "/api/targets": {

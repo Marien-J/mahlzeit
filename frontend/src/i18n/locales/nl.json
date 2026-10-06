@@ -207,7 +207,17 @@
     "nothing_to_copy": "Er is op die dag niets om te kopiëren.",
     "saved_meal_empty": "Een opgeslagen maaltijd heeft minstens één product uit de catalogus nodig.",
     "saved_meal_name_required": "Geef de maaltijd een naam.",
-    "nothing_to_set": "Geef minstens één doel of een weekpatroon op."
+    "nothing_to_set": "Geef minstens één doel of een weekpatroon op.",
+    "category_unknown": "Deze afdeling bestaat niet.",
+    "id_invalid": "Deze id is ongeldig.",
+    "list_field_unknown": "Deze wijziging bevat een veld dat de lijst niet kent.",
+    "list_item_not_found": "Dit item staat niet meer op de lijst.",
+    "list_text_empty": "Typ wat je nodig hebt.",
+    "store_builtin": "Vaste winkels kunnen niet worden verwijderd.",
+    "store_name_empty": "Geef de winkel een naam.",
+    "store_name_taken": "Er is al een winkel met de naam {{name}}.",
+    "store_not_found": "Deze winkel bestaat niet.",
+    "too_many_operations": "Te veel wijzigingen tegelijk (maximaal {{max}})."
   },
   "day": {
     "today": "Vandaag",

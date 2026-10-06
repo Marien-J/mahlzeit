@@ -11,14 +11,24 @@ from typing import Literal
 
 from pydantic import BaseModel
 
+from mahlzeit import clock
 from mahlzeit.domain.catalogue import display_name
 from mahlzeit.domain.nutrition import Nutrients, Totals, rounded
 from mahlzeit.domain.off import ItemDraft
 from mahlzeit.domain.targets import Targets
-from mahlzeit.models import Item, MealComponent, MealEntry, Recipe
+from mahlzeit.models import (
+    Item,
+    ListMemory,
+    MealComponent,
+    MealEntry,
+    Recipe,
+    ShoppingListItem,
+    Store,
+)
 from mahlzeit.services import day as day_service
 from mahlzeit.services import items as item_service
 from mahlzeit.services import saved_meals
+from mahlzeit.services import shopping as shopping_service
 from mahlzeit.services.snapshot import Snapshot
 from mahlzeit.services.targets import TargetPlan
 
@@ -162,6 +172,7 @@ class SavedMealOut(BaseModel):
 class SnapshotOut(BaseModel):
     today: DayOut
     tonight: list[EntryOut]
+    shopping_list: ListOut
     not_yet_available: list[str]
 
 
@@ -173,6 +184,53 @@ class ConnectorOut(BaseModel):
 
 class ConnectorCreatedOut(BaseModel):
     url: str
+
+
+class StoreOut(BaseModel):
+    id: uuid.UUID
+    key: str | None
+    name: str | None
+    custom: bool
+
+
+class ListItemOut(BaseModel):
+    id: uuid.UUID
+    text: str
+    item_id: uuid.UUID | None
+    quantity: str | None
+    store_id: uuid.UUID | None
+    category: str
+    checked: bool
+    checked_at: datetime | None
+    checked_by: uuid.UUID | None
+    created_by: uuid.UUID | None
+    created_at: datetime
+    updated_at: datetime
+
+
+class ListOut(BaseModel):
+    items: list[ListItemOut]
+    stores: list[StoreOut]
+    server_time: datetime
+
+
+class ListMemoryOut(BaseModel):
+    text: str
+    item_id: uuid.UUID | None
+    category: str
+    store_id: uuid.UUID | None
+    uses: int
+
+
+class ListOpResultOut(BaseModel):
+    id: uuid.UUID
+    status: Literal["applied", "unchanged", "removed", "not_found", "invalid"]
+    code: str | None
+
+
+class ListOpsOut(BaseModel):
+    results: list[ListOpResultOut]
+    list: ListOut
 
 
 # --- converters ---------------------------------------------------------------------------
@@ -335,5 +393,43 @@ def snapshot(s: Snapshot, language: str, viewer: uuid.UUID) -> SnapshotOut:
     return SnapshotOut(
         today=day(s.today, language, viewer),
         tonight=[entry(e, language) for e in s.tonight],
+        shopping_list=shopping_list(s.shopping_list, s.stores, clock.now()),
         not_yet_available=list(s.not_yet_available),
     )
+
+
+def store(s: Store) -> StoreOut:
+    return StoreOut(id=s.id, key=s.key, name=s.name, custom=s.household_id is not None)
+
+
+def list_item(r: ShoppingListItem) -> ListItemOut:
+    return ListItemOut(
+        id=r.id,
+        text=r.text,
+        item_id=r.item_id,
+        quantity=r.quantity,
+        store_id=r.store_id,
+        category=r.category,
+        checked=r.checked,
+        checked_at=r.checked_at,
+        checked_by=r.checked_by,
+        created_by=r.created_by,
+        created_at=r.created_at,
+        updated_at=r.updated_at,
+    )
+
+
+def shopping_list(rows: list[ShoppingListItem], stores: list[Store], now: datetime) -> ListOut:
+    return ListOut(
+        items=[list_item(r) for r in rows], stores=[store(s) for s in stores], server_time=now
+    )
+
+
+def list_memory(m: ListMemory) -> ListMemoryOut:
+    return ListMemoryOut(
+        text=m.text, item_id=m.item_id, category=m.category, store_id=m.store_id, uses=m.uses
+    )
+
+
+def list_op_result(r: shopping_service.OpResult) -> ListOpResultOut:
+    return ListOpResultOut(id=r.id, status=r.status, code=r.code)

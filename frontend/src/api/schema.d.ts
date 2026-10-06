@@ -299,6 +299,27 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/events': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Event Stream
+     * @description Server-sent events for the household: `change` with the kind of thing that changed
+     *     (`{"entity": "list_item"}`, `"*"` for everything). The app refetches what it shows.
+     */
+    get: operations['event_stream_api_events_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/health': {
     parameters: {
       query?: never
@@ -459,6 +480,65 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/list': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get List */
+    get: operations['get_list_api_list_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/list/history': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * List History
+     * @description What the household has put on the list before, most used first.
+     */
+    get: operations['list_history_api_list_history_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/list/ops': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Apply List Ops
+     * @description Apply changes in order, made online or queued offline. Each change carries the item's
+     *     client-made id and the time it was made, so sending the same batch twice is harmless.
+     *     Answers with each change's outcome and the list as it is now.
+     */
+    post: operations['apply_list_ops_api_list_ops_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/me': {
     parameters: {
       query?: never
@@ -612,6 +692,40 @@ export interface paths {
     head?: never
     /** Update Saved Meal */
     patch: operations['update_saved_meal_api_saved_meals__meal_id__patch']
+    trace?: never
+  }
+  '/api/stores': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Create Store */
+    post: operations['create_store_api_stores_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/stores/{store_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Delete Store */
+    delete: operations['delete_store_api_stores__store_id__delete']
+    options?: never
+    head?: never
+    patch?: never
     trace?: never
   }
   '/api/targets': {
@@ -1144,6 +1258,136 @@ export interface components {
        */
       tracking_mode: 'counted' | 'status'
     }
+    /**
+     * ListFieldsIn
+     * @description Only the fields that are sent are changed; send null to clear quantity or store.
+     */
+    ListFieldsIn: {
+      /** Category */
+      category?: string | null
+      /** Checked */
+      checked?: boolean | null
+      /** Item Id */
+      item_id?: string | null
+      /**
+       * Parse
+       * @description On add: split a quantity such as '2' or '500 g' off the text.
+       */
+      parse?: boolean | null
+      /** Quantity */
+      quantity?: string | null
+      /** Store Id */
+      store_id?: string | null
+      /** Text */
+      text?: string | null
+    }
+    /** ListItemOut */
+    ListItemOut: {
+      /** Category */
+      category: string
+      /** Checked */
+      checked: boolean
+      /** Checked At */
+      checked_at: string | null
+      /** Checked By */
+      checked_by: string | null
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /** Created By */
+      created_by: string | null
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Item Id */
+      item_id: string | null
+      /** Quantity */
+      quantity: string | null
+      /** Store Id */
+      store_id: string | null
+      /** Text */
+      text: string
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string
+    }
+    /** ListMemoryOut */
+    ListMemoryOut: {
+      /** Category */
+      category: string
+      /** Item Id */
+      item_id: string | null
+      /** Store Id */
+      store_id: string | null
+      /** Text */
+      text: string
+      /** Uses */
+      uses: number
+    }
+    /** ListOpIn */
+    ListOpIn: {
+      /**
+       * At
+       * @description When the change was made.
+       */
+      at?: string | null
+      fields?: components['schemas']['ListFieldsIn']
+      /**
+       * Id
+       * Format: uuid
+       * @description The list item's id, made by the client on add.
+       */
+      id: string
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: 'add' | 'update' | 'remove'
+    }
+    /** ListOpResultOut */
+    ListOpResultOut: {
+      /** Code */
+      code: string | null
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /**
+       * Status
+       * @enum {string}
+       */
+      status: 'applied' | 'unchanged' | 'removed' | 'not_found' | 'invalid'
+    }
+    /** ListOpsIn */
+    ListOpsIn: {
+      /** Ops */
+      ops: components['schemas']['ListOpIn'][]
+    }
+    /** ListOpsOut */
+    ListOpsOut: {
+      list: components['schemas']['ListOut']
+      /** Results */
+      results: components['schemas']['ListOpResultOut'][]
+    }
+    /** ListOut */
+    ListOut: {
+      /** Items */
+      items: components['schemas']['ListItemOut'][]
+      /**
+       * Server Time
+       * Format: date-time
+       */
+      server_time: string
+      /** Stores */
+      stores: components['schemas']['StoreOut'][]
+    }
     /** LoginIn */
     LoginIn: {
       /** Email */
@@ -1371,6 +1615,25 @@ export interface components {
       amount: number
       /** Label */
       label: string
+    }
+    /** StoreIn */
+    StoreIn: {
+      /** Name */
+      name: string
+    }
+    /** StoreOut */
+    StoreOut: {
+      /** Custom */
+      custom: boolean
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Key */
+      key: string | null
+      /** Name */
+      name: string | null
     }
     /** TargetPlanOut */
     TargetPlanOut: {
@@ -2049,6 +2312,26 @@ export interface operations {
       }
     }
   }
+  event_stream_api_events_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'text/event-stream': unknown
+        }
+      }
+    }
+  }
   health_api_health_get: {
     parameters: {
       query?: never
@@ -2433,6 +2716,79 @@ export interface operations {
       }
     }
   }
+  get_list_api_list_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ListOut']
+        }
+      }
+    }
+  }
+  list_history_api_list_history_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ListMemoryOut'][]
+        }
+      }
+    }
+  }
+  apply_list_ops_api_list_ops_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ListOpsIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ListOpsOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   update_me_api_me_patch: {
     parameters: {
       query?: never
@@ -2737,6 +3093,68 @@ export interface operations {
         content: {
           'application/json': components['schemas']['SavedMealOut']
         }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  create_store_api_stores_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StoreIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StoreOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  delete_store_api_stores__store_id__delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        store_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
       }
       /** @description Validation Error */
       422: {

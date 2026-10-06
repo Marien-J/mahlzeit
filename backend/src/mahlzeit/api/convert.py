@@ -8,6 +8,7 @@ from mahlzeit.domain.day import Slot
 from mahlzeit.domain.nutrition import Nutrients
 from mahlzeit.services.day import ComponentInput, EntryInput, EntryPatch
 from mahlzeit.services.items import ItemInput
+from mahlzeit.services.shopping import Op
 
 
 def item_input(body: schemas.ItemIn) -> ItemInput:
@@ -51,3 +52,7 @@ def entry_patch(body: schemas.EntryPatchIn) -> EntryPatch:
         eaten_out=body.eaten_out,
         components=[component(c) for c in body.components] if body.components is not None else None,
     )
+
+
+def list_op(o: schemas.ListOpIn) -> Op:
+    return Op(kind=o.kind, id=o.id, at=o.at, fields=o.fields.model_dump(exclude_unset=True))

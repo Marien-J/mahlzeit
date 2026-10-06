@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from mahlzeit.domain.permissions import Actor, Client
 from mahlzeit.models import ChangeRecord
+from mahlzeit.services import events
 
 
 def record(
@@ -40,4 +41,6 @@ def record(
         after=after,
     )
     db.add(change)
+    if household_id is not None:
+        events.publish(db, household_id, entity, change.user_id)
     return change

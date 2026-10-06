@@ -207,7 +207,17 @@
     "nothing_to_copy": "There is nothing to copy on that day.",
     "saved_meal_empty": "A saved meal needs at least one food from the catalogue.",
     "saved_meal_name_required": "Give the meal a name.",
-    "nothing_to_set": "Give at least one target or a week pattern."
+    "nothing_to_set": "Give at least one target or a week pattern.",
+    "category_unknown": "This aisle does not exist.",
+    "id_invalid": "This id is not valid.",
+    "list_field_unknown": "This change contains a field the list does not know.",
+    "list_item_not_found": "This item is no longer on the list.",
+    "list_text_empty": "Type what you need.",
+    "store_builtin": "Built-in stores cannot be deleted.",
+    "store_name_empty": "Give the store a name.",
+    "store_name_taken": "There is already a store called {{name}}.",
+    "store_not_found": "This store does not exist.",
+    "too_many_operations": "Too many changes at once (at most {{max}})."
   },
   "day": {
     "today": "Today",

@@ -13,13 +13,15 @@ from sqlalchemy.orm import Session
 
 from mahlzeit.domain.day import Slot
 from mahlzeit.domain.permissions import Client
+from mahlzeit.ids import uuid7
 from mahlzeit.models import ChangeRecord
 from mahlzeit.off_client import set_off_client
-from mahlzeit.services import day, items, saved_meals
+from mahlzeit.services import day, items, saved_meals, shopping
 from mahlzeit.services.auth import actor_for
 from mahlzeit.services.day import ComponentInput, EntryInput
 from mahlzeit.services.items import ItemInput
 from mahlzeit.services.saved_meals import Ingredient
+from mahlzeit.services.shopping import Op
 from mahlzeit.tools import registry
 from mahlzeit.tools.registry import ToolContext, ToolError
 from tests import factories
@@ -68,6 +70,11 @@ class World:
             ).id
         )
 
+    def list_item(self, member: factories.Member | None = None, text: str = "Milch") -> str:
+        op = Op(kind="add", id=uuid7(), fields={"text": text})
+        shopping.apply(self.db, (member or self.me).actor, [op])
+        return str(op.id)
+
     def own_item(self, member: factories.Member | None = None) -> str:
         return str(
             items.create(self.db, (member or self.me).actor, ItemInput(names={"de": "Eigenes"})).id
@@ -112,8 +119,7 @@ CASES: dict[str, Callable[[World], None]] = {
     ),
     "get_day": lambda w: assert_(len(w.call("get_day", {})["people"]) == 2),
     "get_household_snapshot": lambda w: assert_(
-        w.call("get_household_snapshot")["not_yet_available"]
-        == ["offers", "shopping_list", "stock"]
+        w.call("get_household_snapshot")["not_yet_available"] == ["offers", "stock"]
     ),
     "log_food": lambda w: assert_(
         w.call(
@@ -166,6 +172,32 @@ CASES: dict[str, Callable[[World], None]] = {
     ),
     "delete_recipe": lambda w: assert_(
         w.call("delete_recipe", {"recipe_id": w.meal()}) == {"ok": True}
+    ),
+    "get_shopping_list": lambda w: (
+        w.list_item(w.partner),
+        assert_(w.call("get_shopping_list")["items"][0]["text"] == "Milch"),
+    ),
+    "add_list_items": lambda w: assert_(
+        [
+            (i["text"], i["quantity"], i["store_id"] is not None)
+            for i in w.call(
+                "add_list_items", {"items": [{"text": "2 Brot", "store": "aldi"}, {"text": "Eier"}]}
+            )["list"]["items"]
+        ]
+        == [("Brot", "2", True), ("Eier", None, False)]
+    ),
+    "check_list_items": lambda w: assert_(
+        w.call("check_list_items", {"ids": [w.list_item()]})["list"]["items"][0]["checked"]
+    ),
+    "update_list_items": lambda w: assert_(
+        w.call(
+            "update_list_items",
+            {"changes": [{"id": w.list_item(), "quantity": "3", "category": "dairy_eggs"}]},
+        )["list"]["items"][0]["quantity"]
+        == "3"
+    ),
+    "remove_list_items": lambda w: assert_(
+        w.call("remove_list_items", {"ids": [w.list_item()]})["list"]["items"] == []
     ),
 }
 
@@ -243,6 +275,10 @@ CROSS: dict[str, Callable[[World, factories.Member], dict[str, Any]]] = {
     "create_recipe": lambda w, s: {"name": "x", "from_entry_id": w.entry(s)},
     "update_recipe": lambda w, s: {"recipe_id": w.meal(s), "name": "x"},
     "delete_recipe": lambda w, s: {"recipe_id": w.meal(s)},
+    "add_list_items": lambda w, s: {"items": [{"text": "x", "item_id": w.own_item(s)}]},
+    "check_list_items": lambda w, s: {"ids": [w.list_item(s)]},
+    "update_list_items": lambda w, s: {"changes": [{"id": w.list_item(s), "quantity": "9"}]},
+    "remove_list_items": lambda w, s: {"ids": [w.list_item(s)]},
 }
 
 
@@ -278,3 +314,17 @@ def test_reads_only_show_the_own_household(world: World, stranger: factories.Mem
         for i in world.call("search_items", {"query": "eigenes"})["items"]
     )
     assert world.call("list_recipes")["items"] == []
+
+
+def test_unknown_store_names_are_errors(world: World) -> None:
+    with pytest.raises(ToolError) as err:
+        world.call("add_list_items", {"items": [{"text": "Brot", "store": "Harrods"}]})
+    assert err.value.code == "store_not_found"
+
+
+def test_the_list_of_another_household_stays_hidden(
+    world: World, stranger: factories.Member
+) -> None:
+    world.list_item(stranger, "Geheim")
+    assert world.call("get_shopping_list")["items"] == []
+    assert world.call("get_household_snapshot")["shopping_list"]["items"] == []

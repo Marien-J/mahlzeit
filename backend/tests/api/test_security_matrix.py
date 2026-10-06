@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 
 from mahlzeit.domain.day import Slot
 from mahlzeit.main import app
-from mahlzeit.services import day, invites, items, saved_meals
+from mahlzeit.services import day, invites, items, saved_meals, shopping
 from mahlzeit.services.day import ComponentInput, EntryInput
 from mahlzeit.services.items import ItemInput
 from mahlzeit.services.saved_meals import Ingredient
@@ -128,6 +128,10 @@ def _saved_meal(db: Session, other: factories.Member) -> tuple[dict[str, Any], d
     return {"meal_id": meal.id}, {"name": "Mine now"}
 
 
+def _store(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[str, Any]]:
+    return {"store_id": shopping.create_store(db, other.actor, "Hofladen").id}, {}
+
+
 CROSS_HOUSEHOLD: dict[tuple[str, str], CrossCase] = {
     ("delete", "/api/household/invites/{invite_id}"): _invite,
     ("get", "/api/items/{item_id}"): _item,
@@ -140,6 +144,7 @@ CROSS_HOUSEHOLD: dict[tuple[str, str], CrossCase] = {
     ("post", "/api/entries/{entry_id}/save-as-meal"): _entry,
     ("patch", "/api/saved-meals/{meal_id}"): _saved_meal,
     ("delete", "/api/saved-meals/{meal_id}"): _saved_meal,
+    ("delete", "/api/stores/{store_id}"): _store,
 }
 
 # Path parameters that are not household-owned ids: lookups by secret key or by value,
