@@ -202,6 +202,7 @@
     "portions_invalid": "Vul tussen 0 en 20 porties in.",
     "nothing_to_copy": "Er is op die dag niets om te kopiëren.",
     "saved_meal_empty": "Een opgeslagen maaltijd heeft minstens één product uit de catalogus nodig.",
-    "saved_meal_name_required": "Geef de maaltijd een naam."
+    "saved_meal_name_required": "Geef de maaltijd een naam.",
+    "nothing_to_set": "Geef minstens één doel of een weekpatroon op."
   }
 }

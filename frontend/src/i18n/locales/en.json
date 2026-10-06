@@ -202,6 +202,7 @@
     "portions_invalid": "Enter between 0 and 20 portions.",
     "nothing_to_copy": "There is nothing to copy on that day.",
     "saved_meal_empty": "A saved meal needs at least one food from the catalogue.",
-    "saved_meal_name_required": "Give the meal a name."
+    "saved_meal_name_required": "Give the meal a name.",
+    "nothing_to_set": "Give at least one target or a week pattern."
   }
 }
