@@ -1,0 +1,20 @@
+name: mahlzeit
+
+services:
+  # Development and test database only (profile "dev"): published on localhost:5433, data in tmpfs.
+  devdb:
+    profiles: ["dev"]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: mahlzeit
+      POSTGRES_PASSWORD: mahlzeit
+      POSTGRES_DB: mahlzeit
+    ports:
+      - "127.0.0.1:5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mahlzeit"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
