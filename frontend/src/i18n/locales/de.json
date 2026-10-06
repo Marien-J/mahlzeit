@@ -6,7 +6,11 @@
     "loadFailed": "Konnte nicht geladen werden. Prüfe deine Verbindung.",
     "retry": "Erneut versuchen"
   },
-  "languages": { "de": "Deutsch", "en": "English", "nl": "Nederlands" },
+  "languages": {
+    "de": "Deutsch",
+    "en": "English",
+    "nl": "Nederlands"
+  },
   "nav": {
     "today": "Heute",
     "household": "Haushalt",
@@ -173,6 +177,12 @@
     "push_no_subscription": "Schalte Benachrichtigungen zuerst für dieses Gerät ein.",
     "push_endpoint_invalid": "Dieser Browser hat eine unbrauchbare Benachrichtigungsadresse geliefert.",
     "admin_only": "Das darf nur die Administration.",
-    "user_not_found": "Kein Konto mit dieser E-Mail-Adresse."
+    "user_not_found": "Kein Konto mit dieser E-Mail-Adresse.",
+    "label_implausible": "Diese Nährwerte können nicht stimmen. Bitte prüfe das Etikett.",
+    "item_name_required": "Gib dem Lebensmittel einen Namen.",
+    "barcode_invalid": "Das ist kein gültiger Barcode.",
+    "serving_invalid": "Eine Portion braucht einen Namen und eine Menge zwischen 1 und 5000.",
+    "date_too_far_ahead": "Du kannst bis zu {{max_days}} Tage im Voraus planen.",
+    "amount_invalid": "Gib eine Menge zwischen 0 und {{max}} ein."
   }
 }

@@ -6,8 +6,17 @@
     "loadFailed": "Could not load. Check your connection.",
     "retry": "Try again"
   },
-  "languages": { "de": "Deutsch", "en": "English", "nl": "Nederlands" },
-  "nav": { "today": "Today", "household": "Household", "settings": "Settings", "main": "Main" },
+  "languages": {
+    "de": "Deutsch",
+    "en": "English",
+    "nl": "Nederlands"
+  },
+  "nav": {
+    "today": "Today",
+    "household": "Household",
+    "settings": "Settings",
+    "main": "Main"
+  },
   "common": {
     "save": "Save",
     "saving": "Saving…",
@@ -168,6 +177,12 @@
     "push_no_subscription": "Turn notifications on for this device first.",
     "push_endpoint_invalid": "This browser gave an unusable notification address.",
     "admin_only": "Only the administrator can do that.",
-    "user_not_found": "No user with this email."
+    "user_not_found": "No user with this email.",
+    "label_implausible": "These nutrition values cannot be right. Please check the label.",
+    "item_name_required": "Give the item a name.",
+    "barcode_invalid": "That is not a valid barcode.",
+    "serving_invalid": "A serving needs a name and an amount between 1 and 5000.",
+    "date_too_far_ahead": "You can plan up to {{max_days}} days ahead.",
+    "amount_invalid": "Enter an amount between 0 and {{max}}."
   }
 }

@@ -6,7 +6,11 @@
     "loadFailed": "Laden mislukt. Controleer je verbinding.",
     "retry": "Opnieuw proberen"
   },
-  "languages": { "de": "Deutsch", "en": "English", "nl": "Nederlands" },
+  "languages": {
+    "de": "Deutsch",
+    "en": "English",
+    "nl": "Nederlands"
+  },
   "nav": {
     "today": "Vandaag",
     "household": "Huishouden",
@@ -173,6 +177,12 @@
     "push_no_subscription": "Zet meldingen eerst aan voor dit apparaat.",
     "push_endpoint_invalid": "Deze browser gaf een onbruikbaar meldingsadres.",
     "admin_only": "Alleen de beheerder mag dat.",
-    "user_not_found": "Geen account met dit e-mailadres."
+    "user_not_found": "Geen account met dit e-mailadres.",
+    "label_implausible": "Deze voedingswaarden kunnen niet kloppen. Controleer het etiket.",
+    "item_name_required": "Geef het product een naam.",
+    "barcode_invalid": "Dat is geen geldige barcode.",
+    "serving_invalid": "Een portie heeft een naam en een hoeveelheid tussen 1 en 5000 nodig.",
+    "date_too_far_ahead": "Je kunt tot {{max_days}} dagen vooruit plannen.",
+    "amount_invalid": "Vul een hoeveelheid tussen 0 en {{max}} in."
   }
 }
