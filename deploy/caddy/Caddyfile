@@ -1,0 +1,38 @@
+# SITE_ADDRESS decides TLS: "http://localhost, http://127.0.0.1" serves plain HTTP for local use;
+# a domain name such as "mahlzeit.example.org" makes Caddy obtain and renew a certificate.
+{
+	admin off
+}
+
+{$SITE_ADDRESS:http://localhost, http://127.0.0.1} {
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options DENY
+		Permissions-Policy "camera=(self), microphone=(), geolocation=()"
+		Content-Security-Policy "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+		-Server
+	}
+
+	# API, connector and live events go to the app. Streaming responses are flushed at once.
+	@backend path /api/* /mcp /mcp/* /events /events/*
+	handle @backend {
+		reverse_proxy app:8000 {
+			flush_interval -1
+		}
+	}
+
+	handle {
+		root * /srv
+		# Hashed assets never change; everything else (index, service worker, manifest)
+		# is revalidated, or app updates would stall.
+		@hashed path /assets/*
+		header @hashed Cache-Control "public, max-age=31536000, immutable"
+		@unhashed not path /assets/*
+		header @unhashed Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}

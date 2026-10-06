@@ -1,0 +1,173 @@
+{
+  "app": {
+    "name": "Mahlzeit",
+    "offline": "You are offline. Changes need a connection.",
+    "loading": "Loading…",
+    "loadFailed": "Could not load. Check your connection.",
+    "retry": "Try again"
+  },
+  "languages": { "de": "Deutsch", "en": "English", "nl": "Nederlands" },
+  "nav": { "today": "Today", "household": "Household", "settings": "Settings", "main": "Main" },
+  "common": {
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "cancel": "Cancel",
+    "copy": "Copy",
+    "copied": "Copied",
+    "share": "Share",
+    "language": "Language",
+    "back": "Back"
+  },
+  "login": {
+    "title": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "forgot": "Forgot your password?",
+    "join": "Have an invite code?",
+    "noAccount": "New here? Accounts are created by invitation only."
+  },
+  "join": {
+    "title": "Join Mahlzeit",
+    "enterCode": "Enter the code from your invitation.",
+    "code": "Invite code",
+    "continue": "Continue",
+    "partnerInvite": "{{inviter}} invited you to the household “{{household}}”.",
+    "householdInvite": "You are invited to start your own household on Mahlzeit.",
+    "displayName": "Your name",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least {{min}} characters.",
+    "householdName": "Household name",
+    "timeZone": "Time zone",
+    "submit": "Create account",
+    "expires": "This invitation is valid until {{date}}.",
+    "status": {
+      "expired": "This invitation has expired. Ask for a new one.",
+      "accepted": "This invitation has already been used.",
+      "revoked": "This invitation was withdrawn."
+    },
+    "signedIn": "You are signed in as {{name}}. Sign out first to use this invitation.",
+    "signOut": "Sign out"
+  },
+  "forgot": {
+    "title": "Forgot password",
+    "intro": "Enter your email. If it belongs to an account, we will send you a link to set a new password.",
+    "submit": "Send link",
+    "sent": "If the address is known, a link is on its way. It is valid for one hour.",
+    "disabled": "This server cannot send email. Ask the person who runs it to reset your password with the admin command “mahlzeit reset-password”."
+  },
+  "reset": {
+    "title": "Set a new password",
+    "password": "New password",
+    "submit": "Save password",
+    "done": "Your password is set. You can sign in now.",
+    "toLogin": "Go to sign in"
+  },
+  "today": {
+    "greeting": "Hello, {{name}}",
+    "empty": "Nothing planned or logged yet."
+  },
+  "household": {
+    "title": "Household",
+    "name": "Name",
+    "rename": "Rename",
+    "members": "Members",
+    "you": "you",
+    "joined": "joined {{date}}",
+    "invite": {
+      "title": "Invite your partner",
+      "explain": "Share the link, or read out the code. It works once and for seven days.",
+      "create": "Create invitation",
+      "link": "Link",
+      "code": "Code",
+      "expires": "valid until {{date}}",
+      "pending": "Open invitations",
+      "note": "For whom? (optional)",
+      "revoke": "Withdraw",
+      "full": "A household has room for {{max}} people.",
+      "shareText": "Join me on Mahlzeit: {{link}} (code {{code}})"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account",
+    "displayName": "Name",
+    "timeZone": "Time zone",
+    "privacy": "Sharing",
+    "privacyIntro": "Your food log and targets are always visible to your household, because planning together depends on them.",
+    "showWorkouts": "Show my workouts",
+    "showBody": "Show my weight and waist",
+    "shareAi": "Share my AI usage",
+    "notifications": "Notifications",
+    "push": {
+      "enable": "Turn on for this device",
+      "disable": "Turn off for this device",
+      "test": "Send a test notification",
+      "testSent": "Sent. It should arrive in a few seconds.",
+      "unsupported": "This browser does not support notifications. Install the app or use Chrome.",
+      "notConfigured": "Notifications are not set up on this server.",
+      "denied": "Notifications are blocked for this site in the browser settings.",
+      "devices_one": "On for {{count}} device.",
+      "devices_other": "On for {{count}} devices.",
+      "offers": "Notify me about meal offers"
+    },
+    "password": {
+      "title": "Password",
+      "current": "Current password",
+      "new": "New password",
+      "submit": "Change password",
+      "changed": "Password changed. Your other devices are signed out."
+    },
+    "install": {
+      "title": "App",
+      "button": "Install Mahlzeit",
+      "installed": "Mahlzeit is installed on this device.",
+      "hint": "To install, open the browser menu and choose “Install app” or “Add to home screen”."
+    },
+    "about": "About Mahlzeit",
+    "logout": "Sign out"
+  },
+  "about": {
+    "title": "About",
+    "version": "Version {{version}}",
+    "privacy": "Mahlzeit runs on your own server. Your data stays there; nothing is sent to an AI provider unless you switch that on.",
+    "attribution": "Food data sources are named here once the catalogue is added."
+  },
+  "errors": {
+    "unknown": "Something went wrong. Please try again.",
+    "network": "No connection to the server.",
+    "not_found": "Not found.",
+    "forbidden": "You are not allowed to do that.",
+    "not_authenticated": "Please sign in.",
+    "session_expired": "Your session has expired. Please sign in again.",
+    "invalid_credentials": "Email or password is wrong.",
+    "too_many_attempts": "Too many attempts. Wait {{minutes}} minutes and try again.",
+    "csrf_failed": "Please reload the page and try again.",
+    "origin_not_allowed": "This request came from another site and was blocked.",
+    "validation_error": "Please check your entries.",
+    "password_too_short": "The password needs at least {{min}} characters.",
+    "password_too_long": "The password can have at most {{max}} characters.",
+    "email_invalid": "That email address does not look right.",
+    "email_taken": "An account with this email already exists.",
+    "display_name_invalid": "The name must have 1 to {{max}} characters.",
+    "household_name_invalid": "The household name must have 1 to {{max}} characters.",
+    "time_zone_invalid": "Unknown time zone.",
+    "language_invalid": "Unknown language.",
+    "start_screen_invalid": "Unknown start screen.",
+    "invite_not_found": "No invitation with this code or link.",
+    "invite_expired": "This invitation has expired.",
+    "invite_used": "This invitation has already been used.",
+    "invite_revoked": "This invitation was withdrawn.",
+    "invite_not_pending": "This invitation is no longer open.",
+    "household_full": "The household is full ({{max}} people).",
+    "current_password_wrong": "The current password is wrong.",
+    "reset_token_invalid": "This link is invalid or has expired. Ask for a new one.",
+    "push_not_configured": "Notifications are not set up on this server.",
+    "push_no_subscription": "Turn notifications on for this device first.",
+    "push_endpoint_invalid": "This browser gave an unusable notification address.",
+    "admin_only": "Only the administrator can do that.",
+    "user_not_found": "No user with this email."
+  }
+}

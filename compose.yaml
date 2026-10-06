@@ -1,0 +1,131 @@
+# The whole stack: caddy, app, worker, db. Configure everything in .env (see .env.example).
+#   docker compose up -d --build        start or update
+#   scripts/backup.sh / restore.sh      backup service (profile "ops")
+#   docker compose --profile dev up -d devdb   Postgres for local development and tests
+name: mahlzeit
+
+x-app-env: &app-env
+  ENV: production
+  LOG_LEVEL: ${LOG_LEVEL:-INFO}
+  DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-mahlzeit}:${POSTGRES_PASSWORD:-}@db:5432/${POSTGRES_DB:-mahlzeit}
+  BASE_URL: ${BASE_URL:-http://localhost}
+  EXTRA_ORIGINS: ${EXTRA_ORIGINS:-}
+  ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
+  VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
+  VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
+  VAPID_SUBJECT: ${VAPID_SUBJECT:-}
+  SMTP_HOST: ${SMTP_HOST:-}
+  SMTP_PORT: ${SMTP_PORT:-587}
+  SMTP_USER: ${SMTP_USER:-}
+  SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+  SMTP_FROM: ${SMTP_FROM:-}
+  SMTP_SECURITY: ${SMTP_SECURITY:-starttls}
+
+x-db-env: &db-env
+  POSTGRES_USER: ${POSTGRES_USER:-mahlzeit}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
+  POSTGRES_DB: ${POSTGRES_DB:-mahlzeit}
+
+services:
+  caddy:
+    image: mahlzeit-caddy:${MAHLZEIT_TAG:-local}
+    build:
+      context: .
+      dockerfile: deploy/caddy/Dockerfile
+    restart: unless-stopped
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-http://localhost, http://127.0.0.1}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+      - "${HTTPS_PORT:-443}:443/udp"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+
+  app:
+    image: mahlzeit-app:${MAHLZEIT_TAG:-local}
+    build:
+      context: backend
+    restart: unless-stopped
+    environment:
+      <<: *app-env
+      WEB_CONCURRENCY: ${WEB_CONCURRENCY:-2}
+    volumes:
+      - files:/data/files
+    depends_on:
+      db:
+        condition: service_healthy
+
+  worker:
+    image: mahlzeit-app:${MAHLZEIT_TAG:-local}
+    restart: unless-stopped
+    command: ["python", "-m", "mahlzeit.jobs.worker"]
+    environment: *app-env
+    volumes:
+      - files:/data/files
+    healthcheck:
+      test: ["CMD", "python", "-m", "mahlzeit.jobs.worker", "--healthcheck"]
+      interval: 15s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    depends_on:
+      app:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment: *db-env
+    volumes:
+      - db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # On demand only: scripts/backup.sh and scripts/restore.sh.
+  backup:
+    profiles: ["ops"]
+    image: mahlzeit-backup:${MAHLZEIT_TAG:-local}
+    build:
+      context: deploy/backup
+    environment:
+      <<: *db-env
+      BACKUP_AGE_RECIPIENT: ${BACKUP_AGE_RECIPIENT:-}
+      BACKUP_KEEP: ${BACKUP_KEEP:-14}
+    volumes:
+      - files:/data/files
+      - ${BACKUP_DIR:-./backups}:/backups
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Development and tests only: Postgres on localhost:5433, data in memory.
+  devdb:
+    profiles: ["dev"]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: mahlzeit
+      POSTGRES_PASSWORD: mahlzeit
+      POSTGRES_DB: mahlzeit
+    ports:
+      - "127.0.0.1:5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mahlzeit"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  db:
+  files:
+  caddy_data:
+  caddy_config:
