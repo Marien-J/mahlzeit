@@ -15,7 +15,8 @@
     "today": "Vandaag",
     "household": "Huishouden",
     "settings": "Instellingen",
-    "main": "Hoofdmenu"
+    "main": "Hoofdmenu",
+    "list": "Lijst"
   },
   "common": {
     "save": "Opslaan",
@@ -135,7 +136,10 @@
     "about": "Over Mahlzeit",
     "logout": "Uitloggen",
     "targets": "Doelen en dagtypes",
-    "foods": "Mijn producten en maaltijden"
+    "foods": "Mijn producten en maaltijden",
+    "startScreen": "App openen op",
+    "startToday": "Vandaag",
+    "startList": "Boodschappenlijst"
   },
   "about": {
     "title": "Over",
@@ -409,5 +413,39 @@
   "unit": {
     "g": "g",
     "ml": "ml"
+  },
+  "store": {
+    "other": "Overig"
+  },
+  "list": {
+    "title": "Boodschappenlijst",
+    "add": "Op de lijst zetten",
+    "addButton": "Toevoegen",
+    "suggestions": "Suggesties",
+    "shop": "Boodschappen doen",
+    "doneShopping": "Klaar",
+    "storeFilter": "Winkel",
+    "allStores": "Alle",
+    "empty": "De lijst is leeg. Typ hierboven wat jullie nodig hebben.",
+    "pending_one": "{{count}} wijziging wacht op verbinding.",
+    "pending_other": "{{count}} wijzigingen wachten op verbinding.",
+    "done": "Afgevinkt",
+    "doneCount_one": "{{count}} afgevinkt",
+    "doneCount_other": "{{count}} afgevinkt",
+    "clearChecked": "Afgevinkte verwijderen",
+    "checked": "{{text}} afgevinkt",
+    "unchecked": "{{text}} weer op de lijst",
+    "removed_one": "{{count}} item verwijderd",
+    "removed_other": "{{count}} items verwijderd",
+    "undo": "Ongedaan maken",
+    "text": "Wat",
+    "quantity": "Hoeveelheid",
+    "store": "Winkel",
+    "anyStore": "Maakt niet uit",
+    "newStore": "Nieuwe winkel …",
+    "newStoreName": "Naam van de winkel",
+    "createStore": "Aanmaken",
+    "aisle": "Afdeling",
+    "remove": "Van de lijst halen"
   }
 }

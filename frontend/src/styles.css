@@ -278,7 +278,7 @@ select {
   left: 0;
   right: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   background: var(--surface);
   border-top: 1px solid var(--border);
   padding-bottom: env(safe-area-inset-bottom);
@@ -628,4 +628,196 @@ dialog.sheet::backdrop {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--accent-text);
+}
+
+button.link {
+  border: none;
+  background: none;
+  color: var(--accent);
+  padding: 0;
+  min-height: 2rem;
+  align-self: flex-start;
+}
+
+/* Shopping list: fast to add, thumb-sized rows, aisle headings */
+.list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.add-field {
+  position: relative;
+}
+
+.add-field .row {
+  flex-wrap: nowrap;
+}
+
+.suggestions {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.suggestions button {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  justify-content: space-between;
+  gap: 0.5rem;
+  text-align: left;
+}
+
+.suggestions li + li button {
+  border-top: 1px solid var(--border);
+}
+
+.chips {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.1rem;
+}
+
+.chips .chip {
+  flex: none;
+}
+
+.chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.aisle h2 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin: 0.5rem 0 0.25rem;
+}
+
+.list-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.list-row {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+}
+
+.list-row + .list-row {
+  border-top: 1px solid var(--border);
+}
+
+.list-row .check {
+  flex: none;
+  width: var(--tap);
+  min-height: var(--tap);
+  padding: 0;
+  border: none;
+  background: none;
+  position: relative;
+}
+
+.list-row .check::before {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 1.4rem;
+  height: 1.4rem;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--muted);
+  border-radius: 50%;
+}
+
+.list-row .check[aria-checked='true']::before {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 3px var(--surface);
+}
+
+.list-row .what {
+  flex: 1;
+  min-width: 0;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  border: none;
+  background: none;
+  padding: 0 0.75rem 0 0;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.list-row .qty {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.store-badge {
+  margin-left: auto;
+  font-size: 0.75rem;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.list-row.checked .what span:first-child {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+/* Shopping mode: bigger rows for walking through the shop */
+.shopping .list-row {
+  min-height: 3.75rem;
+  font-size: 1.15rem;
+}
+
+.shopping .list-row .check {
+  width: 3.75rem;
+  min-height: 3.75rem;
+}
+
+.shopping .list-row .check::before {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
+.snackbar {
+  position: fixed;
+  left: 1rem;
+  right: 1rem;
+  bottom: calc(68px + env(safe-area-inset-bottom));
+  max-width: 38rem;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0.25rem 0.25rem 1rem;
+  border-radius: var(--radius);
+  background: var(--text);
+  color: var(--bg);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
+  z-index: 5;
+}
+
+.snackbar button {
+  border: none;
+  background: none;
+  color: var(--bg);
+  font-weight: 700;
 }

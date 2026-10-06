@@ -15,7 +15,8 @@
     "today": "Today",
     "household": "Household",
     "settings": "Settings",
-    "main": "Main"
+    "main": "Main",
+    "list": "List"
   },
   "common": {
     "save": "Save",
@@ -135,7 +136,10 @@
     "about": "About Mahlzeit",
     "logout": "Sign out",
     "targets": "Targets and day types",
-    "foods": "My foods and saved meals"
+    "foods": "My foods and saved meals",
+    "startScreen": "Open the app on",
+    "startToday": "Today",
+    "startList": "Shopping list"
   },
   "about": {
     "title": "About",
@@ -409,5 +413,39 @@
   "unit": {
     "g": "g",
     "ml": "ml"
+  },
+  "store": {
+    "other": "Other"
+  },
+  "list": {
+    "title": "Shopping list",
+    "add": "Add to the list",
+    "addButton": "Add",
+    "suggestions": "Suggestions",
+    "shop": "Shop",
+    "doneShopping": "Done",
+    "storeFilter": "Store",
+    "allStores": "All",
+    "empty": "The list is empty. Type what you need above.",
+    "pending_one": "{{count}} change waits for a connection.",
+    "pending_other": "{{count}} changes wait for a connection.",
+    "done": "Checked off",
+    "doneCount_one": "{{count}} checked off",
+    "doneCount_other": "{{count}} checked off",
+    "clearChecked": "Remove checked",
+    "checked": "{{text}} checked off",
+    "unchecked": "{{text}} back on the list",
+    "removed_one": "{{count}} item removed",
+    "removed_other": "{{count}} items removed",
+    "undo": "Undo",
+    "text": "What",
+    "quantity": "Quantity",
+    "store": "Store",
+    "anyStore": "Any store",
+    "newStore": "New store…",
+    "newStoreName": "Name of the store",
+    "createStore": "Create",
+    "aisle": "Aisle",
+    "remove": "Remove from list"
   }
 }

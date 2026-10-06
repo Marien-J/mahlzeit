@@ -1,6 +1,7 @@
 import { useQuery, type QueryClient } from '@tanstack/react-query'
 import { ApiError, api, call, setCsrfToken, type Me } from '../../api/client'
 import { setLanguage } from '../../i18n'
+import { forgetOfflineList } from '../list/sync'
 
 export const meKey = ['me'] as const
 const CACHE_KEY = 'mahlzeit.me'
@@ -68,6 +69,7 @@ export function signedIn(client: QueryClient, me: Me): void {
 export function signedOut(client: QueryClient): void {
   setCsrfToken(null)
   rememberMe(null)
+  forgetOfflineList()
   client.clear()
   client.setQueryData(meKey, null)
 }

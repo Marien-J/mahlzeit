@@ -24,6 +24,7 @@ export function SettingsPage() {
         <Link to="/foods">{t('settings.foods')}</Link>
       </nav>
       <AccountSettings me={me} />
+      <StartScreenSetting me={me} />
       <SharingSettings me={me} />
       <h2>{t('settings.notifications')}</h2>
       <PushSettings me={me} />
@@ -119,6 +120,23 @@ function SharingSettings({ me }: { me: Me }) {
       />
       <ErrorMessage error={patchProfile.error} />
     </>
+  )
+}
+
+function StartScreenSetting({ me }: { me: Me }) {
+  const { t } = useTranslation()
+  const { patchProfile } = useUpdateMe()
+  return (
+    <SelectField
+      label={t('settings.startScreen')}
+      value={me.profile.start_screen}
+      options={[
+        { value: 'today', label: t('settings.startToday') },
+        { value: 'list', label: t('settings.startList') },
+      ]}
+      disabled={patchProfile.isPending}
+      onChange={(v) => patchProfile.mutate({ start_screen: v as 'today' | 'list' })}
+    />
   )
 }
 
