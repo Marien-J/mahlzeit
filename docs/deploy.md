@@ -5,7 +5,7 @@ a rented server and an on-prem machine; only `.env` differs.
 
 | Service | What it does |
 | --- | --- |
-| caddy | Serves the PWA, proxies `/api` (later `/mcp`, `/events`) to the app, gets TLS certificates |
+| caddy | Serves the PWA, proxies `/api` and `/mcp` (later `/events`) to the app, gets TLS certificates |
 | app | FastAPI; runs migrations on start (safe with several replicas) |
 | worker | Background jobs from the Postgres queue (email, push, cleanup) |
 | db | PostgreSQL 16 |
@@ -26,6 +26,9 @@ MAHLZEIT_PASSWORD='choose a long password' \
 Open http://localhost, sign in, go to **Household** and create an invitation for your partner.
 `http://localhost` counts as a secure origin, so the service worker, installation and push work in
 a desktop browser on the same machine. Phones need the HTTPS deployment below.
+
+Then set your targets under **Settings → Targets and day types**. The first admin starts with
+about 30 staple foods as favourites; everything else is found by search or barcode.
 
 Further households (other couples): `docker compose exec app mahlzeit invite-household`
 prints a link and a code that start a new household.
@@ -57,12 +60,31 @@ git pull && docker compose up -d --build --wait
   (automatic HTTPS).
 - `VAPID_SUBJECT`: optional contact for push services; defaults to `BASE_URL` when it is https.
 - `BASE_URL`: the public URL; used in invite and reset links, cookies (`Secure` when https),
-  push and, from M1, the connector.
+  push and the connector link.
+- `OFF_CONTACT`: optional contact (e.g. `mailto:you@example.org`) that Open Food Facts sees in
+  the User-Agent of barcode lookups; defaults to `BASE_URL`. `OFF_ENABLED=false` turns lookups
+  off; unknown barcodes then go straight to the label form.
 - `ENCRYPTION_KEY`: encrypts push subscriptions and, later, API keys. Losing it makes those
   unreadable; keep a copy with your backup key. The app refuses to start without a valid one.
 - `SMTP_*`: optional. Without it, password resets use
   `docker compose exec -T -e MAHLZEIT_PASSWORD app mahlzeit reset-password --email ...`.
   Check it with `docker compose exec app mahlzeit send-test-email --to you@example.org`.
+
+## Claude connector
+
+Each person can let Claude read and log food for them. It needs the HTTPS deployment, because
+Claude connects to the server from the internet.
+
+1. In Mahlzeit: **Settings → Claude connector → Create link**. Copy the link; it is shown once.
+2. In Claude (web or app): **Settings → Connectors → Add custom connector**. Paste the link as
+   the server URL and name it, for example Mahlzeit. No other authentication is needed: the
+   link itself is the secret.
+3. In a chat, enable the connector and ask, for example, "Log 200 g skyr for breakfast" or
+   "What do I have left today?".
+
+**Create new link** replaces the old link (the old one stops working at once); **Turn off**
+removes it. Anyone with the link can act as that person, so treat it like a password.
+Locally (`http://localhost`) any MCP client can use the link, e.g. for testing.
 
 ## Backups
 

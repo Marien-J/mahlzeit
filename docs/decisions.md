@@ -23,6 +23,16 @@ One line per decision the brief leaves open. Newest at the bottom of each sectio
 - 2026-10-06 · Any member can rename the household; the name defaults to the first member's name.
 - 2026-10-06 · The "open on Today or List" choice is stored on the profile now; its switch appears in M2 together with the list.
 - 2026-10-06 · Sessions, login attempts, reset tokens and jobs are infrastructure rows: no change records; they are purged hourly once expired.
+- 2026-10-06 · Generic foods: 248 items selected from BLS 4.0 plus one estimated whey protein entry (brief: about 300); values per 100 g, base unit g for every BLS item, servings only where the BLS appendix gives them. The selection lives in `backend/seed/` and is rebuilt with `backend/scripts/build_bls_seed.py`.
+- 2026-10-06 · The first admin gets 31 staple foods as favourites; everyone else starts with none.
+- 2026-10-06 · Search score: trigram similarity, plus up to 0.3 for use in the last 90 days, 0.15 for a favourite, 0.2 for the household's own items; an empty query shows favourites and recent foods.
+- 2026-10-06 · Entries on a future date are planned (at most 30 days ahead); today and past dates are logged. So `log_planned_meal` ships in M1 as the same call with a future date.
+- 2026-10-06 · Saved meals are recipes with one serving and use the recipe tool names (`list_recipes`, `create_recipe`, ...); logging one copies its ingredients, so later edits do not change past days.
+- 2026-10-06 · A quick add needs a name and kcal; missing macros mark that day's totals as incomplete instead of counting as zero.
+- 2026-10-06 · Copying a meal (own or the partner's) or a whole day creates new entries for the person copying; the target day decides planned or logged.
+- 2026-10-06 · Week pattern: seven letters T/R starting Monday, default all rest days (`RRRRRRR`) until the person sets it; a single day can be overridden from the day view.
+- 2026-10-06 · Targets are versioned by `valid_from`; earlier days keep the targets they had. With no targets the day shows totals only.
+- 2026-10-06 · Extra tools beyond the brief's list, each a thin call to an existing service: `get_targets`, `set_targets`, `set_day_type`, `copy_meals`, `set_favourite`, `lookup_barcode`, `search_online`, `delete_recipe`.
 
 ## Stack and architecture
 
@@ -40,6 +50,10 @@ One line per decision the brief leaves open. Newest at the bottom of each sectio
 - 2026-10-06 · Dockerfiles accept an optional `build_ca` build secret for builds behind TLS-intercepting proxies; normal builds ignore it.
 - 2026-10-06 · Playwright is pinned to 1.56.1 to match the Chromium build available in the development sandbox; CI installs the matching browser.
 - 2026-10-06 · No ACME email in the Caddyfile: Let's Encrypt no longer sends expiry mail and Caddy renews by itself.
+- 2026-10-06 · Open Food Facts: product reads via API v3, text search only as an explicit 'search online' action via search.openfoodfacts.org; at most 15 reads and 10 searches per minute per instance (counted in Postgres); found products cached 30 days, misses 1 day. `OFF_CONTACT` sets the User-Agent contact (default `BASE_URL`); `OFF_ENABLED=false` turns lookups off.
+- 2026-10-06 · Barcode scanning uses the browser's BarcodeDetector where it exists (Chrome on Android) and otherwise the `barcode-detector` ponyfill with the ZXing wasm served from our own origin (CSP `'wasm-unsafe-eval'`); typing the number always works.
+- 2026-10-06 · MCP: the official Python SDK's low-level server, Streamable HTTP, stateless with JSON responses, mounted at `/mcp/<token>`; tools come straight from the registry.
+- 2026-10-06 · The end-to-end tests use a small Open Food Facts stub (`scripts/offstub.py`, compose profile `e2e`) so CI never depends on the live service.
 
 ## Security
 
@@ -52,6 +66,8 @@ One line per decision the brief leaves open. Newest at the bottom of each sectio
 - 2026-10-06 · Password reset tokens are single use, valid for 1 hour, stored hashed; using one ends all of that user's sessions. At most 3 requests per user per hour.
 - 2026-10-06 · Changing the password ends all other sessions of that user and keeps the current one.
 - 2026-10-06 · In production the app and worker refuse to start when `ENCRYPTION_KEY`, `BASE_URL`, VAPID or SMTP settings are missing or inconsistent.
+- 2026-10-06 · Connector URL: `BASE_URL/mcp/<token>` with a 2×32-byte random token stored as a SHA-256 hash, one active URL per person; creating a new one revokes the old; tokens are redacted from access logs.
+- 2026-10-06 · `/mcp` is exempt from the Origin/CSRF checks because it has no cookies; the token is the only credential and acts with the person's own permissions (change records use client `connector`).
 
 ## PWA, push and i18n
 
@@ -73,3 +89,5 @@ One line per decision the brief leaves open. Newest at the bottom of each sectio
 - 2026-10-06 · Local M0 verification treats `http://localhost` as the live URL; phone installation is verified after deployment because Android requires HTTPS.
 - 2026-10-06 · Installability is checked with Chrome's own `Page.getInstallabilityErrors` in a persistent profile, because Chrome never offers install in incognito contexts.
 - 2026-10-06 · `scripts/restore-drill.sh` runs as a separate Compose project (`mahlzeit-drill`, port 8088) with its own volumes, backup directory and throwaway age key, so it can never touch real data. `BACKUP_DIR` is configurable for that reason.
+- 2026-10-06 · M1 'one day through Claude chat' is verified locally with an MCP client making the same calls Claude makes (end-to-end test); a real Claude chat needs the public HTTPS deployment and is checked after deploying.
+- 2026-10-06 · 'Scan to logged under 20 s' is measured in the end-to-end test from the scan tab to the entry on the day view (system time, typed code); with a phone camera the human part is three taps: scan, confirm label (new products only), log.
