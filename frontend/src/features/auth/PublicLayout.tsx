@@ -3,8 +3,16 @@ import { useTranslation } from 'react-i18next'
 import { LanguageSelect } from '../../components/LanguageSelect'
 import { setLanguage } from '../../i18n'
 
-/** Frame for pages shown before sign-in, with a language switch. */
-export function PublicLayout({ title, children }: { title: string; children: ReactNode }) {
+/** Frame for pages shown before sign-in, with a language switch unless the page has its own. */
+export function PublicLayout({
+  title,
+  children,
+  languageSwitch = true,
+}: {
+  title: string
+  children: ReactNode
+  languageSwitch?: boolean
+}) {
   const { t, i18n } = useTranslation()
   return (
     <div className="public">
@@ -16,9 +24,11 @@ export function PublicLayout({ title, children }: { title: string; children: Rea
         <h1>{title}</h1>
         {children}
       </main>
-      <footer className="public-footer">
-        <LanguageSelect value={i18n.language} onChange={(l) => void setLanguage(l)} />
-      </footer>
+      {languageSwitch ? (
+        <footer className="public-footer">
+          <LanguageSelect value={i18n.language} onChange={(l) => void setLanguage(l)} />
+        </footer>
+      ) : null}
     </div>
   )
 }

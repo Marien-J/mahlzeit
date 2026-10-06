@@ -24,8 +24,8 @@ function RequireAuth() {
   const { t } = useTranslation()
   const me = useMe()
   const location = useLocation()
-  if (me.isPending) return <p className="center muted">{t('app.loading')}</p>
-  if (me.isError)
+  if (me.isPending && !me.data) return <p className="center muted">{t('app.loading')}</p>
+  if (me.isError && !me.data)
     return (
       <div className="center stack">
         <p>{t('app.loadFailed')}</p>

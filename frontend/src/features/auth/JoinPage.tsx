@@ -127,7 +127,7 @@ function JoinForm({
   }
 
   return (
-    <PublicLayout title={t('join.title')}>
+    <PublicLayout title={t('join.title')} languageSwitch={false}>
       <p>
         {invite.kind === 'partner'
           ? t('join.partnerInvite', {

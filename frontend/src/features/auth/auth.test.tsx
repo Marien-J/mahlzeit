@@ -165,3 +165,40 @@ describe('password reset', () => {
     expect(await screen.findByText(/mahlzeit reset-password/)).toBeInTheDocument()
   })
 })
+
+describe('join form', () => {
+  it('has exactly one language switch', async () => {
+    mockApi({
+      'GET /api/auth/me': () => unauthenticated,
+      'GET /api/invites/tok': () => ({
+        kind: 'household',
+        status: 'pending',
+        household_name: null,
+        inviter_name: null,
+        language: 'de',
+        expires_at: '2026-10-13T12:00:00Z',
+      }),
+    })
+    renderApp('/join/tok')
+    expect(await screen.findByLabelText('Name des Haushalts')).toBeInTheDocument()
+    expect(screen.getAllByLabelText('Sprache')).toHaveLength(1)
+  })
+})
+
+describe('offline start', () => {
+  it('shows the last signed-in user while the server cannot be reached', async () => {
+    localStorage.setItem('mahlzeit.me', JSON.stringify({ ...ME, csrf_token: undefined }))
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')))
+    renderApp('/')
+    expect(await screen.findByRole('heading', { name: 'Hallo, Jonas' })).toBeInTheDocument()
+    localStorage.clear()
+  })
+
+  it('forgets the cached user when the session is gone', async () => {
+    localStorage.setItem('mahlzeit.me', JSON.stringify(ME))
+    mockApi({ 'GET /api/auth/me': () => unauthenticated })
+    renderApp('/')
+    expect(await screen.findByRole('heading', { name: 'Anmelden' })).toBeInTheDocument()
+    expect(localStorage.getItem('mahlzeit.me')).toBeNull()
+  })
+})
