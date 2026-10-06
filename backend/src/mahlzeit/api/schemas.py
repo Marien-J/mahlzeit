@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime, time
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -167,3 +167,140 @@ class PushStatusOut(BaseModel):
     configured: bool
     public_key: str | None
     devices: int
+
+
+# --- M1: catalogue, day, targets, saved meals --------------------------------------------------
+
+Slot = Literal["breakfast", "lunch", "dinner", "snack"]
+DayTypeName = Literal["training", "rest"]
+
+
+class NutrientsIn(BaseModel):
+    kcal: float | None = None
+    protein: float | None = None
+    carbs: float | None = None
+    sugar: float | None = None
+    fat: float | None = None
+    sat_fat: float | None = None
+    fibre: float | None = None
+    salt: float | None = None
+    alcohol: float | None = None
+
+
+class ServingIn(BaseModel):
+    label: str = Field(max_length=40)
+    amount: float
+
+
+class ItemIn(BaseModel):
+    names: dict[Language, str | None]
+    brand: str | None = Field(default=None, max_length=80)
+    category: Literal[
+        "produce",
+        "bakery",
+        "meat_fish",
+        "dairy_eggs",
+        "dry_goods",
+        "canned",
+        "frozen",
+        "oils_fats",
+        "spices_condiments",
+        "sweets_snacks",
+        "drinks",
+        "household",
+        "personal_care",
+        "other",
+    ] = "other"
+    base_unit: Literal["g", "ml"] = "g"
+    nutrients: NutrientsIn = Field(default_factory=NutrientsIn)
+    package_size: float | None = None
+    servings: list[ServingIn] = Field(default_factory=list, max_length=10)
+    barcodes: list[str] = Field(default_factory=list, max_length=5)
+    tracking_mode: Literal["counted", "status"] = "counted"
+    image_url: str | None = Field(default=None, max_length=500)
+    source: Literal["custom", "off"] = "custom"
+
+
+class FavouriteIn(BaseModel):
+    on: bool
+
+
+class ComponentIn(BaseModel):
+    item_id: uuid.UUID | None = None
+    amount: float | None = None
+    serving_label: str | None = Field(default=None, max_length=40)
+    serving_count: float | None = None
+    quick_name: str | None = Field(default=None, max_length=120)
+    kcal: float | None = None
+    protein: float | None = None
+    carbs: float | None = None
+    fat: float | None = None
+
+
+class EntryIn(BaseModel):
+    day: date
+    slot: Slot
+    at: time | None = None
+    name: str | None = Field(default=None, max_length=120)
+    eaten_out: bool = False
+    components: list[ComponentIn] = Field(default_factory=list, max_length=50)
+    saved_meal_id: uuid.UUID | None = None
+    portions: float = 1.0
+
+
+class EntryPatchIn(BaseModel):
+    day: date | None = None
+    slot: Slot | None = None
+    at: time | None = None
+    name: str | None = Field(default=None, max_length=120)
+    eaten_out: bool | None = None
+    components: list[ComponentIn] | None = Field(default=None, max_length=50)
+
+
+class EntryStateIn(BaseModel):
+    state: Literal["planned", "logged", "skipped"]
+
+
+class CopyEntryIn(BaseModel):
+    day: date
+    slot: Slot | None = None
+
+
+class CopyDayIn(BaseModel):
+    source_day: date
+
+
+class TargetsIn(BaseModel):
+    kcal: float | None = None
+    protein: float | None = None
+    carbs: float | None = None
+    fat: float | None = None
+    day_types: list[DayTypeName] = Field(min_length=1, max_length=2)
+    valid_from: date | None = None
+
+
+class WeekPatternIn(BaseModel):
+    pattern: str = Field(max_length=7)
+
+
+class DayTypeIn(BaseModel):
+    day_type: DayTypeName | None
+
+
+class IngredientIn(BaseModel):
+    item_id: uuid.UUID
+    amount: float
+
+
+class SavedMealIn(BaseModel):
+    name: str = Field(max_length=120)
+    ingredients: list[IngredientIn] = Field(max_length=50)
+
+
+class SavedMealPatchIn(BaseModel):
+    name: str | None = Field(default=None, max_length=120)
+    ingredients: list[IngredientIn] | None = Field(default=None, max_length=50)
+
+
+class SaveAsMealIn(BaseModel):
+    name: str | None = Field(default=None, max_length=120)

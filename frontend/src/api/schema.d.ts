@@ -106,6 +106,23 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/barcodes/{code}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Lookup Barcode */
+    get: operations['lookup_barcode_api_barcodes__code__get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/config': {
     parameters: {
       query?: never
@@ -117,6 +134,165 @@ export interface paths {
     get: operations['config_api_config_get']
     put?: never
     post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/connector': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Connector Status */
+    get: operations['connector_status_api_connector_get']
+    put?: never
+    /**
+     * Create Connector Url
+     * @description A new personal URL, shown once. The previous one stops working.
+     */
+    post: operations['create_connector_url_api_connector_post']
+    /** Revoke Connector Url */
+    delete: operations['revoke_connector_url_api_connector_delete']
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/days/{day_}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Day */
+    get: operations['get_day_api_days__day___get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/days/{day_}/copy': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Copy Day */
+    post: operations['copy_day_api_days__day___copy_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/days/{day_}/day-type': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Set Day Type */
+    put: operations['set_day_type_api_days__day___day_type_put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/entries': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Log Food */
+    post: operations['log_food_api_entries_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/entries/{entry_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Delete Entry */
+    delete: operations['delete_entry_api_entries__entry_id__delete']
+    options?: never
+    head?: never
+    /** Update Entry */
+    patch: operations['update_entry_api_entries__entry_id__patch']
+    trace?: never
+  }
+  '/api/entries/{entry_id}/copy': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Copy Entry */
+    post: operations['copy_entry_api_entries__entry_id__copy_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/entries/{entry_id}/save-as-meal': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Save Entry As Meal */
+    post: operations['save_entry_as_meal_api_entries__entry_id__save_as_meal_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/entries/{entry_id}/state': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Set Entry State */
+    post: operations['set_entry_state_api_entries__entry_id__state_post']
     delete?: never
     options?: never
     head?: never
@@ -227,6 +403,59 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/items': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Search Items */
+    get: operations['search_items_api_items_get']
+    put?: never
+    /** Create Item */
+    post: operations['create_item_api_items_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/items/{item_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Item */
+    get: operations['get_item_api_items__item_id__get']
+    /** Update Item */
+    put: operations['update_item_api_items__item_id__put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/items/{item_id}/favourite': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Set Favourite */
+    put: operations['set_favourite_api_items__item_id__favourite_put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/me': {
     parameters: {
       query?: never
@@ -259,6 +488,23 @@ export interface paths {
     head?: never
     /** Update Profile */
     patch: operations['update_profile_api_me_profile_patch']
+    trace?: never
+  }
+  '/api/online-search': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Search Online */
+    get: operations['search_online_api_online_search_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
     trace?: never
   }
   '/api/push': {
@@ -329,6 +575,77 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/saved-meals': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** List Saved Meals */
+    get: operations['list_saved_meals_api_saved_meals_get']
+    put?: never
+    /** Create Saved Meal */
+    post: operations['create_saved_meal_api_saved_meals_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/saved-meals/{meal_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post?: never
+    /** Delete Saved Meal */
+    delete: operations['delete_saved_meal_api_saved_meals__meal_id__delete']
+    options?: never
+    head?: never
+    /** Update Saved Meal */
+    patch: operations['update_saved_meal_api_saved_meals__meal_id__patch']
+    trace?: never
+  }
+  '/api/targets': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Targets */
+    get: operations['get_targets_api_targets_get']
+    /** Set Targets */
+    put: operations['set_targets_api_targets_put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/targets/week-pattern': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Set Week Pattern */
+    put: operations['set_week_pattern_api_targets_week_pattern_put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
 }
 export type webhooks = Record<string, never>
 export interface components {
@@ -356,6 +673,60 @@ export interface components {
       /** Time Zone */
       time_zone: string
     }
+    /** BarcodeOut */
+    BarcodeOut: {
+      draft: components['schemas']['ItemDraftOut'] | null
+      item: components['schemas']['ItemOut'] | null
+      /**
+       * Status
+       * @enum {string}
+       */
+      status: 'item' | 'draft' | 'not_found'
+    }
+    /** ComponentIn */
+    ComponentIn: {
+      /** Amount */
+      amount?: number | null
+      /** Carbs */
+      carbs?: number | null
+      /** Fat */
+      fat?: number | null
+      /** Item Id */
+      item_id?: string | null
+      /** Kcal */
+      kcal?: number | null
+      /** Protein */
+      protein?: number | null
+      /** Quick Name */
+      quick_name?: string | null
+      /** Serving Count */
+      serving_count?: number | null
+      /** Serving Label */
+      serving_label?: string | null
+    }
+    /** ComponentOut */
+    ComponentOut: {
+      /** Amount */
+      amount: number | null
+      /** Base Unit */
+      base_unit: string | null
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Item Id */
+      item_id: string | null
+      /** Name */
+      name: string
+      nutrients: components['schemas']['NutrientsOut']
+      /** Quick */
+      quick: boolean
+      /** Serving Count */
+      serving_count: number | null
+      /** Serving Label */
+      serving_label: string | null
+    }
     /** ConfigOut */
     ConfigOut: {
       /** Email Reset */
@@ -366,6 +737,148 @@ export interface components {
       push_public_key: string | null
       /** Version */
       version: string
+    }
+    /** ConnectorCreatedOut */
+    ConnectorCreatedOut: {
+      /** Url */
+      url: string
+    }
+    /** ConnectorOut */
+    ConnectorOut: {
+      /** Active */
+      active: boolean
+      /** Created At */
+      created_at: string | null
+      /** Last Used At */
+      last_used_at: string | null
+    }
+    /** CopyDayIn */
+    CopyDayIn: {
+      /**
+       * Source Day
+       * Format: date
+       */
+      source_day: string
+    }
+    /** CopyEntryIn */
+    CopyEntryIn: {
+      /**
+       * Day
+       * Format: date
+       */
+      day: string
+      /** Slot */
+      slot?: ('breakfast' | 'lunch' | 'dinner' | 'snack') | null
+    }
+    /** DayOut */
+    DayOut: {
+      /**
+       * Day
+       * Format: date
+       */
+      day: string
+      /** People */
+      people: components['schemas']['PersonDayOut'][]
+    }
+    /** DayTypeIn */
+    DayTypeIn: {
+      /** Day Type */
+      day_type: ('training' | 'rest') | null
+    }
+    /** EntryIn */
+    EntryIn: {
+      /** At */
+      at?: string | null
+      /** Components */
+      components?: components['schemas']['ComponentIn'][]
+      /**
+       * Day
+       * Format: date
+       */
+      day: string
+      /**
+       * Eaten Out
+       * @default false
+       */
+      eaten_out: boolean
+      /** Name */
+      name?: string | null
+      /**
+       * Portions
+       * @default 1
+       */
+      portions: number
+      /** Saved Meal Id */
+      saved_meal_id?: string | null
+      /**
+       * Slot
+       * @enum {string}
+       */
+      slot: 'breakfast' | 'lunch' | 'dinner' | 'snack'
+    }
+    /** EntryOut */
+    EntryOut: {
+      /**
+       * At
+       * Format: time
+       */
+      at: string
+      /** Components */
+      components: components['schemas']['ComponentOut'][]
+      /**
+       * Day
+       * Format: date
+       */
+      day: string
+      /** Eaten Out */
+      eaten_out: boolean
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      intake: components['schemas']['TotalsOut'] | null
+      /** Name */
+      name: string | null
+      /** Saved Meal Id */
+      saved_meal_id: string | null
+      /** Share */
+      share: number | null
+      /**
+       * Slot
+       * @enum {string}
+       */
+      slot: 'breakfast' | 'lunch' | 'dinner' | 'snack'
+      /** State */
+      state: ('planned' | 'logged' | 'skipped') | null
+    }
+    /** EntryPatchIn */
+    EntryPatchIn: {
+      /** At */
+      at?: string | null
+      /** Components */
+      components?: components['schemas']['ComponentIn'][] | null
+      /** Day */
+      day?: string | null
+      /** Eaten Out */
+      eaten_out?: boolean | null
+      /** Name */
+      name?: string | null
+      /** Slot */
+      slot?: ('breakfast' | 'lunch' | 'dinner' | 'snack') | null
+    }
+    /** EntryStateIn */
+    EntryStateIn: {
+      /**
+       * State
+       * @enum {string}
+       */
+      state: 'planned' | 'logged' | 'skipped'
+    }
+    /** FavouriteIn */
+    FavouriteIn: {
+      /** On */
+      on: boolean
     }
     /** HTTPValidationError */
     HTTPValidationError: {
@@ -413,6 +926,30 @@ export interface components {
     }
     /** HouseholdPatch */
     HouseholdPatch: {
+      /** Name */
+      name: string
+    }
+    /** IngredientIn */
+    IngredientIn: {
+      /** Amount */
+      amount: number
+      /**
+       * Item Id
+       * Format: uuid
+       */
+      item_id: string
+    }
+    /** IngredientOut */
+    IngredientOut: {
+      /** Amount */
+      amount: number
+      /** Base Unit */
+      base_unit: string
+      /**
+       * Item Id
+       * Format: uuid
+       */
+      item_id: string
       /** Name */
       name: string
     }
@@ -476,6 +1013,134 @@ export interface components {
       /** Link */
       link: string
     }
+    /** ItemDraftOut */
+    ItemDraftOut: {
+      /** Barcode */
+      barcode: string
+      /**
+       * Base Unit
+       * @enum {string}
+       */
+      base_unit: 'g' | 'ml'
+      /** Brand */
+      brand: string | null
+      /** Category */
+      category: string
+      /** Complete */
+      complete: boolean
+      /** Image Url */
+      image_url: string | null
+      /** Missing */
+      missing: string[]
+      /** Names */
+      names: {
+        [key: string]: string
+      }
+      nutrients: components['schemas']['NutrientsOut']
+      /** Package Size */
+      package_size: number | null
+      /** Servings */
+      servings: components['schemas']['ServingOut'][]
+    }
+    /** ItemIn */
+    ItemIn: {
+      /** Barcodes */
+      barcodes?: string[]
+      /**
+       * Base Unit
+       * @default g
+       * @enum {string}
+       */
+      base_unit: 'g' | 'ml'
+      /** Brand */
+      brand?: string | null
+      /**
+       * Category
+       * @default other
+       * @enum {string}
+       */
+      category:
+        | 'produce'
+        | 'bakery'
+        | 'meat_fish'
+        | 'dairy_eggs'
+        | 'dry_goods'
+        | 'canned'
+        | 'frozen'
+        | 'oils_fats'
+        | 'spices_condiments'
+        | 'sweets_snacks'
+        | 'drinks'
+        | 'household'
+        | 'personal_care'
+        | 'other'
+      /** Image Url */
+      image_url?: string | null
+      /** Names */
+      names: {
+        [key: string]: string | null
+      }
+      nutrients?: components['schemas']['NutrientsIn']
+      /** Package Size */
+      package_size?: number | null
+      /** Servings */
+      servings?: components['schemas']['ServingIn'][]
+      /**
+       * Source
+       * @default custom
+       * @enum {string}
+       */
+      source: 'custom' | 'off'
+      /**
+       * Tracking Mode
+       * @default counted
+       * @enum {string}
+       */
+      tracking_mode: 'counted' | 'status'
+    }
+    /** ItemOut */
+    ItemOut: {
+      /** Barcodes */
+      barcodes: string[]
+      /**
+       * Base Unit
+       * @enum {string}
+       */
+      base_unit: 'g' | 'ml'
+      /** Brand */
+      brand: string | null
+      /** Category */
+      category: string
+      /** Favourite */
+      favourite: boolean
+      /** Generic */
+      generic: boolean
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Image Url */
+      image_url: string | null
+      /** Name */
+      name: string
+      /** Names */
+      names: {
+        [key: string]: string | null
+      }
+      nutrients: components['schemas']['NutrientsOut']
+      /** Package Size */
+      package_size: number | null
+      /** Servings */
+      servings: components['schemas']['ServingOut'][]
+      /** Source */
+      source: string
+      /**
+       * Tracking Mode
+       * @enum {string}
+       */
+      tracking_mode: 'counted' | 'status'
+    }
     /** LoginIn */
     LoginIn: {
       /** Email */
@@ -517,12 +1182,78 @@ export interface components {
        */
       joined_at: string
     }
+    /** NutrientsIn */
+    NutrientsIn: {
+      /** Alcohol */
+      alcohol?: number | null
+      /** Carbs */
+      carbs?: number | null
+      /** Fat */
+      fat?: number | null
+      /** Fibre */
+      fibre?: number | null
+      /** Kcal */
+      kcal?: number | null
+      /** Protein */
+      protein?: number | null
+      /** Salt */
+      salt?: number | null
+      /** Sat Fat */
+      sat_fat?: number | null
+      /** Sugar */
+      sugar?: number | null
+    }
+    /** NutrientsOut */
+    NutrientsOut: {
+      /** Alcohol */
+      alcohol: number | null
+      /** Carbs */
+      carbs: number | null
+      /** Fat */
+      fat: number | null
+      /** Fibre */
+      fibre: number | null
+      /** Kcal */
+      kcal: number | null
+      /** Protein */
+      protein: number | null
+      /** Salt */
+      salt: number | null
+      /** Sat Fat */
+      sat_fat: number | null
+      /** Sugar */
+      sugar: number | null
+    }
     /** PasswordChangeIn */
     PasswordChangeIn: {
       /** Current Password */
       current_password: string
       /** New Password */
       new_password: string
+    }
+    /** PersonDayOut */
+    PersonDayOut: {
+      /**
+       * Day Type
+       * @enum {string}
+       */
+      day_type: 'training' | 'rest'
+      /** Display Name */
+      display_name: string
+      /** Entries */
+      entries: components['schemas']['EntryOut'][]
+      /** Is Me */
+      is_me: boolean
+      logged: components['schemas']['TotalsOut']
+      planned: components['schemas']['TotalsOut']
+      projection: components['schemas']['TargetsOut'] | null
+      remaining: components['schemas']['TargetsOut'] | null
+      targets: components['schemas']['TargetsOut'] | null
+      /**
+       * User Id
+       * Format: uuid
+       */
+      user_id: string
     }
     /** ProfileOut */
     ProfileOut: {
@@ -592,6 +1323,105 @@ export interface components {
       /** Email */
       email: string
     }
+    /** SaveAsMealIn */
+    SaveAsMealIn: {
+      /** Name */
+      name?: string | null
+    }
+    /** SavedMealIn */
+    SavedMealIn: {
+      /** Ingredients */
+      ingredients: components['schemas']['IngredientIn'][]
+      /** Name */
+      name: string
+    }
+    /** SavedMealOut */
+    SavedMealOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Ingredients */
+      ingredients: components['schemas']['IngredientOut'][]
+      /** Name */
+      name: string
+      per_serving: components['schemas']['TotalsOut']
+    }
+    /** SavedMealPatchIn */
+    SavedMealPatchIn: {
+      /** Ingredients */
+      ingredients?: components['schemas']['IngredientIn'][] | null
+      /** Name */
+      name?: string | null
+    }
+    /** ServingIn */
+    ServingIn: {
+      /** Amount */
+      amount: number
+      /** Label */
+      label: string
+    }
+    /** ServingOut */
+    ServingOut: {
+      /** Amount */
+      amount: number
+      /** Label */
+      label: string
+    }
+    /** TargetPlanOut */
+    TargetPlanOut: {
+      /** History */
+      history: components['schemas']['TargetSetOut'][]
+      /** Week Pattern */
+      week_pattern: string
+    }
+    /** TargetSetOut */
+    TargetSetOut: {
+      /**
+       * Day Type
+       * @enum {string}
+       */
+      day_type: 'training' | 'rest'
+      targets: components['schemas']['TargetsOut']
+      /**
+       * Valid From
+       * Format: date
+       */
+      valid_from: string
+    }
+    /** TargetsIn */
+    TargetsIn: {
+      /** Carbs */
+      carbs?: number | null
+      /** Day Types */
+      day_types: ('training' | 'rest')[]
+      /** Fat */
+      fat?: number | null
+      /** Kcal */
+      kcal?: number | null
+      /** Protein */
+      protein?: number | null
+      /** Valid From */
+      valid_from?: string | null
+    }
+    /** TargetsOut */
+    TargetsOut: {
+      /** Carbs */
+      carbs: number | null
+      /** Fat */
+      fat: number | null
+      /** Kcal */
+      kcal: number | null
+      /** Protein */
+      protein: number | null
+    }
+    /** TotalsOut */
+    TotalsOut: {
+      /** Incomplete */
+      incomplete: string[]
+      values: components['schemas']['NutrientsOut']
+    }
     /** UserOut */
     UserOut: {
       /** Display Name */
@@ -625,6 +1455,11 @@ export interface components {
       msg: string
       /** Error Type */
       type: string
+    }
+    /** WeekPatternIn */
+    WeekPatternIn: {
+      /** Pattern */
+      pattern: string
     }
   }
   responses: never
@@ -801,6 +1636,37 @@ export interface operations {
       }
     }
   }
+  lookup_barcode_api_barcodes__code__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        code: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['BarcodeOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   config_api_config_get: {
     parameters: {
       query?: never
@@ -817,6 +1683,365 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ConfigOut']
+        }
+      }
+    }
+  }
+  connector_status_api_connector_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ConnectorOut']
+        }
+      }
+    }
+  }
+  create_connector_url_api_connector_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ConnectorCreatedOut']
+        }
+      }
+    }
+  }
+  revoke_connector_url_api_connector_delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  get_day_api_days__day___get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        day_: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['DayOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  copy_day_api_days__day___copy_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        day_: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CopyDayIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['EntryOut'][]
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  set_day_type_api_days__day___day_type_put: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        day_: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DayTypeIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  log_food_api_entries_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EntryIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['EntryOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  delete_entry_api_entries__entry_id__delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        entry_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  update_entry_api_entries__entry_id__patch: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        entry_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EntryPatchIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['EntryOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  copy_entry_api_entries__entry_id__copy_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        entry_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CopyEntryIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['EntryOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  save_entry_as_meal_api_entries__entry_id__save_as_meal_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        entry_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SaveAsMealIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SavedMealOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  set_entry_state_api_entries__entry_id__state_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        entry_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EntryStateIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['EntryOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
         }
       }
     }
@@ -1040,6 +2265,170 @@ export interface operations {
       }
     }
   }
+  search_items_api_items_get: {
+    parameters: {
+      query?: {
+        q?: string
+        limit?: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ItemOut'][]
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  create_item_api_items_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ItemIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ItemOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_item_api_items__item_id__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        item_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ItemOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  update_item_api_items__item_id__put: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        item_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ItemIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ItemOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  set_favourite_api_items__item_id__favourite_put: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        item_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FavouriteIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   update_me_api_me_patch: {
     parameters: {
       query?: never
@@ -1093,6 +2482,37 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['MeOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  search_online_api_online_search_get: {
+    parameters: {
+      query: {
+        q: string
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ItemDraftOut'][]
         }
       }
       /** @description Validation Error */
@@ -1204,6 +2624,209 @@ export interface operations {
         }
         content: {
           'application/json': unknown
+        }
+      }
+    }
+  }
+  list_saved_meals_api_saved_meals_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SavedMealOut'][]
+        }
+      }
+    }
+  }
+  create_saved_meal_api_saved_meals_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SavedMealIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SavedMealOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  delete_saved_meal_api_saved_meals__meal_id__delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        meal_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  update_saved_meal_api_saved_meals__meal_id__patch: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        meal_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SavedMealPatchIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SavedMealOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_targets_api_targets_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['TargetPlanOut']
+        }
+      }
+    }
+  }
+  set_targets_api_targets_put: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TargetsIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['TargetPlanOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  set_week_pattern_api_targets_week_pattern_put: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WeekPatternIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['TargetPlanOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
         }
       }
     }

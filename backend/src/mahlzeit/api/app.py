@@ -10,7 +10,19 @@ from fastapi.responses import JSONResponse
 
 from mahlzeit import __version__
 from mahlzeit.api import errors
-from mahlzeit.api.routes import auth, household, invites, me, push, system
+from mahlzeit.api.routes import (
+    auth,
+    catalogue,
+    connector,
+    day,
+    household,
+    invites,
+    me,
+    push,
+    saved_meals,
+    system,
+    targets,
+)
 from mahlzeit.config import get_settings, require_valid_settings
 
 UNSAFE = {"POST", "PUT", "PATCH", "DELETE"}
@@ -53,6 +65,11 @@ def create_app() -> FastAPI:
         household.router,
         invites.router,
         push.router,
+        catalogue.router,
+        day.router,
+        targets.router,
+        saved_meals.router,
+        connector.router,
     ):
         app.include_router(router, prefix="/api")
     return app
