@@ -26,7 +26,8 @@
     "copied": "Gekopieerd",
     "share": "Delen",
     "language": "Taal",
-    "back": "Terug"
+    "back": "Terug",
+    "close": "Sluiten"
   },
   "login": {
     "title": "Inloggen",
@@ -73,10 +74,6 @@
     "submit": "Wachtwoord opslaan",
     "done": "Je wachtwoord is ingesteld. Je kunt nu inloggen.",
     "toLogin": "Naar inloggen"
-  },
-  "today": {
-    "greeting": "Hallo, {{name}}",
-    "empty": "Nog niets gepland of gelogd."
   },
   "household": {
     "title": "Huishouden",
@@ -136,13 +133,20 @@
       "hint": "Open het browsermenu en kies ‘App installeren’ of ‘Toevoegen aan startscherm’."
     },
     "about": "Over Mahlzeit",
-    "logout": "Uitloggen"
+    "logout": "Uitloggen",
+    "targets": "Doelen en dagtypes",
+    "foods": "Mijn producten en maaltijden"
   },
   "about": {
     "title": "Over",
     "version": "Versie {{version}}",
     "privacy": "Mahlzeit draait op je eigen server. Je gegevens blijven daar; er gaat niets naar een AI-aanbieder tenzij je dat aanzet.",
-    "attribution": "De bronnen van de voedingsgegevens staan hier zodra de catalogus erbij komt."
+    "attribution": "De bronnen van de voedingsgegevens staan hier zodra de catalogus erbij komt.",
+    "data": "Voedingsgegevens",
+    "bls": "Algemene voedingsmiddelen: Bundeslebensmittelschlüssel (BLS) 4.0, Max Rubner-Institut, licentie CC BY 4.0. Waarden per 100 g, door Mahlzeit geselecteerd en afgerond.",
+    "blsLink": "Bron (DOI)",
+    "off": "Verpakte producten: Open Food Facts, licentie ODbL. Overgenomen producten controleer en bewaar je zelf.",
+    "offLink": "openfoodfacts.org"
   },
   "errors": {
     "unknown": "Er ging iets mis. Probeer het opnieuw.",
@@ -204,5 +208,196 @@
     "saved_meal_empty": "Een opgeslagen maaltijd heeft minstens één product uit de catalogus nodig.",
     "saved_meal_name_required": "Geef de maaltijd een naam.",
     "nothing_to_set": "Geef minstens één doel of een weekpatroon op."
+  },
+  "day": {
+    "today": "Vandaag",
+    "previous": "Vorige dag",
+    "next": "Volgende dag",
+    "copy": "Dag kopiëren",
+    "copyFrom": "Kopiëren van …",
+    "copyExplain": "Kopieert je maaltijden van een andere dag naar deze dag. Op een dag in de toekomst zijn ze gepland.",
+    "sourceDay": "Maaltijden kopiëren van"
+  },
+  "dayType": {
+    "training": "Trainingsdag",
+    "rest": "Rustdag",
+    "trainingShort": "T",
+    "restShort": "R"
+  },
+  "slot": {
+    "breakfast": "Ontbijt",
+    "lunch": "Lunch",
+    "dinner": "Avondeten",
+    "snack": "Tussendoortje"
+  },
+  "macro": {
+    "short": {
+      "protein": "E",
+      "carbs": "K",
+      "fat": "V"
+    }
+  },
+  "nutrient": {
+    "kcal": "Energie (kcal)",
+    "protein": "Eiwitten (g)",
+    "carbs": "Koolhydraten (g)",
+    "sugar": "waarvan suikers (g)",
+    "fat": "Vetten (g)",
+    "sat_fat": "waarvan verzadigd (g)",
+    "fibre": "Vezels (g)",
+    "salt": "Zout (g)"
+  },
+  "totals": {
+    "kcal": "{{value}} kcal",
+    "ofTarget": "{{value}} van {{target}} kcal",
+    "left": "Nog {{kcal}} kcal en {{protein}} g eiwit",
+    "projection": "Met geplande maaltijden: {{kcal}} kcal"
+  },
+  "entry": {
+    "eaten": "Gegeten",
+    "planned": "Gepland",
+    "eatenOut": "Buiten de deur gegeten",
+    "delete": "Verwijderen",
+    "saveAsMeal": "Als maaltijd bewaren",
+    "savedAsMeal": "Als maaltijd bewaard",
+    "copyToToday": "Naar vandaag kopiëren",
+    "copyToMyDay": "Naar mijn dag kopiëren"
+  },
+  "log": {
+    "title": "Eten toevoegen",
+    "add": "Eten toevoegen",
+    "addTo": "Toevoegen aan {{slot}}",
+    "slot": "Maaltijd",
+    "time": "Tijd",
+    "how": "Manier van toevoegen",
+    "mode": {
+      "search": "Zoeken",
+      "scan": "Scannen",
+      "quick": "Snel",
+      "meals": "Maaltijden"
+    },
+    "search": "Producten zoeken",
+    "favouritesAndRecent": "Favorieten en recent gegeten",
+    "searchOnline": "‘{{query}}’ online zoeken",
+    "fromOpenFoodFacts": "van Open Food Facts",
+    "nothingOnline": "Online niets gevonden.",
+    "remove": "{{name}} verwijderen",
+    "logBasket_one": "{{count}} product toevoegen · {{kcal}} kcal",
+    "logBasket_other": "{{count}} producten toevoegen · {{kcal}} kcal",
+    "amountOf": "Hoeveelheid {{name}}"
+  },
+  "amount": {
+    "per100": "{{kcal}} kcal per 100 {{unit}}",
+    "serving": "{{label}} ({{amount}} {{unit}})",
+    "twice": "2 × {{label}}",
+    "label": "Hoeveelheid ({{unit}})",
+    "addMore": "Nog iets toevoegen",
+    "logNow": "Nu toevoegen"
+  },
+  "quick": {
+    "name": "Wat was het?",
+    "kcal": "Energie (kcal)"
+  },
+  "serving": {
+    "egg": "1 ei",
+    "label": "1 portie (verpakking)",
+    "portion": "1 portie",
+    "roll": "1 broodje",
+    "scoop": "1 schepje"
+  },
+  "scan": {
+    "camera": "Richt de camera op de streepjescode",
+    "noCamera": "Geen camera beschikbaar. Typ het nummer onder de streepjescode.",
+    "typeCode": "Nummer van de streepjescode",
+    "lookUp": "Opzoeken",
+    "lookingUp": "Bezig met opzoeken …"
+  },
+  "label": {
+    "title": "Voedingswaarden",
+    "completeMissing": "Er ontbraken waarden. Vul ze aan van de verpakking.",
+    "name": "Naam",
+    "nameIn": "Naam in het {{language}}",
+    "addOtherNames": "Namen in andere talen toevoegen",
+    "brand": "Merk",
+    "category": "Categorie",
+    "unit": "Eenheid",
+    "per": "Waarden per 100 {{unit}}",
+    "packageSize": "Verpakkingsgrootte ({{unit}})",
+    "servings": "Porties",
+    "servingName": "Naam van de portie",
+    "addServing": "Portie toevoegen",
+    "barcode": "Streepjescode"
+  },
+  "category": {
+    "produce": "Groente en fruit",
+    "bakery": "Brood en banket",
+    "meat_fish": "Vlees en vis",
+    "dairy_eggs": "Zuivel en eieren",
+    "dry_goods": "Droge waren",
+    "canned": "Blik en pot",
+    "frozen": "Diepvries",
+    "oils_fats": "Olie en vetten",
+    "spices_condiments": "Kruiden en sauzen",
+    "sweets_snacks": "Snoep en snacks",
+    "drinks": "Dranken",
+    "household": "Huishouden",
+    "personal_care": "Verzorging",
+    "other": "Overig"
+  },
+  "meals": {
+    "title": "Bewaarde maaltijden",
+    "none": "Nog geen bewaarde maaltijden. Open een ingevoerde maaltijd en kies ‘Als maaltijd bewaren’.",
+    "name": "Naam",
+    "delete": "Maaltijd verwijderen"
+  },
+  "foods": {
+    "title": "Mijn producten",
+    "new": "Nieuw product",
+    "search": "Mijn producten doorzoeken",
+    "none": "Nog geen eigen producten. Gescande en aangemaakte producten verschijnen hier.",
+    "favourite": "Favoriet",
+    "star": "★"
+  },
+  "targets": {
+    "title": "Doelen",
+    "intro": "Je dagdoelen. Je partner ziet ze naast je totalen.",
+    "week": "Trainingsweek",
+    "weekHint": "Tik op een dag om te wisselen tussen training en rust. Losse dagen pas je aan in de dagweergave.",
+    "daily": "Dagdoelen",
+    "same": "Dezelfde doelen op trainings- en rustdagen",
+    "everyDay": "Elke dag",
+    "field": {
+      "kcal": "kcal",
+      "protein": "Eiwitten (g)",
+      "carbs": "Koolhydraten (g)",
+      "fat": "Vetten (g)"
+    },
+    "validFrom": "Geldig vanaf",
+    "validFromHint": "Eerdere dagen houden hun oude doelen.",
+    "saved": "Doelen bewaard.",
+    "history": "Geschiedenis",
+    "summary": "{{kcal}} kcal · E {{protein}} · K {{carbs}} · V {{fat}}"
+  },
+  "connector": {
+    "title": "Claude-connector",
+    "intro": "Een persoonlijke link waarmee Claude voor jou eten kan opzoeken en invoeren. Wie de link heeft, handelt namens jou, dus houd hem privé.",
+    "create": "Link maken",
+    "rotate": "Nieuwe link maken",
+    "revoke": "Uitschakelen",
+    "onceOnly": "Kopieer deze link nu. Hij wordt maar één keer getoond.",
+    "url": "Connectorlink",
+    "copy": "Link kopiëren",
+    "copied": "Gekopieerd",
+    "step1": "Open in Claude de instellingen, dan Connectors, en kies ‘Aangepaste connector toevoegen’.",
+    "step2": "Plak de link als server-URL en geef hem een naam, bijvoorbeeld Mahlzeit.",
+    "step3": "Zet de connector aan in een chat en vraag bijvoorbeeld: ‘Voeg 200 g skyr toe bij het ontbijt’.",
+    "active": "Actief sinds {{created}}.",
+    "lastUsed": "Laatst gebruikt {{at}}.",
+    "neverUsed": "Nog niet gebruikt.",
+    "inactive": "Nog geen link."
+  },
+  "unit": {
+    "g": "g",
+    "ml": "ml"
   }
 }

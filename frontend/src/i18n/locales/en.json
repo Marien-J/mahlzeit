@@ -26,7 +26,8 @@
     "copied": "Copied",
     "share": "Share",
     "language": "Language",
-    "back": "Back"
+    "back": "Back",
+    "close": "Close"
   },
   "login": {
     "title": "Sign in",
@@ -73,10 +74,6 @@
     "submit": "Save password",
     "done": "Your password is set. You can sign in now.",
     "toLogin": "Go to sign in"
-  },
-  "today": {
-    "greeting": "Hello, {{name}}",
-    "empty": "Nothing planned or logged yet."
   },
   "household": {
     "title": "Household",
@@ -136,13 +133,20 @@
       "hint": "To install, open the browser menu and choose “Install app” or “Add to home screen”."
     },
     "about": "About Mahlzeit",
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "targets": "Targets and day types",
+    "foods": "My foods and saved meals"
   },
   "about": {
     "title": "About",
     "version": "Version {{version}}",
     "privacy": "Mahlzeit runs on your own server. Your data stays there; nothing is sent to an AI provider unless you switch that on.",
-    "attribution": "Food data sources are named here once the catalogue is added."
+    "attribution": "Food data sources are named here once the catalogue is added.",
+    "data": "Food data",
+    "bls": "Generic foods: German Nutrient Database (BLS) 4.0, Max Rubner-Institut, licensed CC BY 4.0. Values per 100 g, selected and rounded by Mahlzeit.",
+    "blsLink": "Source (DOI)",
+    "off": "Packaged foods: Open Food Facts, licensed ODbL. Imported products are checked and saved by you.",
+    "offLink": "openfoodfacts.org"
   },
   "errors": {
     "unknown": "Something went wrong. Please try again.",
@@ -204,5 +208,196 @@
     "saved_meal_empty": "A saved meal needs at least one food from the catalogue.",
     "saved_meal_name_required": "Give the meal a name.",
     "nothing_to_set": "Give at least one target or a week pattern."
+  },
+  "day": {
+    "today": "Today",
+    "previous": "Previous day",
+    "next": "Next day",
+    "copy": "Copy day",
+    "copyFrom": "Copy from…",
+    "copyExplain": "Copies your meals from another day to this one. On a future day they are planned.",
+    "sourceDay": "Copy meals from"
+  },
+  "dayType": {
+    "training": "Training day",
+    "rest": "Rest day",
+    "trainingShort": "T",
+    "restShort": "R"
+  },
+  "slot": {
+    "breakfast": "Breakfast",
+    "lunch": "Lunch",
+    "dinner": "Dinner",
+    "snack": "Snack"
+  },
+  "macro": {
+    "short": {
+      "protein": "P",
+      "carbs": "C",
+      "fat": "F"
+    }
+  },
+  "nutrient": {
+    "kcal": "Energy (kcal)",
+    "protein": "Protein (g)",
+    "carbs": "Carbohydrate (g)",
+    "sugar": "of which sugars (g)",
+    "fat": "Fat (g)",
+    "sat_fat": "of which saturates (g)",
+    "fibre": "Fibre (g)",
+    "salt": "Salt (g)"
+  },
+  "totals": {
+    "kcal": "{{value}} kcal",
+    "ofTarget": "{{value}} of {{target}} kcal",
+    "left": "{{kcal}} kcal and {{protein}} g protein left",
+    "projection": "With planned meals: {{kcal}} kcal"
+  },
+  "entry": {
+    "eaten": "Eaten",
+    "planned": "Planned",
+    "eatenOut": "Eaten out",
+    "delete": "Delete",
+    "saveAsMeal": "Save as meal",
+    "savedAsMeal": "Saved as meal",
+    "copyToToday": "Copy to today",
+    "copyToMyDay": "Copy to my day"
+  },
+  "log": {
+    "title": "Add food",
+    "add": "Add food",
+    "addTo": "Add to {{slot}}",
+    "slot": "Meal",
+    "time": "Time",
+    "how": "How to add",
+    "mode": {
+      "search": "Search",
+      "scan": "Scan",
+      "quick": "Quick add",
+      "meals": "Saved meals"
+    },
+    "search": "Search foods",
+    "favouritesAndRecent": "Favourites and recent foods",
+    "searchOnline": "Search \"{{query}}\" online",
+    "fromOpenFoodFacts": "from Open Food Facts",
+    "nothingOnline": "Nothing found online.",
+    "remove": "Remove {{name}}",
+    "logBasket_one": "Log {{count}} food · {{kcal}} kcal",
+    "logBasket_other": "Log {{count}} foods · {{kcal}} kcal",
+    "amountOf": "Amount of {{name}}"
+  },
+  "amount": {
+    "per100": "{{kcal}} kcal per 100 {{unit}}",
+    "serving": "{{label}} ({{amount}} {{unit}})",
+    "twice": "2 × {{label}}",
+    "label": "Amount ({{unit}})",
+    "addMore": "Add more",
+    "logNow": "Log now"
+  },
+  "quick": {
+    "name": "What was it?",
+    "kcal": "Energy (kcal)"
+  },
+  "serving": {
+    "egg": "1 egg",
+    "label": "1 serving (label)",
+    "portion": "1 portion",
+    "roll": "1 roll",
+    "scoop": "1 scoop"
+  },
+  "scan": {
+    "camera": "Point the camera at the barcode",
+    "noCamera": "No camera available. Type the number below the barcode.",
+    "typeCode": "Barcode number",
+    "lookUp": "Look up",
+    "lookingUp": "Looking up…"
+  },
+  "label": {
+    "title": "Nutrition label",
+    "completeMissing": "Some values were missing. Fill them in from the package.",
+    "name": "Name",
+    "nameIn": "Name in {{language}}",
+    "addOtherNames": "Add names in other languages",
+    "brand": "Brand",
+    "category": "Category",
+    "unit": "Unit",
+    "per": "Values per 100 {{unit}}",
+    "packageSize": "Package size ({{unit}})",
+    "servings": "Servings",
+    "servingName": "Serving name",
+    "addServing": "Add serving",
+    "barcode": "Barcode"
+  },
+  "category": {
+    "produce": "Fruit and vegetables",
+    "bakery": "Bread and bakery",
+    "meat_fish": "Meat and fish",
+    "dairy_eggs": "Dairy and eggs",
+    "dry_goods": "Dry goods",
+    "canned": "Canned and jars",
+    "frozen": "Frozen",
+    "oils_fats": "Oils and fats",
+    "spices_condiments": "Spices and sauces",
+    "sweets_snacks": "Sweets and snacks",
+    "drinks": "Drinks",
+    "household": "Household",
+    "personal_care": "Personal care",
+    "other": "Other"
+  },
+  "meals": {
+    "title": "Saved meals",
+    "none": "No saved meals yet. Open a logged meal and choose \"Save as meal\".",
+    "name": "Name",
+    "delete": "Delete meal"
+  },
+  "foods": {
+    "title": "My foods",
+    "new": "New food",
+    "search": "Search my foods",
+    "none": "No foods of your own yet. Scanned and created foods appear here.",
+    "favourite": "Favourite",
+    "star": "★"
+  },
+  "targets": {
+    "title": "Targets",
+    "intro": "Daily targets for you. Your partner sees them next to your totals.",
+    "week": "Training week",
+    "weekHint": "Tap a day to switch between training and rest. You can still change a single day on the day view.",
+    "daily": "Daily targets",
+    "same": "Same targets on training and rest days",
+    "everyDay": "Every day",
+    "field": {
+      "kcal": "kcal",
+      "protein": "Protein (g)",
+      "carbs": "Carbohydrate (g)",
+      "fat": "Fat (g)"
+    },
+    "validFrom": "Valid from",
+    "validFromHint": "Earlier days keep the targets they had.",
+    "saved": "Targets saved.",
+    "history": "History",
+    "summary": "{{kcal}} kcal · P {{protein}} · C {{carbs}} · F {{fat}}"
+  },
+  "connector": {
+    "title": "Claude connector",
+    "intro": "A personal link that lets Claude read and log food for you. Anyone with the link can act as you, so keep it private.",
+    "create": "Create link",
+    "rotate": "Create new link",
+    "revoke": "Turn off",
+    "onceOnly": "Copy this link now. It is shown only once.",
+    "url": "Connector link",
+    "copy": "Copy link",
+    "copied": "Copied",
+    "step1": "In Claude, open Settings, then Connectors, and choose \"Add custom connector\".",
+    "step2": "Paste the link as the server URL and give it a name, for example Mahlzeit.",
+    "step3": "In a chat, enable the connector and ask, for example: \"Log 200 g skyr for breakfast\".",
+    "active": "Active since {{created}}.",
+    "lastUsed": "Last used {{at}}.",
+    "neverUsed": "Not used yet.",
+    "inactive": "No link yet."
+  },
+  "unit": {
+    "g": "g",
+    "ml": "ml"
   }
 }

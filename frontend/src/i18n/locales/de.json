@@ -26,7 +26,8 @@
     "copied": "Kopiert",
     "share": "Teilen",
     "language": "Sprache",
-    "back": "Zurück"
+    "back": "Zurück",
+    "close": "Schließen"
   },
   "login": {
     "title": "Anmelden",
@@ -73,10 +74,6 @@
     "submit": "Passwort speichern",
     "done": "Dein Passwort ist gesetzt. Du kannst dich jetzt anmelden.",
     "toLogin": "Zur Anmeldung"
-  },
-  "today": {
-    "greeting": "Hallo, {{name}}",
-    "empty": "Noch nichts geplant oder eingetragen."
   },
   "household": {
     "title": "Haushalt",
@@ -136,13 +133,20 @@
       "hint": "Zum Installieren öffne das Browser-Menü und wähle „App installieren“ oder „Zum Startbildschirm hinzufügen“."
     },
     "about": "Über Mahlzeit",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "targets": "Ziele und Tagestypen",
+    "foods": "Meine Lebensmittel und Mahlzeiten"
   },
   "about": {
     "title": "Über",
     "version": "Version {{version}}",
     "privacy": "Mahlzeit läuft auf deinem eigenen Server. Deine Daten bleiben dort; nichts geht an einen KI-Anbieter, solange du das nicht einschaltest.",
-    "attribution": "Die Quellen der Lebensmitteldaten stehen hier, sobald der Katalog dazukommt."
+    "attribution": "Die Quellen der Lebensmitteldaten stehen hier, sobald der Katalog dazukommt.",
+    "data": "Lebensmitteldaten",
+    "bls": "Allgemeine Lebensmittel: Bundeslebensmittelschlüssel (BLS) 4.0, Max Rubner-Institut, Lizenz CC BY 4.0. Werte je 100 g, von Mahlzeit ausgewählt und gerundet.",
+    "blsLink": "Quelle (DOI)",
+    "off": "Verpackte Lebensmittel: Open Food Facts, Lizenz ODbL. Übernommene Produkte prüfst und speicherst du selbst.",
+    "offLink": "openfoodfacts.org"
   },
   "errors": {
     "unknown": "Etwas ist schiefgegangen. Bitte versuche es noch einmal.",
@@ -204,5 +208,196 @@
     "saved_meal_empty": "Eine gespeicherte Mahlzeit braucht mindestens ein Lebensmittel aus dem Katalog.",
     "saved_meal_name_required": "Gib der Mahlzeit einen Namen.",
     "nothing_to_set": "Gib mindestens ein Ziel oder ein Wochenmuster an."
+  },
+  "day": {
+    "today": "Heute",
+    "previous": "Vorheriger Tag",
+    "next": "Nächster Tag",
+    "copy": "Tag kopieren",
+    "copyFrom": "Kopieren von …",
+    "copyExplain": "Kopiert deine Mahlzeiten von einem anderen Tag hierher. An einem zukünftigen Tag sind sie geplant.",
+    "sourceDay": "Mahlzeiten kopieren von"
+  },
+  "dayType": {
+    "training": "Trainingstag",
+    "rest": "Ruhetag",
+    "trainingShort": "T",
+    "restShort": "R"
+  },
+  "slot": {
+    "breakfast": "Frühstück",
+    "lunch": "Mittagessen",
+    "dinner": "Abendessen",
+    "snack": "Snack"
+  },
+  "macro": {
+    "short": {
+      "protein": "E",
+      "carbs": "K",
+      "fat": "F"
+    }
+  },
+  "nutrient": {
+    "kcal": "Energie (kcal)",
+    "protein": "Eiweiß (g)",
+    "carbs": "Kohlenhydrate (g)",
+    "sugar": "davon Zucker (g)",
+    "fat": "Fett (g)",
+    "sat_fat": "davon gesättigte Fettsäuren (g)",
+    "fibre": "Ballaststoffe (g)",
+    "salt": "Salz (g)"
+  },
+  "totals": {
+    "kcal": "{{value}} kcal",
+    "ofTarget": "{{value}} von {{target}} kcal",
+    "left": "Noch {{kcal}} kcal und {{protein}} g Eiweiß",
+    "projection": "Mit geplanten Mahlzeiten: {{kcal}} kcal"
+  },
+  "entry": {
+    "eaten": "Gegessen",
+    "planned": "Geplant",
+    "eatenOut": "Auswärts gegessen",
+    "delete": "Löschen",
+    "saveAsMeal": "Als Mahlzeit speichern",
+    "savedAsMeal": "Als Mahlzeit gespeichert",
+    "copyToToday": "Für heute übernehmen",
+    "copyToMyDay": "In meinen Tag übernehmen"
+  },
+  "log": {
+    "title": "Essen eintragen",
+    "add": "Essen eintragen",
+    "addTo": "Zu {{slot}} hinzufügen",
+    "slot": "Mahlzeit",
+    "time": "Uhrzeit",
+    "how": "Art des Eintrags",
+    "mode": {
+      "search": "Suchen",
+      "scan": "Scannen",
+      "quick": "Schnell",
+      "meals": "Mahlzeiten"
+    },
+    "search": "Lebensmittel suchen",
+    "favouritesAndRecent": "Favoriten und zuletzt gegessen",
+    "searchOnline": "„{{query}}“ online suchen",
+    "fromOpenFoodFacts": "von Open Food Facts",
+    "nothingOnline": "Online nichts gefunden.",
+    "remove": "{{name}} entfernen",
+    "logBasket_one": "{{count}} Lebensmittel eintragen · {{kcal}} kcal",
+    "logBasket_other": "{{count}} Lebensmittel eintragen · {{kcal}} kcal",
+    "amountOf": "Menge von {{name}}"
+  },
+  "amount": {
+    "per100": "{{kcal}} kcal je 100 {{unit}}",
+    "serving": "{{label}} ({{amount}} {{unit}})",
+    "twice": "2 × {{label}}",
+    "label": "Menge ({{unit}})",
+    "addMore": "Weiteres hinzufügen",
+    "logNow": "Jetzt eintragen"
+  },
+  "quick": {
+    "name": "Was war es?",
+    "kcal": "Energie (kcal)"
+  },
+  "serving": {
+    "egg": "1 Ei",
+    "label": "1 Portion (Packung)",
+    "portion": "1 Portion",
+    "roll": "1 Brötchen",
+    "scoop": "1 Messlöffel"
+  },
+  "scan": {
+    "camera": "Kamera auf den Strichcode richten",
+    "noCamera": "Keine Kamera verfügbar. Gib die Nummer unter dem Strichcode ein.",
+    "typeCode": "Strichcode-Nummer",
+    "lookUp": "Nachschlagen",
+    "lookingUp": "Wird nachgeschlagen …"
+  },
+  "label": {
+    "title": "Nährwerttabelle",
+    "completeMissing": "Einige Werte fehlten. Ergänze sie von der Packung.",
+    "name": "Name",
+    "nameIn": "Name auf {{language}}",
+    "addOtherNames": "Namen in anderen Sprachen hinzufügen",
+    "brand": "Marke",
+    "category": "Kategorie",
+    "unit": "Einheit",
+    "per": "Werte je 100 {{unit}}",
+    "packageSize": "Packungsgröße ({{unit}})",
+    "servings": "Portionen",
+    "servingName": "Name der Portion",
+    "addServing": "Portion hinzufügen",
+    "barcode": "Strichcode"
+  },
+  "category": {
+    "produce": "Obst und Gemüse",
+    "bakery": "Brot und Backwaren",
+    "meat_fish": "Fleisch und Fisch",
+    "dairy_eggs": "Milchprodukte und Eier",
+    "dry_goods": "Trockenware",
+    "canned": "Konserven und Gläser",
+    "frozen": "Tiefkühl",
+    "oils_fats": "Öle und Fette",
+    "spices_condiments": "Gewürze und Soßen",
+    "sweets_snacks": "Süßes und Snacks",
+    "drinks": "Getränke",
+    "household": "Haushalt",
+    "personal_care": "Körperpflege",
+    "other": "Sonstiges"
+  },
+  "meals": {
+    "title": "Gespeicherte Mahlzeiten",
+    "none": "Noch keine gespeicherten Mahlzeiten. Öffne eine eingetragene Mahlzeit und wähle „Als Mahlzeit speichern“.",
+    "name": "Name",
+    "delete": "Mahlzeit löschen"
+  },
+  "foods": {
+    "title": "Meine Lebensmittel",
+    "new": "Neues Lebensmittel",
+    "search": "Meine Lebensmittel durchsuchen",
+    "none": "Noch keine eigenen Lebensmittel. Gescannte und angelegte Lebensmittel erscheinen hier.",
+    "favourite": "Favorit",
+    "star": "★"
+  },
+  "targets": {
+    "title": "Ziele",
+    "intro": "Deine Tagesziele. Sie erscheinen in der Tagesansicht für euch beide.",
+    "week": "Trainingswoche",
+    "weekHint": "Tippe auf einen Tag, um zwischen Training und Ruhe zu wechseln. Einzelne Tage änderst du in der Tagesansicht.",
+    "daily": "Tagesziele",
+    "same": "Gleiche Ziele an Trainings- und Ruhetagen",
+    "everyDay": "Jeden Tag",
+    "field": {
+      "kcal": "kcal",
+      "protein": "Eiweiß (g)",
+      "carbs": "Kohlenhydrate (g)",
+      "fat": "Fett (g)"
+    },
+    "validFrom": "Gültig ab",
+    "validFromHint": "Frühere Tage behalten ihre bisherigen Ziele.",
+    "saved": "Ziele gespeichert.",
+    "history": "Verlauf",
+    "summary": "{{kcal}} kcal · E {{protein}} · K {{carbs}} · F {{fat}}"
+  },
+  "connector": {
+    "title": "Claude-Connector",
+    "intro": "Ein persönlicher Link, über den Claude für dich Essen nachschlagen und eintragen kann. Wer den Link hat, handelt in deinem Namen, also halte ihn privat.",
+    "create": "Link erstellen",
+    "rotate": "Neuen Link erstellen",
+    "revoke": "Ausschalten",
+    "onceOnly": "Kopiere diesen Link jetzt. Er wird nur einmal angezeigt.",
+    "url": "Connector-Link",
+    "copy": "Link kopieren",
+    "copied": "Kopiert",
+    "step1": "Öffne in Claude die Einstellungen, dann Connectors, und wähle „Benutzerdefinierten Connector hinzufügen“.",
+    "step2": "Füge den Link als Server-URL ein und gib ihm einen Namen, zum Beispiel Mahlzeit.",
+    "step3": "Aktiviere den Connector im Chat und frag zum Beispiel: „Trag 200 g Skyr zum Frühstück ein“.",
+    "active": "Aktiv seit {{created}}.",
+    "lastUsed": "Zuletzt benutzt {{at}}.",
+    "neverUsed": "Noch nicht benutzt.",
+    "inactive": "Noch kein Link."
+  },
+  "unit": {
+    "g": "g",
+    "ml": "ml"
   }
 }

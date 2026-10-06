@@ -11,6 +11,19 @@ export function AboutPage() {
       <p>{t('about.version', { version: config.data?.version ?? '…' })}</p>
       <p>{t('about.privacy')}</p>
       <p className="muted">{t('about.attribution')}</p>
+      <h2>{t('about.data')}</h2>
+      <p className="muted">
+        {t('about.bls')}{' '}
+        <a href="https://doi.org/10.25826/Data20251217-134202-0" target="_blank" rel="noreferrer">
+          {t('about.blsLink')}
+        </a>
+      </p>
+      <p className="muted">
+        {t('about.off')}{' '}
+        <a href="https://world.openfoodfacts.org" target="_blank" rel="noreferrer">
+          {t('about.offLink')}
+        </a>
+      </p>
       <Link to="/settings">{t('common.back')}</Link>
     </section>
   )

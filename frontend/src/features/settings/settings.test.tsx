@@ -93,3 +93,40 @@ describe('household', () => {
     expect(await screen.findByRole('button', { name: 'Zurückziehen' })).toBeInTheDocument()
   })
 })
+
+describe('Claude connector', () => {
+  it('shows a new personal link once and can turn it off', async () => {
+    let active = false
+    const server = mockApi({
+      'GET /api/auth/me': () => ME,
+      'GET /api/push': () => ({ configured: true, public_key: 'BPk', devices: 0 }),
+      'GET /api/connector': () => ({
+        active,
+        created_at: active ? '2026-10-06T10:00:00Z' : null,
+        last_used_at: null,
+      }),
+      'POST /api/connector': () => {
+        active = true
+        return reply(201, { url: 'http://localhost/mcp/secret-token' })
+      },
+      'DELETE /api/connector': () => {
+        active = false
+        return reply(204)
+      },
+    })
+    renderApp('/settings')
+    const user = userEvent.setup()
+    expect(await screen.findByText('Noch kein Link.')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Link erstellen' }))
+    expect(await screen.findByLabelText('Connector-Link')).toHaveValue(
+      'http://localhost/mcp/secret-token',
+    )
+    expect(await screen.findByText(/Noch nicht benutzt/)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Ausschalten' }))
+    expect(await screen.findByText('Noch kein Link.')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Connector-Link')).toBeNull()
+    expect(server.calls.filter((c) => c.path === '/api/connector').map((c) => c.method)).toEqual(
+      expect.arrayContaining(['POST', 'DELETE']),
+    )
+  })
+})
