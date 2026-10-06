@@ -85,7 +85,8 @@ storage will do):
 17 3 * * * cd /opt/mahlzeit && scripts/backup.sh >> backups/backup.log 2>&1
 ```
 
-A backup holds the database dump, the files volume and a short `meta.txt`.
+A backup holds the database dump, the files volume and a short `meta.txt`. The file belongs to
+the user who ran `scripts/backup.sh` (mode 600), so a non-root operator can copy it away.
 
 ### Restore
 

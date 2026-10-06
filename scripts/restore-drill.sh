@@ -25,8 +25,8 @@ login_status() {
 }
 
 step "Throwaway age key"
-docker compose --profile ops run --rm --no-deps -T backup age-keygen -o /backups/key.txt 2>/dev/null
-chmod 600 "$BACKUP_DIR/key.txt" 2>/dev/null || true
+docker compose --profile ops run --rm --no-deps -T -e OWNER="$(id -u):$(id -g)" backup \
+  sh -c 'age-keygen -o /backups/key.txt 2>/dev/null && chown "$OWNER" /backups/key.txt'
 export BACKUP_AGE_RECIPIENT="$(grep -o 'age1[0-9a-z]*' "$BACKUP_DIR/key.txt" | head -1)"
 [ -n "$BACKUP_AGE_RECIPIENT" ] || { echo "no age recipient" >&2; exit 1; }
 
@@ -41,6 +41,7 @@ step "Encrypted backup"
 scripts/backup.sh
 backup="$(ls -1t "$BACKUP_DIR"/mahlzeit-*.tar.age | head -1)"
 echo "backup: $(basename "$backup") ($(du -h "$backup" | cut -f1))"
+[ -r "$backup" ] || { echo "backup is not readable by $(id -un)" >&2; exit 1; }
 if tar -tf "$backup" >/dev/null 2>&1; then echo "backup is not encrypted" >&2; exit 1; fi
 
 step "Wipe database and files"

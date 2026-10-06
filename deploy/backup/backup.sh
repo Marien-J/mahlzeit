@@ -30,6 +30,8 @@ else
 fi
 mv "$out.part" "$out"
 chmod 600 "$out"
+# Hand the file to whoever ran scripts/backup.sh, so they can copy it off the machine.
+if [ -n "${BACKUP_OWNER:-}" ]; then chown "$BACKUP_OWNER" "$out"; fi
 
 # Keep the newest $keep backups.
 ls -1t /backups/mahlzeit-*.tar /backups/mahlzeit-*.tar.age 2>/dev/null | tail -n +"$((keep + 1))" | xargs -r rm -f
