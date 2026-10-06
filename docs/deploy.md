@@ -5,8 +5,8 @@ a rented server and an on-prem machine; only `.env` differs.
 
 | Service | What it does |
 | --- | --- |
-| caddy | Serves the PWA, proxies `/api` and `/mcp` (later `/events`) to the app, gets TLS certificates |
-| app | FastAPI; runs migrations on start (safe with several replicas) |
+| caddy | Serves the PWA, proxies `/api` (including the live event stream) and `/mcp` to the app, gets TLS certificates |
+| app | FastAPI; runs migrations on start (safe with several replicas); streams live updates |
 | worker | Background jobs from the Postgres queue (email, push, cleanup) |
 | db | PostgreSQL 16 |
 | backup | On demand only (`ops` profile): encrypted backups and restores |

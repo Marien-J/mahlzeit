@@ -95,6 +95,12 @@ Playwright needs `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium`.
 - **Tools** are registered with `@tool` in `src/mahlzeit/tools/`; every tool needs a case in
   `tests/tools/test_registry.py` (and a cross-household case if it takes ids). The MCP connector
   serves the registry as is.
+- **Live updates** come for free: `audit.record` also sends a Postgres NOTIFY, and the app turns
+  it into a server-sent event at `/api/events`. When a new entity appears, map its name to the
+  query keys to refetch in `frontend/src/features/live/live.ts`.
+- **Shopping list writes** are operations with client-made ids (`services.shopping.apply`); the
+  UI queues them in an outbox (`features/list/sync.ts`) and never calls the API for list
+  writes directly.
 - **Open Food Facts** is reached only through `off_client` behind `services.items` (rate limit,
   cache); tests use `tests/fakes.FakeOff`, end-to-end tests `scripts/offstub.py`.
 - **Definition of done** for a feature: UI path, registered tools (from M1), tests for both,

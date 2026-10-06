@@ -33,6 +33,14 @@ One line per decision the brief leaves open. Newest at the bottom of each sectio
 - 2026-10-06 · Week pattern: seven letters T/R starting Monday, default all rest days (`RRRRRRR`) until the person sets it; a single day can be overridden from the day view.
 - 2026-10-06 · Targets are versioned by `valid_from`; earlier days keep the targets they had. With no targets the day shows totals only.
 - 2026-10-06 · Extra tools beyond the brief's list, each a thin call to an existing service: `get_targets`, `set_targets`, `set_day_type`, `copy_meals`, `set_favourite`, `lookup_barcode`, `search_online`, `delete_recipe`.
+- 2026-10-06 · Shopping list items carry a client-made UUIDv7 id, a time per field and a tombstone: adds are idempotent by id, each field is last-write-wins by the time the change was made (a phone clock ahead of the server counts as now), and a removed item stays removed. No separate idempotency-key table is needed because every operation is idempotent by construction.
+- 2026-10-06 · Quantity on the list is free text ("2", "500 g", "1 Pck"); one-field adding splits a leading or trailing quantity off the text on the server. M4 turns quantities into amounts when 'Bought' is confirmed.
+- 2026-10-06 · Stores: eight built-in rows (ALDI, Lidl, EDEKA, REWE, Netto, Penny, dm, other) with stable ids and untranslated brand names, plus custom stores per household. An item's default store is the store the household last used for it (list memory), not a field on the item, because generic items are shared and read-only.
+- 2026-10-06 · ListTextMemory is the table `list_memory`: per household and per catalogue item or normalized text, the last aisle and store and a use count. It powers history suggestions and remembers the aisle a free-text item was moved to.
+- 2026-10-06 · Checked items stay on the list until 'Remove checked' (M2) or 'Bought' (M4); checked items sink to the bottom, newest first.
+- 2026-10-06 · Undo on the list covers the last check and the last removal (removal is undone by adding the items again under new ids, since removal is final).
+- 2026-10-06 · The 'open on Today or List' switch is in Settings; it applies to the first screen of each app launch.
+- 2026-10-06 · Extra list tool beyond the brief: `update_list_items` (text, quantity, store, aisle). Tools name stores by name or key instead of id.
 
 ## Stack and architecture
 
@@ -43,7 +51,7 @@ One line per decision the brief leaves open. Newest at the bottom of each sectio
 - 2026-10-06 · Frontend stays on TypeScript 5.9 because typescript-eslint and openapi-typescript do not support TypeScript 7 yet.
 - 2026-10-06 · Router: React Router 8 in data mode (`createBrowserRouter`); i18next with react-i18next.
 - 2026-10-06 · API client: `openapi-typescript` generates types from the FastAPI schema, `openapi-fetch` calls it; CI fails when the generated file is stale.
-- 2026-10-06 · Caddy serves the built frontend and proxies `/api`, `/mcp` and `/events` to the app; the frontend is baked into the Caddy image.
+- 2026-10-06 · Caddy serves the built frontend and proxies `/api` and `/mcp` to the app; the frontend is baked into the Caddy image. (M2: the event stream lives at `/api/events`, so no separate `/events` route.)
 - 2026-10-06 · Migrations run at app start under a Postgres advisory lock; the worker waits for the app to be healthy and proves its own health with a heartbeat file touched every loop (stale after 60 s).
 - 2026-10-06 · Job queue: one `job` table, workers claim with `FOR UPDATE SKIP LOCKED`; recurring jobs are declared in code and enqueued by the worker's scheduler loop.
 - 2026-10-06 · Files are stored on the `files` volume behind a `Storage` interface (local disk implementation only).
@@ -54,6 +62,11 @@ One line per decision the brief leaves open. Newest at the bottom of each sectio
 - 2026-10-06 · Barcode scanning uses the browser's BarcodeDetector where it exists (Chrome on Android) and otherwise the `barcode-detector` ponyfill with the ZXing wasm served from our own origin (CSP `'wasm-unsafe-eval'`); typing the number always works.
 - 2026-10-06 · MCP: the official Python SDK's low-level server, Streamable HTTP, stateless with JSON responses, mounted at `/mcp/<token>`; tools come straight from the registry.
 - 2026-10-06 · The end-to-end tests use a small Open Food Facts stub (`scripts/offstub.py`, compose profile `e2e`) so CI never depends on the live service.
+- 2026-10-06 · Live sync: every change record also sends a Postgres NOTIFY (delivered on commit, so rolled-back changes never reach a phone). Each app process holds one LISTEN connection and serves server-sent events at `/api/events`; events only name the kind of thing that changed and the app refetches through the normal API, so permissions stay in one place. No Redis.
+- 2026-10-06 · The event stream authenticates once with a function-scoped database session (no connection is held while streaming), sends a heartbeat every 15 s and re-checks the session every 60 s. While it is down the list polls every 15 s.
+- 2026-10-06 · Offline list: an outbox in localStorage holds changes in order and is sent in batches of at most 200 when the browser is online, on reconnect of the event stream, and every 10 s while changes wait. The list and history are cached in localStorage so a repeat visit shows them at once. A batch the server rejects as malformed (422) is dropped so it cannot block the queue.
+- 2026-10-06 · UUIDv7 ids from one process or device always increase (a 12-bit counter covers ids made in the same millisecond), so rows created together keep their order.
+- 2026-10-06 · Household, Settings and About load lazily so the first load stays small; Today and the List are in the main bundle for an instant start.
 
 ## Security
 
@@ -91,3 +104,4 @@ One line per decision the brief leaves open. Newest at the bottom of each sectio
 - 2026-10-06 · `scripts/restore-drill.sh` runs as a separate Compose project (`mahlzeit-drill`, port 8088) with its own volumes, backup directory and throwaway age key, so it can never touch real data. `BACKUP_DIR` is configurable for that reason.
 - 2026-10-06 · M1 'one day through Claude chat' is verified locally with an MCP client making the same calls Claude makes (end-to-end test); a real Claude chat needs the public HTTPS deployment and is checked after deploying.
 - 2026-10-06 · 'Scan to logged under 20 s' is measured in the end-to-end test from the scan tab to the entry on the day view (system time, typed code); with a phone camera the human part is three taps: scan, confirm label (new products only), log.
+- 2026-10-06 · M2 'within 3 seconds' and 'airplane mode syncs cleanly' are verified by `frontend/e2e/list.spec.ts` with two browser contexts against the Compose stack (measured about 0.2 s); the offline phone even reopens the app offline before shopping.
