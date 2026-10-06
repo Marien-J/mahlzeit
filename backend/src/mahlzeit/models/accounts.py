@@ -55,6 +55,9 @@ class Profile(Base):
     share_ai_usage: Mapped[bool] = mapped_column(Boolean, default=False)
     start_screen: Mapped[str] = mapped_column(String(10), default="today")
     push_offers: Mapped[bool] = mapped_column(Boolean, default=True)
+    week_pattern: Mapped[str] = mapped_column(
+        String(7), default="RRRRRRR", server_default="RRRRRRR"
+    )
     updated_at: Mapped[Timestamp]
 
     user: Mapped[User] = relationship(back_populates="profile")
