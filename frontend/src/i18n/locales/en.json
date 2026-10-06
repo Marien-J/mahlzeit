@@ -96,7 +96,7 @@
       "note": "For whom? (optional)",
       "revoke": "Withdraw",
       "full": "A household has room for {{max}} people.",
-      "shareText": "Join me on Mahlzeit: {{link}} (code {{code}})"
+      "shareText": "Join me on Mahlzeit: {{link}} (code {{barcode}})"
     }
   },
   "settings": {
@@ -183,6 +183,11 @@
     "barcode_invalid": "That is not a valid barcode.",
     "serving_invalid": "A serving needs a name and an amount between 1 and 5000.",
     "date_too_far_ahead": "You can plan up to {{max_days}} days ahead.",
-    "amount_invalid": "Enter an amount between 0 and {{max}}."
+    "amount_invalid": "Enter an amount between 0 and {{max}}.",
+    "item_not_found": "This item does not exist (any more).",
+    "item_read_only": "Generic foods cannot be changed. Create your own item instead.",
+    "barcode_taken": "Barcode {{barcode}} already belongs to another item.",
+    "off_unavailable": "Open Food Facts cannot be reached right now. Enter the label yourself.",
+    "external_rate_limited": "Too many online lookups. Try again in {{seconds}} seconds."
   }
 }

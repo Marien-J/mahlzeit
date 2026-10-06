@@ -72,3 +72,13 @@ def test_liquids_use_ml() -> None:
 
 def test_category_guess_from_tags() -> None:
     assert map_product(FIXTURE).category is Category.SPICES_CONDIMENTS  # type: ignore[union-attr]
+
+
+def test_search_hits_with_brand_lists() -> None:
+    hit = {
+        "code": "4337185761638",
+        "product_name": "Skyr natur",
+        "brands": ["K-Classic", "Kaufland"],
+    }
+    draft = map_product({"status": "success", "code": hit["code"], "product": hit})
+    assert draft is not None and draft.brand == "K-Classic"

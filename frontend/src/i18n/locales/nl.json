@@ -96,7 +96,7 @@
       "note": "Voor wie? (optioneel)",
       "revoke": "Intrekken",
       "full": "Een huishouden heeft plaats voor {{max}} personen.",
-      "shareText": "Doe mee met Mahlzeit: {{link}} (code {{code}})"
+      "shareText": "Doe mee met Mahlzeit: {{link}} (code {{barcode}})"
     }
   },
   "settings": {
@@ -183,6 +183,11 @@
     "barcode_invalid": "Dat is geen geldige barcode.",
     "serving_invalid": "Een portie heeft een naam en een hoeveelheid tussen 1 en 5000 nodig.",
     "date_too_far_ahead": "Je kunt tot {{max_days}} dagen vooruit plannen.",
-    "amount_invalid": "Vul een hoeveelheid tussen 0 en {{max}} in."
+    "amount_invalid": "Vul een hoeveelheid tussen 0 en {{max}} in.",
+    "item_not_found": "Dit product bestaat niet (meer).",
+    "item_read_only": "Algemene levensmiddelen kun je niet wijzigen. Maak een eigen product aan.",
+    "barcode_taken": "Barcode {{barcode}} hoort al bij een ander product.",
+    "off_unavailable": "Open Food Facts is nu niet bereikbaar. Vul het etiket zelf in.",
+    "external_rate_limited": "Te veel online zoekopdrachten. Probeer het over {{seconds}} seconden opnieuw."
   }
 }

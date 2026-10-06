@@ -96,7 +96,7 @@
       "note": "Für wen? (optional)",
       "revoke": "Zurückziehen",
       "full": "Ein Haushalt hat Platz für {{max}} Personen.",
-      "shareText": "Mach mit bei Mahlzeit: {{link}} (Code {{code}})"
+      "shareText": "Mach mit bei Mahlzeit: {{link}} (Code {{barcode}})"
     }
   },
   "settings": {
@@ -183,6 +183,11 @@
     "barcode_invalid": "Das ist kein gültiger Barcode.",
     "serving_invalid": "Eine Portion braucht einen Namen und eine Menge zwischen 1 und 5000.",
     "date_too_far_ahead": "Du kannst bis zu {{max_days}} Tage im Voraus planen.",
-    "amount_invalid": "Gib eine Menge zwischen 0 und {{max}} ein."
+    "amount_invalid": "Gib eine Menge zwischen 0 und {{max}} ein.",
+    "item_not_found": "Dieses Lebensmittel gibt es nicht (mehr).",
+    "item_read_only": "Allgemeine Lebensmittel können nicht geändert werden. Lege stattdessen ein eigenes an.",
+    "barcode_taken": "Der Barcode {{barcode}} gehört schon zu einem anderen Lebensmittel.",
+    "off_unavailable": "Open Food Facts ist gerade nicht erreichbar. Gib das Etikett selbst ein.",
+    "external_rate_limited": "Zu viele Online-Abfragen. Versuche es in {{seconds}} Sekunden erneut."
   }
 }

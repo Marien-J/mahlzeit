@@ -121,7 +121,10 @@ def map_product(raw: Mapping[str, Any]) -> ItemDraft | None:
     if serving and serving > 0:
         servings.append(("serving", serving))
 
-    brand = str(product.get("brands") or "").split(",")[0].strip() or None
+    brands = product.get("brands") or ""
+    if isinstance(brands, list):
+        brands = ",".join(str(b) for b in brands)
+    brand = str(brands).split(",")[0].strip() or None
     return ItemDraft(
         barcode=str(raw.get("code") or product.get("code") or ""),
         names=names,
