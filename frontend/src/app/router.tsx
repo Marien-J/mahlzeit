@@ -1,0 +1,69 @@
+import { useTranslation } from 'react-i18next'
+import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router'
+import { OfflineBanner } from '../components/OfflineBanner'
+import { AboutPage } from '../features/about/AboutPage'
+import { JoinPage } from '../features/auth/JoinPage'
+import { LoginPage } from '../features/auth/LoginPage'
+import { ForgotPage, ResetPage } from '../features/auth/PasswordPages'
+import { useMe } from '../features/auth/session'
+import { HouseholdPage } from '../features/household/HouseholdPage'
+import { SettingsPage } from '../features/settings/SettingsPage'
+import { TodayPage } from '../features/today/TodayPage'
+import { Shell } from './Shell'
+
+function Root() {
+  return (
+    <>
+      <OfflineBanner />
+      <Outlet />
+    </>
+  )
+}
+
+function RequireAuth() {
+  const { t } = useTranslation()
+  const me = useMe()
+  const location = useLocation()
+  if (me.isPending) return <p className="center muted">{t('app.loading')}</p>
+  if (me.isError)
+    return (
+      <div className="center stack">
+        <p>{t('app.loadFailed')}</p>
+        <button type="button" onClick={() => void me.refetch()}>
+          {t('app.retry')}
+        </button>
+      </div>
+    )
+  if (!me.data) {
+    const next = location.pathname === '/' ? '' : `?next=${encodeURIComponent(location.pathname)}`
+    return <Navigate to={`/login${next}`} replace />
+  }
+  return <Shell me={me.data} />
+}
+
+export const routes = [
+  {
+    element: <Root />,
+    children: [
+      { path: '/login', element: <LoginPage /> },
+      { path: '/join', element: <JoinPage /> },
+      { path: '/join/:token', element: <JoinPage /> },
+      { path: '/forgot', element: <ForgotPage /> },
+      { path: '/reset/:token', element: <ResetPage /> },
+      {
+        element: <RequireAuth />,
+        children: [
+          { path: '/', element: <TodayPage /> },
+          { path: '/household', element: <HouseholdPage /> },
+          { path: '/settings', element: <SettingsPage /> },
+          { path: '/about', element: <AboutPage /> },
+        ],
+      },
+      { path: '*', element: <Navigate to="/" replace /> },
+    ],
+  },
+]
+
+export function createRouter() {
+  return createBrowserRouter(routes)
+}
