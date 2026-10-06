@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import logging
+import os
 import signal
 import time
+from pathlib import Path
 from types import FrameType
 
 from sqlalchemy.orm import Session
@@ -16,6 +18,20 @@ from mahlzeit.jobs.registry import HANDLERS, RECURRING, Deps
 from mahlzeit.services import queue
 
 log = logging.getLogger("mahlzeit.worker")
+
+# Touched on every loop; the container healthcheck fails when it gets older than a minute.
+HEARTBEAT = Path(os.environ.get("WORKER_HEARTBEAT", "/tmp/mahlzeit-worker.heartbeat"))  # noqa: S108
+
+
+def beat(path: Path = HEARTBEAT) -> None:
+    path.touch()
+
+
+def healthy(path: Path = HEARTBEAT, max_age: float = 60.0) -> bool:
+    try:
+        return time.time() - path.stat().st_mtime < max_age
+    except FileNotFoundError:
+        return False
 
 
 def schedule_recurring(db: Session) -> None:
@@ -65,6 +81,7 @@ def main() -> None:
     log.info("worker started")
     last_schedule = 0.0
     while not stopping:
+        beat()
         with new_session() as db:
             if time.monotonic() - last_schedule > 30:
                 schedule_recurring(db)
@@ -76,4 +93,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    import sys
+
+    if sys.argv[1:] == ["--healthcheck"]:
+        sys.exit(0 if healthy() else 1)
     main()

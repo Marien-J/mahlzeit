@@ -100,3 +100,19 @@ class TestHandlers:
         assert counts["login_attempts"] == 1
         assert db.scalar(select(func.count()).select_from(AuthSession)) == 0
         assert db.scalar(select(func.count()).select_from(LoginAttempt)) == 0
+
+
+class TestHeartbeat:
+    def test_fresh_heartbeat_is_healthy(self, tmp_path) -> None:
+        path = tmp_path / "beat"
+        assert not worker.healthy(path)
+        worker.beat(path)
+        assert worker.healthy(path)
+
+    def test_stale_heartbeat_is_unhealthy(self, tmp_path) -> None:
+        import os
+
+        path = tmp_path / "beat"
+        worker.beat(path)
+        os.utime(path, (0, 0))
+        assert not worker.healthy(path)

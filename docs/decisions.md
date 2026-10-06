@@ -34,7 +34,7 @@ One line per decision the brief leaves open. Newest at the bottom of each sectio
 - 2026-10-06 · Router: React Router 8 in data mode (`createBrowserRouter`); i18next with react-i18next.
 - 2026-10-06 · API client: `openapi-typescript` generates types from the FastAPI schema, `openapi-fetch` calls it; CI fails when the generated file is stale.
 - 2026-10-06 · Caddy serves the built frontend and proxies `/api`, `/mcp` and `/events` to the app; the frontend is baked into the Caddy image.
-- 2026-10-06 · Migrations run at app start under a Postgres advisory lock; the worker waits for the app to be healthy.
+- 2026-10-06 · Migrations run at app start under a Postgres advisory lock; the worker waits for the app to be healthy and proves its own health with a heartbeat file touched every loop (stale after 60 s).
 - 2026-10-06 · Job queue: one `job` table, workers claim with `FOR UPDATE SKIP LOCKED`; recurring jobs are declared in code and enqueued by the worker's scheduler loop.
 - 2026-10-06 · Files are stored on the `files` volume behind a `Storage` interface (local disk implementation only).
 - 2026-10-06 · Dockerfiles accept an optional `build_ca` build secret for builds behind TLS-intercepting proxies; normal builds ignore it.

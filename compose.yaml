@@ -68,7 +68,11 @@ services:
     volumes:
       - files:/data/files
     healthcheck:
-      disable: true
+      test: ["CMD", "python", "-m", "mahlzeit.jobs.worker", "--healthcheck"]
+      interval: 15s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
     depends_on:
       app:
         condition: service_healthy
