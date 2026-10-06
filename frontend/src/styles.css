@@ -286,6 +286,11 @@ select {
 
 .tabbar a {
   min-height: 56px;
+  min-width: 0;
+  padding: 0 0.25rem;
+  font-size: clamp(0.75rem, 3.4vw, 1rem);
+  text-align: center;
+  overflow-wrap: anywhere;
   display: flex;
   align-items: center;
   justify-content: center;

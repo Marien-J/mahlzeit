@@ -80,7 +80,9 @@ export function arrange(
   }
   const done = visible
     .filter((i) => i.checked)
-    .sort((a, b) => (b.checked_at ?? '').localeCompare(a.checked_at ?? ''))
+    .sort(
+      (a, b) => (b.checked_at ?? '').localeCompare(a.checked_at ?? '') || b.id.localeCompare(a.id),
+    )
   return { aisles, done }
 }
 

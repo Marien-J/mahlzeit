@@ -262,7 +262,7 @@ def _add(db: Session, actor: Actor, op: Op, at: datetime, now: datetime, languag
         store_id=clean.get("store_id"),
         category=clean["category"],
         checked=checked,
-        checked_at=now if checked else None,
+        checked_at=at if checked else None,
         checked_by=actor.user_id if checked else None,
         origin="manual",
         field_times={name: at.isoformat() for name in rules.FIELDS},
@@ -296,7 +296,7 @@ def _update(
     for name in result.changed:
         setattr(row, name, result.state.values[name])
     if "checked" in result.changed:
-        row.checked_at = now if row.checked else None
+        row.checked_at = at if row.checked else None  # when it was ticked, also offline
         row.checked_by = actor.user_id if row.checked else None
     row.updated_at = now
     if result.changed & {"category", "store_id"}:

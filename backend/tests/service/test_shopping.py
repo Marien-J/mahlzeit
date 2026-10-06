@@ -103,6 +103,7 @@ class TestOfflineSync:
         assert result[0].status == "applied"
         row = shopping.get_row(db, jonas.actor, op.id)
         assert (row.quantity, row.checked, row.checked_by) == ("6", True, jonas.user.id)
+        assert row.checked_at == offline_at  # ticked in the shop, not when it synced
 
     def test_a_removed_item_stays_removed(self, db: Session) -> None:
         jonas, partner = factories.household(db)
