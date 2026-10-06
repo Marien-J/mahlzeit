@@ -97,7 +97,7 @@ services:
       BACKUP_KEEP: ${BACKUP_KEEP:-14}
     volumes:
       - files:/data/files
-      - ./backups:/backups
+      - ${BACKUP_DIR:-./backups}:/backups
     depends_on:
       db:
         condition: service_healthy

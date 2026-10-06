@@ -9,10 +9,11 @@ cd "$(dirname "$0")/.."
 file="${1:?usage: scripts/restore.sh <backup file> [age identity file]}"
 identity="${2:-}"
 [ -f "$file" ] || { echo "no such file: $file" >&2; exit 1; }
-case "$(cd "$(dirname "$file")" && pwd)" in
-  "$(pwd)/backups") ;;
-  *) echo "put the backup into ./backups first" >&2; exit 1 ;;
-esac
+backup_dir="$(mkdir -p "${BACKUP_DIR:-./backups}" && cd "${BACKUP_DIR:-./backups}" && pwd)"
+[ "$(cd "$(dirname "$file")" && pwd)" = "$backup_dir" ] || {
+  echo "put the backup into $backup_dir first" >&2
+  exit 1
+}
 
 args=(--profile ops run --rm)
 inner=(restore.sh "/backups/$(basename "$file")")
