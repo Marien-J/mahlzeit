@@ -31,6 +31,7 @@ from mahlzeit.models.day import (
 from mahlzeit.models.jobs import Job
 from mahlzeit.models.push import PushSubscription
 from mahlzeit.models.shopping import ListMemory, ShoppingListItem, Store
+from mahlzeit.models.stock import PantryCheck, Purchase, PurchaseLine, StockMovement, StockStatus
 
 __all__ = [
     "AuthSession",
@@ -51,14 +52,19 @@ __all__ = [
     "MealParticipant",
     "OffCache",
     "Offer",
+    "PantryCheck",
     "PasswordReset",
     "Profile",
+    "Purchase",
+    "PurchaseLine",
     "PushSubscription",
     "RateWindow",
     "Recipe",
     "RecipeIngredient",
     "ServingSize",
     "ShoppingListItem",
+    "StockMovement",
+    "StockStatus",
     "Store",
     "TargetSet",
     "User",

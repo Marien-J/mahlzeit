@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 
-from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Index, String, Text
+from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from mahlzeit.db import Base
@@ -58,6 +58,8 @@ class Profile(Base):
     week_pattern: Mapped[str] = mapped_column(
         String(7), default="RRRRRRR", server_default="RRRRRRR"
     )
+    # How many days ahead the list's suggestions look at planned meals.
+    list_plan_days: Mapped[int] = mapped_column(Integer, default=3, server_default="3")
     updated_at: Mapped[Timestamp]
 
     user: Mapped[User] = relationship(back_populates="profile")
