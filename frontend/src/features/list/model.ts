@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next'
 import type { Schemas } from '../../api/client'
 import { normalize } from '../../lib/text'
 import { CATEGORIES } from '../catalogue/LabelForm'
@@ -151,4 +152,10 @@ export const STORE_BRANDS: Record<string, string> = {
   netto: 'Netto',
   penny: 'Penny',
   dm: 'dm',
+}
+
+export function storeName(t: TFunction, store: Store | undefined): string {
+  if (!store) return ''
+  if (store.key) return STORE_BRANDS[store.key] ?? t('store.other')
+  return store.name ?? ''
 }

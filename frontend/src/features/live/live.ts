@@ -12,7 +12,10 @@ const ME: QueryKey = ['me']
 const KEYS: Record<string, QueryKey[]> = {
   list_item: [['list']],
   store: [['list']],
-  meal_entry: [['day'], ['plan'], ['offers']],
+  // A meal changes stock (once eaten) and what the list suggests (while planned).
+  meal_entry: [['day'], ['plan'], ['offers'], ['stock'], ['list', 'suggestions']],
+  purchase: [['list'], ['stock'], ['purchases']],
+  stock: [['stock'], ['list', 'suggestions']],
   day_type: [['day']],
   targets: [['day'], ['targets']],
   item: [['items'], ['day']],
@@ -22,7 +25,7 @@ const KEYS: Record<string, QueryKey[]> = {
   household: [ME, ['household']],
   invite: [['household']],
   user: [ME, ['household'], ['day']],
-  profile: [ME],
+  profile: [ME, ['list', 'suggestions']],
 }
 
 let connected = false
@@ -63,7 +66,7 @@ export function useLiveEvents(enabled: boolean, onReady?: () => void): void {
     source.addEventListener('ready', () => {
       setConnected(true)
       // Whatever changed while the stream was down: fetch it now.
-      refetch([['list'], ['day'], ['plan'], ['offers'], ['recipes']])
+      refetch([['list'], ['day'], ['plan'], ['offers'], ['recipes'], ['stock']])
       onReady?.()
     })
     source.addEventListener('change', (event) => {

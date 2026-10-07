@@ -55,6 +55,7 @@ export const ME = {
     share_ai_usage: false,
     start_screen: 'today',
     push_offers: true,
+    list_plan_days: 3,
   },
   household: { id: '0192f1c4-0000-7000-8000-0000000000aa', name: 'Zuhause' },
   csrf_token: 'csrf-123',

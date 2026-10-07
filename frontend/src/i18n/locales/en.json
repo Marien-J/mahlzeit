@@ -143,7 +143,8 @@
     "startScreen": "Open the app on",
     "startToday": "Today",
     "startList": "Shopping list",
-    "recipes": "Recipes"
+    "recipes": "Recipes",
+    "listPlanDays": "Suggest for meals planned in the next"
   },
   "about": {
     "title": "About",
@@ -543,7 +544,8 @@
     "toList": "Go to the list",
     "delete": "Delete recipe",
     "confirmDelete": "Really delete",
-    "cookedWeight": "Or: weight on the plate (g)"
+    "cookedWeight": "Or: weight on the plate (g)",
+    "inStock": "In stock: {{names}}."
   },
   "plan": {
     "addTitle": "Plan a meal",
@@ -580,5 +582,89 @@
     "suggest": "Suggest it",
     "offer": "Offer it",
     "yourShareUnknown": "Your share: {{percent}} %. The nutrition is not known yet."
+  },
+  "stock": {
+    "title": "Stock",
+    "empty": "Nothing in stock yet. Tick off what you bought on the list and tap 'Bought'.",
+    "checkedOn": "Checked {{date}}",
+    "check": "Check",
+    "checkAisle": "Check {{aisle}}",
+    "statusOf": "{{name}}: {{status}}",
+    "status": {
+      "ok": "ok",
+      "low": "low",
+      "out": "out"
+    },
+    "less": "Less {{name}}",
+    "more": "More {{name}}",
+    "amountOf": "{{name}} in {{unit}}",
+    "markChecked": "Mark {{aisle}} as checked",
+    "checked": "Checked",
+    "levelNow": "Stock says: {{amount}}",
+    "statusNow": "Now: {{status}}",
+    "countNow": "There now ({{unit}})",
+    "thrownAway": "Thrown away ({{unit}})",
+    "writeOff": "Write off",
+    "statusOnly": "Only track ok / low / out",
+    "history": "History",
+    "movement": {
+      "purchase": "Bought",
+      "consumption": "Eaten",
+      "correction": "Corrected",
+      "waste": "Thrown away",
+      "shortfall": "Filled in (ate more than stock knew of)"
+    }
+  },
+  "purchase": {
+    "add": "Add a purchase",
+    "title": "Add a purchase",
+    "textOf": "What",
+    "removeLine": "Remove {{text}}",
+    "intro": "Search or scan what you bought.",
+    "search": "Search foods",
+    "scan": "Scan",
+    "asText": "'{{text}}' as text",
+    "save": "Save"
+  },
+  "bought": {
+    "open": "Bought",
+    "title": "Bought",
+    "intro": "The ticked items become one purchase. Food goes into stock and the items leave the list.",
+    "day": "Date",
+    "intoStock": "into stock",
+    "quantityOf": "Quantity of {{text}}",
+    "priceOf": "Price of {{text}}",
+    "price": "Price (€)",
+    "total": "Total {{total}}",
+    "confirm_one": "Confirm {{count}} item",
+    "confirm_other": "Confirm {{count}} items",
+    "done_one": "{{count}} item bought",
+    "done_other": "{{count}} items bought"
+  },
+  "suggested": {
+    "title": "Suggested",
+    "reason": {
+      "planned_one": "for meals planned today",
+      "planned_other": "for meals planned in the next {{count}} days",
+      "low": "running low",
+      "out": "used up",
+      "usual": "you usually buy this"
+    },
+    "add": "Put {{name}} on the list"
+  },
+  "report": {
+    "title": "Bought and eaten",
+    "period": "Period",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "spend": "Spent: {{total}}",
+    "empty": "No purchases and nothing from stock in this period.",
+    "purchased": "Bought",
+    "logged": "Eaten",
+    "wasted": "Thrown away",
+    "corrected": "Corrected",
+    "shortfall": "Filled in",
+    "left": "Left",
+    "note": "Eaten counts what was logged at home, as whole dishes. Filled in means more was eaten than stock knew of."
   }
 }

@@ -143,7 +143,8 @@
     "startScreen": "App openen op",
     "startToday": "Vandaag",
     "startList": "Boodschappenlijst",
-    "recipes": "Recepten"
+    "recipes": "Recepten",
+    "listPlanDays": "Voorstellen voor maaltijden gepland in de komende"
   },
   "about": {
     "title": "Over",
@@ -543,7 +544,8 @@
     "toList": "Naar de lijst",
     "delete": "Recept verwijderen",
     "confirmDelete": "Echt verwijderen",
-    "cookedWeight": "Of: gewicht op het bord (g)"
+    "cookedWeight": "Of: gewicht op het bord (g)",
+    "inStock": "In voorraad: {{names}}."
   },
   "plan": {
     "addTitle": "Maaltijd plannen",
@@ -580,5 +582,89 @@
     "suggest": "Voorstellen",
     "offer": "Voorstellen",
     "yourShareUnknown": "Jouw aandeel: {{percent}} %. De voedingswaarden zijn nog niet bekend."
+  },
+  "stock": {
+    "title": "Voorraad",
+    "empty": "Nog niets in voorraad. Vink op de lijst af wat je gekocht hebt en tik op 'Gekocht'.",
+    "checkedOn": "Gecontroleerd op {{date}}",
+    "check": "Controleren",
+    "checkAisle": "{{aisle}} controleren",
+    "statusOf": "{{name}}: {{status}}",
+    "status": {
+      "ok": "genoeg",
+      "low": "bijna op",
+      "out": "op"
+    },
+    "less": "{{name}} minder",
+    "more": "{{name}} meer",
+    "amountOf": "{{name}} in {{unit}}",
+    "markChecked": "{{aisle}} als gecontroleerd markeren",
+    "checked": "Gecontroleerd",
+    "levelNow": "Volgens de voorraad: {{amount}}",
+    "statusNow": "Nu: {{status}}",
+    "countNow": "Nu aanwezig ({{unit}})",
+    "thrownAway": "Weggegooid ({{unit}})",
+    "writeOff": "Afboeken",
+    "statusOnly": "Alleen genoeg / bijna op / op bijhouden",
+    "history": "Geschiedenis",
+    "movement": {
+      "purchase": "Gekocht",
+      "consumption": "Gegeten",
+      "correction": "Gecorrigeerd",
+      "waste": "Weggegooid",
+      "shortfall": "Aangevuld (meer gegeten dan de voorraad wist)"
+    }
+  },
+  "purchase": {
+    "add": "Aankoop invoeren",
+    "title": "Aankoop invoeren",
+    "textOf": "Wat",
+    "removeLine": "{{text}} verwijderen",
+    "intro": "Zoek of scan wat je gekocht hebt.",
+    "search": "Levensmiddel zoeken",
+    "scan": "Scannen",
+    "asText": "'{{text}}' als tekst",
+    "save": "Opslaan"
+  },
+  "bought": {
+    "open": "Gekocht",
+    "title": "Gekocht",
+    "intro": "De afgevinkte items worden één aankoop. Levensmiddelen gaan in de voorraad en de items gaan van de lijst.",
+    "day": "Datum",
+    "intoStock": "naar voorraad",
+    "quantityOf": "Hoeveelheid van {{text}}",
+    "priceOf": "Prijs van {{text}}",
+    "price": "Prijs (€)",
+    "total": "Samen {{total}}",
+    "confirm_one": "{{count}} item bevestigen",
+    "confirm_other": "{{count}} items bevestigen",
+    "done_one": "{{count}} item gekocht",
+    "done_other": "{{count}} items gekocht"
+  },
+  "suggested": {
+    "title": "Voorgesteld",
+    "reason": {
+      "planned_one": "voor maaltijden die vandaag gepland zijn",
+      "planned_other": "voor maaltijden gepland in de komende {{count}} dagen",
+      "low": "bijna op",
+      "out": "op",
+      "usual": "koop je meestal"
+    },
+    "add": "{{name}} op de lijst zetten"
+  },
+  "report": {
+    "title": "Gekocht en gegeten",
+    "period": "Periode",
+    "days_one": "{{count}} dag",
+    "days_other": "{{count}} dagen",
+    "spend": "Uitgegeven: {{total}}",
+    "empty": "Geen aankopen en niets uit de voorraad in deze periode.",
+    "purchased": "Gekocht",
+    "logged": "Gegeten",
+    "wasted": "Weggegooid",
+    "corrected": "Gecorrigeerd",
+    "shortfall": "Aangevuld",
+    "left": "Nog over",
+    "note": "Gegeten telt wat thuis is ingevoerd, als heel gerecht. Aangevuld betekent: meer gegeten dan de voorraad wist."
   }
 }

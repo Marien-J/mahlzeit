@@ -54,6 +54,7 @@ describe('recipes', () => {
         [`POST /api/recipes/${chili.id}/add-to-list`]: () => ({
           added: [{ id: 'x' }],
           already_listed: ['Skyr Natur'],
+          in_stock: ['Reis'],
         }),
       }),
     )
@@ -65,7 +66,7 @@ describe('recipes', () => {
     await user.type(portions, '2')
     await user.click(screen.getByRole('button', { name: 'Zutaten auf die Liste' }))
     expect(await screen.findByTestId('added')).toHaveTextContent(
-      '1 Zutat auf die Liste gesetzt. Schon auf der Liste: Skyr Natur.',
+      '1 Zutat auf die Liste gesetzt. Schon auf der Liste: Skyr Natur. Im Vorrat: Reis.',
     )
     const call = server.calls.find((c) => c.path.endsWith('/add-to-list'))
     expect(call?.body).toEqual({ portions: 2 })

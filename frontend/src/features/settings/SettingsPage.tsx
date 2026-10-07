@@ -26,6 +26,7 @@ export function SettingsPage() {
       </nav>
       <AccountSettings me={me} />
       <StartScreenSetting me={me} />
+      <PlanDaysSetting me={me} />
       <SharingSettings me={me} />
       <h2>{t('settings.notifications')}</h2>
       <PushSettings me={me} />
@@ -137,6 +138,23 @@ function StartScreenSetting({ me }: { me: Me }) {
       ]}
       disabled={patchProfile.isPending}
       onChange={(v) => patchProfile.mutate({ start_screen: v as 'today' | 'list' })}
+    />
+  )
+}
+
+const PLAN_DAYS = [1, 2, 3, 4, 5, 6, 7, 10, 14]
+
+/** How far ahead the list suggests what planned meals need. */
+function PlanDaysSetting({ me }: { me: Me }) {
+  const { t } = useTranslation()
+  const { patchProfile } = useUpdateMe()
+  return (
+    <SelectField
+      label={t('settings.listPlanDays')}
+      value={String(me.profile.list_plan_days)}
+      options={PLAN_DAYS.map((n) => ({ value: String(n), label: t('report.days', { count: n }) }))}
+      disabled={patchProfile.isPending}
+      onChange={(v) => patchProfile.mutate({ list_plan_days: Number(v) })}
     />
   )
 }

@@ -143,7 +143,8 @@
     "startScreen": "App öffnen mit",
     "startToday": "Heute",
     "startList": "Einkaufsliste",
-    "recipes": "Rezepte"
+    "recipes": "Rezepte",
+    "listPlanDays": "Vorschläge für Pläne der nächsten"
   },
   "about": {
     "title": "Über",
@@ -543,7 +544,8 @@
     "toList": "Zur Liste",
     "delete": "Rezept löschen",
     "confirmDelete": "Wirklich löschen",
-    "cookedWeight": "Oder: Gewicht auf dem Teller (g)"
+    "cookedWeight": "Oder: Gewicht auf dem Teller (g)",
+    "inStock": "Im Vorrat: {{names}}."
   },
   "plan": {
     "addTitle": "Mahlzeit planen",
@@ -580,5 +582,89 @@
     "suggest": "Vorschlagen",
     "offer": "Anbieten",
     "yourShareUnknown": "Dein Anteil: {{percent}} %. Die Nährwerte sind noch nicht bekannt."
+  },
+  "stock": {
+    "title": "Vorrat",
+    "empty": "Noch nichts im Vorrat. Hake auf der Liste ab, was ihr gekauft habt, und tippe auf „Gekauft“.",
+    "checkedOn": "Geprüft am {{date}}",
+    "check": "Prüfen",
+    "checkAisle": "{{aisle}} prüfen",
+    "statusOf": "{{name}}: {{status}}",
+    "status": {
+      "ok": "genug",
+      "low": "wenig",
+      "out": "leer"
+    },
+    "less": "{{name}} weniger",
+    "more": "{{name}} mehr",
+    "amountOf": "{{name}} in {{unit}}",
+    "markChecked": "{{aisle}} als geprüft markieren",
+    "checked": "Geprüft",
+    "levelNow": "Laut Vorrat da: {{amount}}",
+    "statusNow": "Stand: {{status}}",
+    "countNow": "Jetzt da ({{unit}})",
+    "thrownAway": "Weggeworfen ({{unit}})",
+    "writeOff": "Abbuchen",
+    "statusOnly": "Nur genug / wenig / leer verfolgen",
+    "history": "Verlauf",
+    "movement": {
+      "purchase": "Gekauft",
+      "consumption": "Gegessen",
+      "correction": "Korrigiert",
+      "waste": "Weggeworfen",
+      "shortfall": "Ergänzt (mehr gegessen als im Vorrat)"
+    }
+  },
+  "purchase": {
+    "add": "Einkauf erfassen",
+    "title": "Einkauf erfassen",
+    "textOf": "Was",
+    "removeLine": "{{text}} entfernen",
+    "intro": "Suche oder scanne, was ihr gekauft habt.",
+    "search": "Lebensmittel suchen",
+    "scan": "Scannen",
+    "asText": "„{{text}}“ als Text",
+    "save": "Speichern"
+  },
+  "bought": {
+    "open": "Gekauft",
+    "title": "Gekauft",
+    "intro": "Die abgehakten Einträge werden ein Einkauf. Lebensmittel kommen in den Vorrat, die Einträge verlassen die Liste.",
+    "day": "Datum",
+    "intoStock": "in den Vorrat",
+    "quantityOf": "Menge von {{text}}",
+    "priceOf": "Preis von {{text}}",
+    "price": "Preis (€)",
+    "total": "Zusammen {{total}}",
+    "confirm_one": "{{count}} Eintrag bestätigen",
+    "confirm_other": "{{count}} Einträge bestätigen",
+    "done_one": "{{count}} Eintrag gekauft",
+    "done_other": "{{count}} Einträge gekauft"
+  },
+  "suggested": {
+    "title": "Vorgeschlagen",
+    "reason": {
+      "planned_one": "für heute geplante Mahlzeiten",
+      "planned_other": "für geplante Mahlzeiten der nächsten {{count}} Tage",
+      "low": "wird knapp",
+      "out": "ist leer",
+      "usual": "kauft ihr sonst"
+    },
+    "add": "{{name}} auf die Liste"
+  },
+  "report": {
+    "title": "Gekauft und gegessen",
+    "period": "Zeitraum",
+    "days_one": "{{count}} Tag",
+    "days_other": "{{count}} Tage",
+    "spend": "Ausgegeben: {{total}}",
+    "empty": "In diesem Zeitraum gab es keine Einkäufe und nichts aus dem Vorrat.",
+    "purchased": "Gekauft",
+    "logged": "Gegessen",
+    "wasted": "Weggeworfen",
+    "corrected": "Korrigiert",
+    "shortfall": "Ergänzt",
+    "left": "Noch da",
+    "note": "Gegessen zählt, was zu Hause eingetragen wurde, als ganzes Gericht. Ergänzt heißt: mehr gegessen, als der Vorrat kannte."
   }
 }

@@ -88,6 +88,12 @@ export function enqueue(household: string, op: Omit<Op, 'at'> & { at?: string })
   save()
 }
 
+/** Changes still waiting to be sent. */
+export function pendingCount(household: string): number {
+  load(household)
+  return outbox.ops.length
+}
+
 let inflight: Promise<void> | null = null
 let again = false
 

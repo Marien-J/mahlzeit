@@ -156,6 +156,9 @@ function RecipeSheet({
             {t('recipes.addedToList', { count: toList.data.added.length })}
             {toList.data.already_listed.length
               ? ` ${t('recipes.alreadyListed', { names: toList.data.already_listed.join(', ') })}`
+              : ''}
+            {toList.data.in_stock.length
+              ? ` ${t('recipes.inStock', { names: toList.data.in_stock.join(', ') })}`
               : ''}{' '}
             <Link to="/list">{t('recipes.toList')}</Link>
           </p>

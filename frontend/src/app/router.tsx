@@ -84,6 +84,16 @@ export const routes = [
           { path: '/plan', element: <PlanPage /> },
           { path: '/list', element: <ListPage /> },
           {
+            path: '/stock',
+            lazy: () =>
+              import('../features/stock/StockPage').then((m) => ({ Component: m.StockPage })),
+          },
+          {
+            path: '/stock/report',
+            lazy: () =>
+              import('../features/stock/ReportPage').then((m) => ({ Component: m.ReportPage })),
+          },
+          {
             path: '/add',
             lazy: () => import('../features/log/AddPage').then((m) => ({ Component: m.AddPage })),
           },

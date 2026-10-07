@@ -1,37 +1,34 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { TFunction } from 'i18next'
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 import { api, call, type Me } from '../../api/client'
 import { ErrorMessage } from '../../components/ErrorMessage'
 import { Field, SelectField } from '../../components/Field'
 import { Sheet } from '../../components/Sheet'
+import { todayIn } from '../../lib/dates'
 import { uuid7 } from '../../lib/ids'
 import { useMe } from '../auth/session'
 import { CATEGORIES } from '../catalogue/LabelForm'
+import { BoughtSheet } from './BoughtSheet'
 import {
-  STORE_BRANDS,
   applyOps,
   arrange,
+  storeName,
   suggest,
   type ListFields,
   type ListItem,
   type Store,
   type Suggestion,
 } from './model'
+import { Suggested } from './Suggested'
 import { enqueue, listKey, useHistory, useListQuery, useOutbox, useOutboxSender } from './sync'
 import { useWakeLock } from './wakeLock'
 
 const FILTER_KEY = 'mahlzeit.list.store'
 const UNDO_MS = 6000
 
-export function storeName(t: TFunction, store: Store | undefined): string {
-  if (!store) return ''
-  if (store.key) return STORE_BRANDS[store.key] ?? t('store.other')
-  return store.name ?? ''
-}
-
-type Undo = { message: string; revert: () => void }
+type Undo = { message: string; revert?: () => void }
 
 export function ListPage() {
   const me = useMe().data
@@ -55,6 +52,7 @@ function ListScreen({ me }: { me: Me }) {
   })
   const [shopping, setShopping] = useState(false)
   const [editing, setEditing] = useState<ListItem | null>(null)
+  const [buying, setBuying] = useState(false)
   const [undo, setUndo] = useState<Undo | null>(null)
   useWakeLock(shopping)
 
@@ -114,14 +112,17 @@ function ListScreen({ me }: { me: Me }) {
     <section className={shopping ? 'list-page shopping' : 'list-page'}>
       <header className="row spread">
         <h1>{t('list.title')}</h1>
-        <button
-          type="button"
-          className={shopping ? 'primary' : undefined}
-          aria-pressed={shopping}
-          onClick={() => setShopping((s) => !s)}
-        >
-          {shopping ? t('list.doneShopping') : t('list.shop')}
-        </button>
+        <div className="row">
+          {!shopping ? <Link to="/stock">{t('stock.title')}</Link> : null}
+          <button
+            type="button"
+            className={shopping ? 'primary' : undefined}
+            aria-pressed={shopping}
+            onClick={() => setShopping((s) => !s)}
+          >
+            {shopping ? t('list.doneShopping') : t('list.shop')}
+          </button>
+        </div>
       </header>
 
       {!shopping ? <AddField household={household} me={me} onAdd={send} /> : null}
@@ -183,11 +184,16 @@ function ListScreen({ me }: { me: Me }) {
 
       {done.length ? (
         <section className="aisle done" aria-label={t('list.done')}>
-          <div className="row spread">
+          <div className="row spread wrap">
             <h2>{t('list.doneCount', { count: done.length })}</h2>
-            <button type="button" onClick={() => remove(done)}>
-              {t('list.clearChecked')}
-            </button>
+            <div className="row">
+              <button type="button" onClick={() => remove(done)}>
+                {t('list.clearChecked')}
+              </button>
+              <button type="button" className="primary" onClick={() => setBuying(true)}>
+                {t('bought.open')}
+              </button>
+            </div>
           </div>
           <ul className="list-rows">
             {done.map((item) => (
@@ -203,19 +209,40 @@ function ListScreen({ me }: { me: Me }) {
         </section>
       ) : null}
 
+      {!shopping && query.data ? (
+        <Suggested items={items} onAdd={(fields) => send('add', uuid7(), fields)} />
+      ) : null}
+
       {undo ? (
         <div className="snackbar" role="status">
           <span>{undo.message}</span>
-          <button
-            type="button"
-            onClick={() => {
-              undo.revert()
-              setUndo(null)
-            }}
-          >
-            {t('list.undo')}
-          </button>
+          {undo.revert ? (
+            <button
+              type="button"
+              onClick={() => {
+                undo.revert?.()
+                setUndo(null)
+              }}
+            >
+              {t('list.undo')}
+            </button>
+          ) : null}
         </div>
+      ) : null}
+
+      {buying ? (
+        <BoughtSheet
+          household={household}
+          items={done}
+          stores={stores}
+          store={storeId}
+          today={todayIn(me.user.time_zone)}
+          onClose={() => setBuying(false)}
+          onDone={(count) => {
+            setBuying(false)
+            setUndo({ message: t('bought.done', { count }) })
+          }}
+        />
       ) : null}
 
       {editing ? (
