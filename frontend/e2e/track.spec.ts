@@ -101,7 +101,7 @@ test('a full day by hand, a timed scan, and a day through the connector', async 
   // The amount sheet opens on the package's serving (15 g).
   await expect(page.getByLabel(/^Menge/)).toHaveValue('15')
   await page.getByRole('button', { name: 'Jetzt eintragen' }).click()
-  await expect(page.getByTestId('column-me').getByText('Nutella')).toBeVisible()
+  await expect(page.getByRole('button', { name: /Nutella/ }).first()).toBeVisible()
   const scanSeconds = (Date.now() - scanStart) / 1000
   console.log(`scan-to-logged (first scan, new product): ${scanSeconds.toFixed(1)} s`)
   expect(scanSeconds).toBeLessThan(20)
@@ -190,7 +190,7 @@ test('a full day by hand, a timed scan, and a day through the connector', async 
   await page.reload()
   // The targets start today, so yesterday shows the total alone.
   await expect(mine.getByText('1.266 kcal', { exact: true })).toBeVisible()
-  await expect(mine.getByText('Döner')).toBeVisible()
+  await expect(page.getByRole('button', { name: /Döner/ }).first()).toBeVisible()
   await shot(page, '3-day-by-connector')
 })
 

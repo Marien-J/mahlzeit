@@ -27,6 +27,13 @@ export function PlanPage() {
   if (!me) return null
 
   const offered = new Set(plan.data?.offers.map((o) => o.meal?.id).filter(Boolean))
+  // Me first, then the others, the same on every row.
+  const rank = new Map(plan.data?.members.map((m, i) => [m.user_id, i]))
+  const names = (e: PlanEntry) =>
+    [...e.participants]
+      .sort((a, b) => (rank.get(a.user_id) ?? 0) - (rank.get(b.user_id) ?? 0))
+      .map((p) => p.display_name)
+      .join(' & ')
   const label = (day: string) =>
     day === today
       ? t('day.today')
@@ -73,8 +80,7 @@ export function PlanPage() {
                         <span className="time">{hhmm(e.at)}</span>
                         <span className="what">
                           <small className="muted">
-                            {t(`slot.${e.slot}`)} ·{' '}
-                            {e.participants.map((p) => p.display_name).join(' & ')}
+                            {t(`slot.${e.slot}`)} · {names(e)}
                           </small>
                           <span>{title(e)}</span>
                         </span>

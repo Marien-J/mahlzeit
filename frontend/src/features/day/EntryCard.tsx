@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query'
 import { type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { hhmm } from '../../lib/dates'
-import { kcal } from '../../lib/nutrition'
+import { kcalOf } from '../../lib/nutrition'
 import { setEntryState, useRefreshDays, type Entry } from './api'
 
 export function entryTitle(entry: Entry): string {
@@ -43,13 +43,14 @@ export function EntryCard({
           <span>{entryTitle(entry)}</span>
           {entry.joint ? (
             <small className="muted shares">
-              {entry.participants
+              {[...entry.participants]
+                .sort((x, y) => Number(y.user_id === me) - Number(x.user_id === me))
                 .map((p) => `${p.display_name} ${Math.round(p.share * 100)} %`)
                 .join(' · ')}
             </small>
           ) : null}
         </span>
-        <span className="kcal">{kcal(entry.intake?.values.kcal)}</span>
+        <span className="kcal">{kcalOf(entry.intake)}</span>
       </button>
       {own && entry.state === 'planned' ? (
         <button

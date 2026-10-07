@@ -53,7 +53,7 @@ class MealEntry(Base):
         back_populates="entry", cascade="all, delete-orphan", order_by="MealComponent.position"
     )
     participants: Mapped[list[MealParticipant]] = relationship(
-        back_populates="entry", cascade="all, delete-orphan"
+        back_populates="entry", cascade="all, delete-orphan", order_by="MealParticipant.id"
     )
     recipe: Mapped[Recipe | None] = relationship()
 

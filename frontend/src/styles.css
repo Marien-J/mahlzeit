@@ -490,7 +490,8 @@ dialog.sheet::backdrop {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .entry .time {
@@ -1049,4 +1050,58 @@ button.link {
 .drop-end.over {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+/* In the two-column day grid a card is narrow: time and energy on one line, the title below.
+   A shared meal spans both columns and keeps the one-line layout. */
+.day-grid .cell:not(.joint-cell) .entry:not(.empty) {
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'time kcal'
+    'what what';
+  gap: 0.1rem 0.5rem;
+}
+
+.day-grid .cell:not(.joint-cell) .entry:not(.empty) .time {
+  grid-area: time;
+}
+
+.day-grid .cell:not(.joint-cell) .entry:not(.empty) .what {
+  grid-area: what;
+}
+
+.day-grid .cell:not(.joint-cell) .entry:not(.empty) .kcal {
+  grid-area: kcal;
+}
+
+/* An empty anchor meal: time and name stacked, the add link beside them. */
+.day-grid .entry.empty {
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'time add'
+    'what add';
+  gap: 0.1rem 0.25rem;
+  padding: 0.5rem;
+}
+
+.day-grid .entry.empty .time {
+  grid-area: time;
+}
+
+.day-grid .entry.empty .what {
+  grid-area: what;
+}
+
+.day-grid .entry.empty .add-here {
+  grid-area: add;
+}
+
+.grip {
+  min-width: 1.25rem;
+}
+
+.tabbar a {
+  hyphens: auto;
+  overflow-wrap: normal;
+  font-size: clamp(0.7rem, 3vw, 0.95rem);
 }

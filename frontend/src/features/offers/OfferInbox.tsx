@@ -73,12 +73,16 @@ function IncomingOffer({ offer }: { offer: Offer }) {
       <p>{mealTitle(offer)}</p>
       {effect ? (
         <p className="muted" data-testid="effect">
-          {t('offers.yourShare', {
-            percent: Math.round(offer.share * 100),
-            kcal: kcal(effect.incoming.values.kcal),
-            protein: grams(effect.incoming.values.protein),
-          })}
-          {before?.kcal != null && after?.kcal != null
+          {effect.incoming.incomplete.includes('kcal')
+            ? t('offers.yourShareUnknown', { percent: Math.round(offer.share * 100) })
+            : t('offers.yourShare', {
+                percent: Math.round(offer.share * 100),
+                kcal: kcal(effect.incoming.values.kcal),
+                protein: grams(effect.incoming.values.protein),
+              })}
+          {!effect.incoming.incomplete.includes('kcal') &&
+          before?.kcal != null &&
+          after?.kcal != null
             ? ` ${t('offers.effect', { before: kcal(before.kcal), after: kcal(after.kcal) })}`
             : ''}
         </p>

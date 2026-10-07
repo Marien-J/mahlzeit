@@ -566,6 +566,7 @@
     "recipe": "Recipe",
     "orName": "Or just a name",
     "suggest": "Suggest it",
-    "offer": "Offer it"
+    "offer": "Offer it",
+    "yourShareUnknown": "Your share: {{percent}} %. The nutrition is not known yet."
   }
 }

@@ -566,6 +566,7 @@
     "recipe": "Rezept",
     "orName": "Oder nur ein Name",
     "suggest": "Vorschlagen",
-    "offer": "Anbieten"
+    "offer": "Anbieten",
+    "yourShareUnknown": "Dein Anteil: {{percent}} %. Die Nährwerte sind noch nicht bekannt."
   }
 }

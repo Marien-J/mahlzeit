@@ -566,6 +566,7 @@
     "recipe": "Recept",
     "orName": "Of alleen een naam",
     "suggest": "Voorstellen",
-    "offer": "Voorstellen"
+    "offer": "Voorstellen",
+    "yourShareUnknown": "Jouw aandeel: {{percent}} %. De voedingswaarden zijn nog niet bekend."
   }
 }
