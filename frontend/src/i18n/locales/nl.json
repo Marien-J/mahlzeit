@@ -17,7 +17,9 @@
     "settings": "Instellingen",
     "main": "Hoofdmenu",
     "list": "Lijst",
-    "plan": "Plan"
+    "plan": "Plan",
+    "offersWaiting_one": "{{count}} voorstel wacht",
+    "offersWaiting_other": "{{count}} voorstellen wachten"
   },
   "common": {
     "save": "Opslaan",
@@ -299,7 +301,23 @@
     "savedAsMeal": "Als maaltijd bewaard",
     "copyToToday": "Naar vandaag kopiëren",
     "copyToMyDay": "Naar mijn dag kopiëren",
-    "together": "Samen eten"
+    "together": "Samen eten",
+    "jointShort": "samen",
+    "eatenFor": "{{name}} als gegeten markeren",
+    "shares": "Aandelen",
+    "myShare": "Mijn aandeel",
+    "myShareValue": "Mijn aandeel: {{percent}} %",
+    "applyShare": "Aandeel toepassen",
+    "iAte": "Ik:",
+    "myAmountOf": "Mijn hoeveelheid {{name}}",
+    "byShare": "naar aandeel",
+    "state": {
+      "planned": "gepland",
+      "logged": "gegeten",
+      "skipped": "overgeslagen"
+    },
+    "planOnly": "Alleen plannen (nog niet gegeten)",
+    "shareLine": "{{percent}} % · {{kcal}} kcal"
   },
   "log": {
     "title": "Eten toevoegen",
@@ -519,5 +537,28 @@
     "more": "Meer dagen tonen",
     "offered": "Voorstel open",
     "dishKcal": "{{kcal}} kcal in totaal"
+  },
+  "offers": {
+    "title": "Voorstellen",
+    "offerFrom": "{{name}} stelt je een maaltijd voor",
+    "counterFrom": "{{name}} stelt iets anders voor",
+    "yourShare": "Jouw aandeel: {{percent}} %, {{kcal}} kcal, eiwit {{protein}} g.",
+    "effect": "Jouw dag: nog {{before}} kcal over, daarna {{after}} kcal.",
+    "accept": "Accepteren",
+    "decline": "Afwijzen",
+    "counter": "Iets anders voorstellen",
+    "waitingFor": "Wacht op {{name}}",
+    "withdraw": "Intrekken",
+    "offerTitle": "{{name}} voorstellen",
+    "shareIntro": "Welk aandeel zou {{name}} eten?",
+    "theirShare": "Aandeel van {{name}}",
+    "send": "Voorstel versturen",
+    "counterTitle": "Tegenvoorstel aan {{name}}",
+    "myPlans": "Een van mijn plannen",
+    "somethingElse": "Of iets nieuws",
+    "recipe": "Recept",
+    "orName": "Of alleen een naam",
+    "suggest": "Voorstellen",
+    "offer": "Voorstellen"
   }
 }

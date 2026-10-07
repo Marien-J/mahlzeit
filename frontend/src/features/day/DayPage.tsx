@@ -7,9 +7,10 @@ import { Sheet } from '../../components/Sheet'
 import { formatDate } from '../../i18n/format'
 import { addDays, dayAsDate, todayIn } from '../../lib/dates'
 import { useMe } from '../auth/session'
-import { copyDay, setDayType, useDay, useRefreshDays, type Entry, type PersonDay } from './api'
+import { copyDay, setDayType, useDay, useRefreshDays } from './api'
 import { EntrySheet } from './EntrySheet'
-import { PersonColumn } from './PersonColumn'
+import { DayGrid } from './DayGrid'
+import { OfferInbox } from '../offers/OfferInbox'
 
 export function DayPage() {
   const { t } = useTranslation()
@@ -20,7 +21,7 @@ export function DayPage() {
   const day = params.day ?? today
   const query = useDay(day)
   const refresh = useRefreshDays()
-  const [open, setOpen] = useState<{ entry: Entry; person: PersonDay } | null>(null)
+  const [openId, setOpenId] = useState<string | null>(null)
   const [copying, setCopying] = useState(false)
   const dayType = useMutation({
     mutationFn: (type: 'training' | 'rest') => setDayType(day, type),
@@ -30,6 +31,16 @@ export function DayPage() {
 
   const go = (target: string) => void navigate(target === today ? '/' : `/day/${target}`)
   const self = query.data?.people.find((p) => p.is_me)
+  const other = query.data?.people.find((p) => !p.is_me)
+  const partner = other ? { id: other.user_id, name: other.display_name } : null
+  // The sheet reads the entry from the latest data, so it follows changes made in it.
+  const people = query.data?.people ?? []
+  const open =
+    people
+      .flatMap((p) => p.entries)
+      .find((e) => e.id === openId && e.participants.some((x) => x.user_id === me.user.id)) ??
+    people.flatMap((p) => p.entries).find((e) => e.id === openId) ??
+    null
   const longDate = formatDate(dayAsDate(day), { dateStyle: 'full', timeZone: 'UTC' })
 
   return (
@@ -81,17 +92,14 @@ export function DayPage() {
         </div>
       </div>
       <ErrorMessage error={query.error ?? dayType.error} />
+      {day === today ? <OfferInbox /> : null}
       {query.data ? (
-        <div className="columns">
-          {query.data.people.map((person) => (
-            <PersonColumn
-              key={person.user_id}
-              person={person}
-              day={day}
-              onOpen={(entry) => setOpen({ entry, person })}
-            />
-          ))}
-        </div>
+        <DayGrid
+          people={query.data.people}
+          day={day}
+          me={me.user.id}
+          onOpen={(entry) => setOpenId(entry.id)}
+        />
       ) : (
         <p className="muted">{t('app.loading')}</p>
       )}
@@ -100,10 +108,11 @@ export function DayPage() {
       </Link>
       {open ? (
         <EntrySheet
-          entry={open.entry}
-          own={open.person.is_me}
+          entry={open}
+          me={me.user.id}
+          partner={partner}
           today={today}
-          onClose={() => setOpen(null)}
+          onClose={() => setOpenId(null)}
         />
       ) : null}
       {copying ? <CopyDaySheet day={day} onClose={() => setCopying(false)} /> : null}

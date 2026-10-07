@@ -17,7 +17,9 @@
     "settings": "Einstellungen",
     "main": "Hauptmenü",
     "list": "Liste",
-    "plan": "Plan"
+    "plan": "Plan",
+    "offersWaiting_one": "{{count}} Angebot wartet",
+    "offersWaiting_other": "{{count}} Angebote warten"
   },
   "common": {
     "save": "Speichern",
@@ -299,7 +301,23 @@
     "savedAsMeal": "Als Mahlzeit gespeichert",
     "copyToToday": "Für heute übernehmen",
     "copyToMyDay": "In meinen Tag übernehmen",
-    "together": "Gemeinsam essen"
+    "together": "Gemeinsam essen",
+    "jointShort": "gemeinsam",
+    "eatenFor": "{{name}} als gegessen markieren",
+    "shares": "Anteile",
+    "myShare": "Mein Anteil",
+    "myShareValue": "Mein Anteil: {{percent}} %",
+    "applyShare": "Anteil übernehmen",
+    "iAte": "Ich:",
+    "myAmountOf": "Meine Menge von {{name}}",
+    "byShare": "nach Anteil",
+    "state": {
+      "planned": "geplant",
+      "logged": "gegessen",
+      "skipped": "ausgelassen"
+    },
+    "planOnly": "Nur planen (noch nicht gegessen)",
+    "shareLine": "{{percent}} % · {{kcal}} kcal"
   },
   "log": {
     "title": "Essen eintragen",
@@ -519,5 +537,28 @@
     "more": "Weitere Tage zeigen",
     "offered": "Angebot offen",
     "dishKcal": "{{kcal}} kcal gesamt"
+  },
+  "offers": {
+    "title": "Angebote",
+    "offerFrom": "{{name}} bietet dir eine Mahlzeit an",
+    "counterFrom": "{{name}} schlägt etwas anderes vor",
+    "yourShare": "Dein Anteil: {{percent}} %, {{kcal}} kcal, Eiweiß {{protein}} g.",
+    "effect": "Dein Tag: noch {{before}} kcal übrig, danach {{after}} kcal.",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "counter": "Anderes vorschlagen",
+    "waitingFor": "Wartet auf {{name}}",
+    "withdraw": "Zurückziehen",
+    "offerTitle": "{{name}} anbieten",
+    "shareIntro": "Welchen Anteil würde {{name}} essen?",
+    "theirShare": "Anteil von {{name}}",
+    "send": "Angebot senden",
+    "counterTitle": "Gegenvorschlag an {{name}}",
+    "myPlans": "Einer meiner Pläne",
+    "somethingElse": "Oder etwas Neues",
+    "recipe": "Rezept",
+    "orName": "Oder nur ein Name",
+    "suggest": "Vorschlagen",
+    "offer": "Anbieten"
   }
 }

@@ -137,3 +137,90 @@ export function recipe(over: Partial<Schemas['RecipeOut']> = {}): Schemas['Recip
     ...over,
   }
 }
+
+/** A planned dinner both of us eat, as the day view shows it to the person it is built for. */
+export function sharedMeal(over: Partial<Schemas['EntryOut']> = {}): Schemas['EntryOut'] {
+  const chicken = {
+    id: '0192f1c4-0000-7000-8000-0000000000c2',
+    item_id: SKYR.id,
+    name: 'Hähnchen',
+    amount: 400,
+    base_unit: 'g',
+    serving_label: null,
+    serving_count: null,
+    quick: false,
+    nutrients: nutrients({ kcal: 440, protein: 90 }),
+  }
+  return entry({
+    id: '0192f1c4-0000-7000-8000-0000000000e2',
+    name: 'Chili',
+    slot: 'dinner',
+    at: '19:00:00',
+    joint: true,
+    state: 'planned',
+    share: 0.5,
+    components: [chicken],
+    intake: totals({ kcal: 220, protein: 45 }),
+    dish: totals({ kcal: 440, protein: 90 }),
+    participants: [
+      {
+        user_id: ME.user.id,
+        display_name: 'Jonas',
+        state: 'planned',
+        share: 0.5,
+        exact_amounts: {},
+        intake: totals({ kcal: 220, protein: 45 }),
+      },
+      {
+        user_id: PARTNER_ID,
+        display_name: 'Sam',
+        state: 'planned',
+        share: 0.5,
+        exact_amounts: {},
+        intake: totals({ kcal: 220, protein: 45 }),
+      },
+    ],
+    ...over,
+  })
+}
+
+export function offer(over: Partial<Schemas['OfferOut']> = {}): Schemas['OfferOut'] {
+  return {
+    id: '0192f1c4-0000-7000-8000-0000000000a1',
+    state: 'pending',
+    from_user_id: PARTNER_ID,
+    from_name: 'Sam',
+    to_user_id: ME.user.id,
+    to_name: 'Jonas',
+    incoming: true,
+    day: TODAY(),
+    slot: 'dinner',
+    share: 0.5,
+    counter_of_id: null,
+    created_at: '2026-10-06T10:00:00Z',
+    responded_at: null,
+    meal: sharedMeal({
+      joint: false,
+      state: null,
+      share: null,
+      intake: null,
+      participants: [
+        {
+          user_id: PARTNER_ID,
+          display_name: 'Sam',
+          state: 'planned',
+          share: 1,
+          exact_amounts: {},
+          intake: totals({ kcal: 440, protein: 90 }),
+        },
+      ],
+    }),
+    effect: {
+      incoming: totals({ kcal: 220, protein: 45 }),
+      targets: { kcal: 2600, protein: 160, carbs: 300, fat: 80 },
+      projection_before: { kcal: 900, protein: 60, carbs: 100, fat: 20 },
+      projection_after: { kcal: 680, protein: 15, carbs: 90, fat: 10 },
+    },
+    ...over,
+  }
+}

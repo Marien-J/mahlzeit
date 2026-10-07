@@ -278,7 +278,7 @@ select {
   left: 0;
   right: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   background: var(--surface);
   border-top: 1px solid var(--border);
   padding-bottom: env(safe-area-inset-bottom);
@@ -886,4 +886,116 @@ button.link {
   color: var(--muted);
   font-variant-numeric: tabular-nums;
   font-size: 0.9rem;
+}
+
+/* Day grid: both people side by side, shared meals across */
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem 0.75rem;
+  align-items: start;
+}
+
+.day-grid.people-1 {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.day-grid .joint-cell {
+  grid-column: 1 / -1;
+}
+
+.column-head h2 {
+  margin-top: 0;
+}
+
+.cell {
+  min-width: 0;
+}
+
+.entry-card {
+  display: flex;
+  align-items: stretch;
+  gap: 0.25rem;
+}
+
+.entry-card .entry {
+  flex: 1;
+  min-width: 0;
+}
+
+.entry-card.joint .entry {
+  border-color: var(--accent);
+}
+
+.entry .shares {
+  font-size: 0.8rem;
+}
+
+.eaten {
+  min-width: var(--tap);
+  font-size: 1.25rem;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.component {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 0.5rem;
+}
+
+.component .amount.mine {
+  flex-basis: 100%;
+  justify-content: flex-end;
+}
+
+.chip.active,
+.chip[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Offers */
+.offer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.offer-card {
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 0.75rem;
+}
+
+.offer-card.outgoing {
+  border-color: var(--border);
+}
+
+.offer-card p {
+  margin: 0 0 0.5rem;
+}
+
+.eaten .check::before {
+  content: '\2713';
+}
+
+.tabbar .count {
+  display: inline-block;
+  min-width: 1.25rem;
+  margin-left: 0.25rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  text-align: center;
 }

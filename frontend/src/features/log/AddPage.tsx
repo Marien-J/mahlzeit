@@ -47,7 +47,7 @@ export function AddPage() {
   const now = nowTimeIn(zone)
   const day = params.get('day') ?? todayIn(zone)
   // A plan for today or later: the same screen, but nothing is eaten yet.
-  const plan = params.get('plan') === '1'
+  const [plan, setPlan] = useState(params.get('plan') === '1')
   const household = useQuery({
     queryKey: ['household'],
     queryFn: () => call(api.GET('/api/household')),
@@ -191,6 +191,9 @@ export function AddPage() {
         />
       ) : null}
 
+      {day === todayIn(zone) ? (
+        <Toggle label={t('entry.planOnly')} checked={plan} onChange={setPlan} />
+      ) : null}
       {hasPartner ? (
         <Toggle label={t('entry.together')} checked={joint} onChange={setJoint} />
       ) : null}

@@ -17,7 +17,9 @@
     "settings": "Settings",
     "main": "Main",
     "list": "List",
-    "plan": "Plan"
+    "plan": "Plan",
+    "offersWaiting_one": "{{count}} offer waiting",
+    "offersWaiting_other": "{{count}} offers waiting"
   },
   "common": {
     "save": "Save",
@@ -299,7 +301,23 @@
     "savedAsMeal": "Saved as meal",
     "copyToToday": "Copy to today",
     "copyToMyDay": "Copy to my day",
-    "together": "Eating together"
+    "together": "Eating together",
+    "jointShort": "together",
+    "eatenFor": "Mark {{name}} as eaten",
+    "shares": "Shares",
+    "myShare": "My share",
+    "myShareValue": "My share: {{percent}} %",
+    "applyShare": "Apply share",
+    "iAte": "Me:",
+    "myAmountOf": "My amount of {{name}}",
+    "byShare": "by share",
+    "state": {
+      "planned": "planned",
+      "logged": "eaten",
+      "skipped": "skipped"
+    },
+    "planOnly": "Only plan it (not eaten yet)",
+    "shareLine": "{{percent}} % · {{kcal}} kcal"
   },
   "log": {
     "title": "Add food",
@@ -519,5 +537,28 @@
     "more": "Show more days",
     "offered": "Offer open",
     "dishKcal": "{{kcal}} kcal in total"
+  },
+  "offers": {
+    "title": "Offers",
+    "offerFrom": "{{name}} offers you a meal",
+    "counterFrom": "{{name}} suggests something else",
+    "yourShare": "Your share: {{percent}} %, {{kcal}} kcal, protein {{protein}} g.",
+    "effect": "Your day: {{before}} kcal left, then {{after}} kcal.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "counter": "Suggest something else",
+    "waitingFor": "Waiting for {{name}}",
+    "withdraw": "Withdraw",
+    "offerTitle": "Offer to {{name}}",
+    "shareIntro": "What share would {{name}} eat?",
+    "theirShare": "{{name}}'s share",
+    "send": "Send offer",
+    "counterTitle": "Counter-offer to {{name}}",
+    "myPlans": "One of my plans",
+    "somethingElse": "Or something new",
+    "recipe": "Recipe",
+    "orName": "Or just a name",
+    "suggest": "Suggest it",
+    "offer": "Offer it"
   }
 }
