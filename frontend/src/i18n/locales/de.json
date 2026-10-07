@@ -298,7 +298,8 @@
     "saveAsMeal": "Als Mahlzeit speichern",
     "savedAsMeal": "Als Mahlzeit gespeichert",
     "copyToToday": "Für heute übernehmen",
-    "copyToMyDay": "In meinen Tag übernehmen"
+    "copyToMyDay": "In meinen Tag übernehmen",
+    "together": "Gemeinsam essen"
   },
   "log": {
     "title": "Essen eintragen",
@@ -311,7 +312,8 @@
       "search": "Suchen",
       "scan": "Scannen",
       "quick": "Schnell",
-      "meals": "Mahlzeiten"
+      "meals": "Mahlzeiten",
+      "recipes": "Rezepte"
     },
     "search": "Lebensmittel suchen",
     "favouritesAndRecent": "Favoriten und zuletzt gegessen",
@@ -329,11 +331,13 @@
     "twice": "2 × {{label}}",
     "label": "Menge ({{unit}})",
     "addMore": "Weiteres hinzufügen",
-    "logNow": "Jetzt eintragen"
+    "logNow": "Jetzt eintragen",
+    "planNow": "Planen"
   },
   "quick": {
     "name": "Was war es?",
-    "kcal": "Energie (kcal)"
+    "kcal": "Energie (kcal)",
+    "kcalOptionalWhenPlanning": "Beim Planen reicht der Name."
   },
   "serving": {
     "egg": "1 Ei",
@@ -501,6 +505,19 @@
     "alreadyListed": "Schon auf der Liste: {{names}}.",
     "toList": "Zur Liste",
     "delete": "Rezept löschen",
-    "confirmDelete": "Wirklich löschen"
+    "confirmDelete": "Wirklich löschen",
+    "cookedWeight": "Oder: Gewicht auf dem Teller (g)"
+  },
+  "plan": {
+    "addTitle": "Mahlzeit planen",
+    "planBasket_one": "{{count}} Lebensmittel planen ({{kcal}} kcal)",
+    "planBasket_other": "{{count}} Lebensmittel planen ({{kcal}} kcal)",
+    "title": "Plan",
+    "tomorrow": "Morgen",
+    "nothing": "Noch nichts geplant.",
+    "planFor": "Mahlzeit planen für {{day}}",
+    "more": "Weitere Tage zeigen",
+    "offered": "Angebot offen",
+    "dishKcal": "{{kcal}} kcal gesamt"
   }
 }

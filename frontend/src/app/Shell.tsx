@@ -26,6 +26,7 @@ export function Shell({ me }: { me: Me }) {
         <NavLink to="/" end>
           {t('nav.today')}
         </NavLink>
+        <NavLink to="/plan">{t('nav.plan')}</NavLink>
         <NavLink to="/list">{t('nav.list')}</NavLink>
         <NavLink to="/household">{t('nav.household')}</NavLink>
         <NavLink to="/settings">{t('nav.settings')}</NavLink>

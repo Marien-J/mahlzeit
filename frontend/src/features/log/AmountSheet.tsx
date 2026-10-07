@@ -20,12 +20,14 @@ export function AmountSheet({
   onLogNow,
   onClose,
   busy,
+  plan = false,
 }: {
   item: Item
   onAdd: (picked: Picked) => void
   onLogNow: (picked: Picked) => void
   onClose: () => void
   busy?: boolean
+  plan?: boolean
 }) {
   const { t } = useTranslation()
   const first = item.servings[0]
@@ -89,7 +91,7 @@ export function AmountSheet({
             disabled={!valid || busy}
             onClick={() => onLogNow(picked())}
           >
-            {t('amount.logNow')}
+            {t(plan ? 'amount.planNow' : 'amount.logNow')}
           </button>
         </div>
       </div>

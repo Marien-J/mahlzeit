@@ -200,7 +200,7 @@ class PlanDayOut(BaseModel):
     entries: list[EntryOut]
 
 
-class MemberOut(BaseModel):
+class PlanMemberOut(BaseModel):
     user_id: uuid.UUID
     display_name: str
     is_me: bool
@@ -232,7 +232,7 @@ class OfferOut(BaseModel):
 
 
 class PlanOut(BaseModel):
-    members: list[MemberOut]
+    members: list[PlanMemberOut]
     days: list[PlanDayOut]
     offers: list[OfferOut]
 
@@ -493,7 +493,7 @@ def plan(
 ) -> PlanOut:
     return PlanOut(
         members=[
-            MemberOut(user_id=m.id, display_name=m.display_name, is_me=m.id == viewer)
+            PlanMemberOut(user_id=m.id, display_name=m.display_name, is_me=m.id == viewer)
             for m in result.members
         ],
         days=[

@@ -298,7 +298,8 @@
     "saveAsMeal": "Save as meal",
     "savedAsMeal": "Saved as meal",
     "copyToToday": "Copy to today",
-    "copyToMyDay": "Copy to my day"
+    "copyToMyDay": "Copy to my day",
+    "together": "Eating together"
   },
   "log": {
     "title": "Add food",
@@ -311,7 +312,8 @@
       "search": "Search",
       "scan": "Scan",
       "quick": "Quick add",
-      "meals": "Saved meals"
+      "meals": "Saved meals",
+      "recipes": "Recipes"
     },
     "search": "Search foods",
     "favouritesAndRecent": "Favourites and recent foods",
@@ -329,11 +331,13 @@
     "twice": "2 × {{label}}",
     "label": "Amount ({{unit}})",
     "addMore": "Add more",
-    "logNow": "Log now"
+    "logNow": "Log now",
+    "planNow": "Plan it"
   },
   "quick": {
     "name": "What was it?",
-    "kcal": "Energy (kcal)"
+    "kcal": "Energy (kcal)",
+    "kcalOptionalWhenPlanning": "A name is enough when planning."
   },
   "serving": {
     "egg": "1 egg",
@@ -501,6 +505,19 @@
     "alreadyListed": "Already on the list: {{names}}.",
     "toList": "Go to the list",
     "delete": "Delete recipe",
-    "confirmDelete": "Really delete"
+    "confirmDelete": "Really delete",
+    "cookedWeight": "Or: weight on the plate (g)"
+  },
+  "plan": {
+    "addTitle": "Plan a meal",
+    "planBasket_one": "Plan {{count}} food ({{kcal}} kcal)",
+    "planBasket_other": "Plan {{count}} foods ({{kcal}} kcal)",
+    "title": "Plan",
+    "tomorrow": "Tomorrow",
+    "nothing": "Nothing planned yet.",
+    "planFor": "Plan a meal for {{day}}",
+    "more": "Show more days",
+    "offered": "Offer open",
+    "dishKcal": "{{kcal}} kcal in total"
   }
 }

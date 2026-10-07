@@ -298,7 +298,8 @@
     "saveAsMeal": "Als maaltijd bewaren",
     "savedAsMeal": "Als maaltijd bewaard",
     "copyToToday": "Naar vandaag kopiëren",
-    "copyToMyDay": "Naar mijn dag kopiëren"
+    "copyToMyDay": "Naar mijn dag kopiëren",
+    "together": "Samen eten"
   },
   "log": {
     "title": "Eten toevoegen",
@@ -311,7 +312,8 @@
       "search": "Zoeken",
       "scan": "Scannen",
       "quick": "Snel",
-      "meals": "Maaltijden"
+      "meals": "Maaltijden",
+      "recipes": "Recepten"
     },
     "search": "Producten zoeken",
     "favouritesAndRecent": "Favorieten en recent gegeten",
@@ -329,11 +331,13 @@
     "twice": "2 × {{label}}",
     "label": "Hoeveelheid ({{unit}})",
     "addMore": "Nog iets toevoegen",
-    "logNow": "Nu toevoegen"
+    "logNow": "Nu toevoegen",
+    "planNow": "Plannen"
   },
   "quick": {
     "name": "Wat was het?",
-    "kcal": "Energie (kcal)"
+    "kcal": "Energie (kcal)",
+    "kcalOptionalWhenPlanning": "Bij plannen is een naam genoeg."
   },
   "serving": {
     "egg": "1 ei",
@@ -501,6 +505,19 @@
     "alreadyListed": "Staat al op de lijst: {{names}}.",
     "toList": "Naar de lijst",
     "delete": "Recept verwijderen",
-    "confirmDelete": "Echt verwijderen"
+    "confirmDelete": "Echt verwijderen",
+    "cookedWeight": "Of: gewicht op het bord (g)"
+  },
+  "plan": {
+    "addTitle": "Maaltijd plannen",
+    "planBasket_one": "{{count}} levensmiddel plannen ({{kcal}} kcal)",
+    "planBasket_other": "{{count}} levensmiddelen plannen ({{kcal}} kcal)",
+    "title": "Plan",
+    "tomorrow": "Morgen",
+    "nothing": "Nog niets gepland.",
+    "planFor": "Maaltijd plannen voor {{day}}",
+    "more": "Meer dagen tonen",
+    "offered": "Voorstel open",
+    "dishKcal": "{{kcal}} kcal in totaal"
   }
 }

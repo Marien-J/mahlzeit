@@ -1271,7 +1271,7 @@ export interface components {
       /** Max Members */
       max_members: number
       /** Members */
-      members: components['schemas']['mahlzeit__api__schemas__MemberOut'][]
+      members: components['schemas']['MemberOut'][]
       /** Name */
       name: string
     }
@@ -1646,6 +1646,23 @@ export interface components {
       /** Time Zone */
       time_zone?: string | null
     }
+    /** MemberOut */
+    MemberOut: {
+      /** Display Name */
+      display_name: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Is Me */
+      is_me: boolean
+      /**
+       * Joined At
+       * Format: date-time
+       */
+      joined_at: string
+    }
     /** MoveEntryIn */
     MoveEntryIn: {
       /**
@@ -1852,12 +1869,24 @@ export interface components {
       /** Entries */
       entries: components['schemas']['EntryOut'][]
     }
+    /** PlanMemberOut */
+    PlanMemberOut: {
+      /** Display Name */
+      display_name: string
+      /** Is Me */
+      is_me: boolean
+      /**
+       * User Id
+       * Format: uuid
+       */
+      user_id: string
+    }
     /** PlanOut */
     PlanOut: {
       /** Days */
       days: components['schemas']['PlanDayOut'][]
       /** Members */
-      members: components['schemas']['mahlzeit__views__MemberOut'][]
+      members: components['schemas']['PlanMemberOut'][]
       /** Offers */
       offers: components['schemas']['OfferOut'][]
     }
@@ -2138,35 +2167,6 @@ export interface components {
     WeekPatternIn: {
       /** Pattern */
       pattern: string
-    }
-    /** MemberOut */
-    mahlzeit__api__schemas__MemberOut: {
-      /** Display Name */
-      display_name: string
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string
-      /** Is Me */
-      is_me: boolean
-      /**
-       * Joined At
-       * Format: date-time
-       */
-      joined_at: string
-    }
-    /** MemberOut */
-    mahlzeit__views__MemberOut: {
-      /** Display Name */
-      display_name: string
-      /** Is Me */
-      is_me: boolean
-      /**
-       * User Id
-       * Format: uuid
-       */
-      user_id: string
     }
   }
   responses: never

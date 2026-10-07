@@ -962,7 +962,7 @@
           },
           "members": {
             "items": {
-              "$ref": "#/components/schemas/mahlzeit__api__schemas__MemberOut"
+              "$ref": "#/components/schemas/MemberOut"
             },
             "title": "Members",
             "type": "array"
@@ -1928,6 +1928,31 @@
         "title": "MePatch",
         "type": "object"
       },
+      "MemberOut": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_me": {
+            "title": "Is Me",
+            "type": "boolean"
+          },
+          "joined_at": {
+            "format": "date-time",
+            "title": "Joined At",
+            "type": "string"
+          }
+        },
+        "required": ["id", "display_name", "joined_at", "is_me"],
+        "title": "MemberOut",
+        "type": "object"
+      },
       "MoveEntryIn": {
         "properties": {
           "before_id": {
@@ -2539,6 +2564,26 @@
         "title": "PlanDayOut",
         "type": "object"
       },
+      "PlanMemberOut": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "is_me": {
+            "title": "Is Me",
+            "type": "boolean"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": ["user_id", "display_name", "is_me"],
+        "title": "PlanMemberOut",
+        "type": "object"
+      },
       "PlanOut": {
         "properties": {
           "days": {
@@ -2550,7 +2595,7 @@
           },
           "members": {
             "items": {
-              "$ref": "#/components/schemas/mahlzeit__views__MemberOut"
+              "$ref": "#/components/schemas/PlanMemberOut"
             },
             "title": "Members",
             "type": "array"
@@ -3345,51 +3390,6 @@
         },
         "required": ["pattern"],
         "title": "WeekPatternIn",
-        "type": "object"
-      },
-      "mahlzeit__api__schemas__MemberOut": {
-        "properties": {
-          "display_name": {
-            "title": "Display Name",
-            "type": "string"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "is_me": {
-            "title": "Is Me",
-            "type": "boolean"
-          },
-          "joined_at": {
-            "format": "date-time",
-            "title": "Joined At",
-            "type": "string"
-          }
-        },
-        "required": ["id", "display_name", "joined_at", "is_me"],
-        "title": "MemberOut",
-        "type": "object"
-      },
-      "mahlzeit__views__MemberOut": {
-        "properties": {
-          "display_name": {
-            "title": "Display Name",
-            "type": "string"
-          },
-          "is_me": {
-            "title": "Is Me",
-            "type": "boolean"
-          },
-          "user_id": {
-            "format": "uuid",
-            "title": "User Id",
-            "type": "string"
-          }
-        },
-        "required": ["user_id", "display_name", "is_me"],
-        "title": "MemberOut",
         "type": "object"
       }
     }

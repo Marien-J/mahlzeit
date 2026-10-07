@@ -8,6 +8,7 @@ import { ForgotPage, ResetPage } from '../features/auth/PasswordPages'
 import { useMe } from '../features/auth/session'
 import { DayPage } from '../features/day/DayPage'
 import { ListPage } from '../features/list/ListPage'
+import { PlanPage } from '../features/plan/PlanPage'
 import { Shell } from './Shell'
 
 function Root() {
@@ -80,6 +81,7 @@ export const routes = [
         children: [
           { path: '/', element: <Home /> },
           { path: '/day/:day', element: <DayPage /> },
+          { path: '/plan', element: <PlanPage /> },
           { path: '/list', element: <ListPage /> },
           {
             path: '/add',
