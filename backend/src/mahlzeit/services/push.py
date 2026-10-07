@@ -100,12 +100,20 @@ def count(db: Session, actor: Actor) -> int:
     )
 
 
-def notify(db: Session, user_id: uuid.UUID, *, message: str, url: str = "/") -> None:
-    """Queue a notification for every device of a user (inside the caller's transaction)."""
+def notify(
+    db: Session,
+    user_id: uuid.UUID,
+    *,
+    message: str,
+    url: str = "/",
+    params: dict[str, str] | None = None,
+) -> None:
+    """Queue a notification for every device of a user (inside the caller's transaction).
+    `params` fill the placeholders of the localised message."""
     queue.enqueue(
         db,
         "push.deliver",
-        {"user_id": str(user_id), "message": message, "url": url},
+        {"user_id": str(user_id), "message": message, "url": url, "params": params or {}},
         max_attempts=3,
     )
 
@@ -124,9 +132,10 @@ def deliver(db: Session, payload: dict[str, Any], sender: PushSender) -> int:
     user = db.get(User, uuid.UUID(payload["user_id"]))
     if user is None:
         return 0
+    params = payload.get("params", {})
     message = {
-        "title": t(user.language, f"push.{payload['message']}.title"),
-        "body": t(user.language, f"push.{payload['message']}.body"),
+        "title": t(user.language, f"push.{payload['message']}.title", **params),
+        "body": t(user.language, f"push.{payload['message']}.body", **params),
         "url": payload.get("url", "/"),
         "tag": payload["message"],
     }

@@ -75,6 +75,13 @@ def search_text_for(item: Item) -> str:
     return normalize(" ".join(p for p in parts if p))
 
 
+def name_of(item: Item, language: str) -> str:
+    """The item's name in the reader's language, falling back to German, then English."""
+    return rules.display_name(
+        {"de": item.name_de, "en": item.name_en, "nl": item.name_nl}, language
+    )
+
+
 def nutrients_of(item: Item) -> Nutrients:
     return Nutrients(**{n: getattr(item, n) for n in NUTRIENTS})
 

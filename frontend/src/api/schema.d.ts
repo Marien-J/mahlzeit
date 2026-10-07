@@ -265,6 +265,43 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/entries/{entry_id}/exact-amounts': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Set Exact Amounts */
+    put: operations['set_exact_amounts_api_entries__entry_id__exact_amounts_put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/entries/{entry_id}/move': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Move Entry
+     * @description Drag an entry before another of my day (or last); the entries whose time changed.
+     */
+    post: operations['move_entry_api_entries__entry_id__move_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/entries/{entry_id}/save-as-meal': {
     parameters: {
       query?: never
@@ -276,6 +313,23 @@ export interface paths {
     put?: never
     /** Save Entry As Meal */
     post: operations['save_entry_as_meal_api_entries__entry_id__save_as_meal_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/entries/{entry_id}/share': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Set Share */
+    put: operations['set_share_api_entries__entry_id__share_put']
+    post?: never
     delete?: never
     options?: never
     head?: never
@@ -573,6 +627,78 @@ export interface paths {
     patch: operations['update_profile_api_me_profile_patch']
     trace?: never
   }
+  '/api/offers': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * List Offers
+     * @description Offers to or from me: the open ones, or with `closed` also the last two weeks'.
+     */
+    get: operations['list_offers_api_offers_get']
+    put?: never
+    /** Send Offer */
+    post: operations['send_offer_api_offers_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/offers/{offer_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Offer */
+    get: operations['get_offer_api_offers__offer_id__get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/offers/{offer_id}/respond': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Respond To Offer */
+    post: operations['respond_to_offer_api_offers__offer_id__respond_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/offers/{offer_id}/withdraw': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /** Withdraw Offer */
+    post: operations['withdraw_offer_api_offers__offer_id__withdraw_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/online-search': {
     parameters: {
       query?: never
@@ -582,6 +708,26 @@ export interface paths {
     }
     /** Search Online */
     get: operations['search_online_api_online_search_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/plan': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get Plan
+     * @description Every entry of the household for `days` days from `start`, with the open offers.
+     */
+    get: operations['get_plan_api_plan_get']
     put?: never
     post?: never
     delete?: never
@@ -658,25 +804,44 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  '/api/saved-meals': {
+  '/api/recipes': {
     parameters: {
       query?: never
       header?: never
       path?: never
       cookie?: never
     }
-    /** List Saved Meals */
-    get: operations['list_saved_meals_api_saved_meals_get']
+    /** List Recipes */
+    get: operations['list_recipes_api_recipes_get']
     put?: never
-    /** Create Saved Meal */
-    post: operations['create_saved_meal_api_saved_meals_post']
+    /** Create Recipe */
+    post: operations['create_recipe_api_recipes_post']
     delete?: never
     options?: never
     head?: never
     patch?: never
     trace?: never
   }
-  '/api/saved-meals/{meal_id}': {
+  '/api/recipes/{recipe_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Recipe */
+    get: operations['get_recipe_api_recipes__recipe_id__get']
+    put?: never
+    post?: never
+    /** Delete Recipe */
+    delete: operations['delete_recipe_api_recipes__recipe_id__delete']
+    options?: never
+    head?: never
+    /** Update Recipe */
+    patch: operations['update_recipe_api_recipes__recipe_id__patch']
+    trace?: never
+  }
+  '/api/recipes/{recipe_id}/add-to-list': {
     parameters: {
       query?: never
       header?: never
@@ -685,13 +850,12 @@ export interface paths {
     }
     get?: never
     put?: never
-    post?: never
-    /** Delete Saved Meal */
-    delete: operations['delete_saved_meal_api_saved_meals__meal_id__delete']
+    /** Add To List */
+    post: operations['add_to_list_api_recipes__recipe_id__add_to_list_post']
+    delete?: never
     options?: never
     head?: never
-    /** Update Saved Meal */
-    patch: operations['update_saved_meal_api_saved_meals__meal_id__patch']
+    patch?: never
     trace?: never
   }
   '/api/stores': {
@@ -790,6 +954,21 @@ export interface components {
       /** Time Zone */
       time_zone: string
     }
+    /** AddToListIn */
+    AddToListIn: {
+      /**
+       * Portions
+       * @description Default: the whole recipe.
+       */
+      portions?: number | null
+    }
+    /** AddedToListOut */
+    AddedToListOut: {
+      /** Added */
+      added: components['schemas']['ListItemOut'][]
+      /** Already Listed */
+      already_listed: string[]
+    }
     /** BarcodeOut */
     BarcodeOut: {
       draft: components['schemas']['ItemDraftOut'] | null
@@ -887,6 +1066,27 @@ export interface components {
       /** Slot */
       slot?: ('breakfast' | 'lunch' | 'dinner' | 'snack') | null
     }
+    /**
+     * CounterMealIn
+     * @description A new meal for the offer's day and slot.
+     */
+    CounterMealIn: {
+      /** At */
+      at?: string | null
+      /** Components */
+      components?: components['schemas']['ComponentIn'][]
+      /** Cooked Grams */
+      cooked_grams?: number | null
+      /** Name */
+      name?: string | null
+      /**
+       * Portions
+       * @default 1
+       */
+      portions: number
+      /** Recipe Id */
+      recipe_id?: string | null
+    }
     /** DayOut */
     DayOut: {
       /**
@@ -909,6 +1109,11 @@ export interface components {
       /** Components */
       components?: components['schemas']['ComponentIn'][]
       /**
+       * Cooked Grams
+       * @description A portion weighed after cooking, instead of portions.
+       */
+      cooked_grams?: number | null
+      /**
        * Day
        * Format: date
        */
@@ -918,15 +1123,27 @@ export interface components {
        * @default false
        */
       eaten_out: boolean
+      /**
+       * Joint
+       * @description For everyone else in the household too.
+       * @default false
+       */
+      joint: boolean
       /** Name */
       name?: string | null
+      /**
+       * Plan
+       * @description A plan for today or later, never eaten yet.
+       * @default false
+       */
+      plan: boolean
       /**
        * Portions
        * @default 1
        */
       portions: number
-      /** Saved Meal Id */
-      saved_meal_id?: string | null
+      /** Recipe Id */
+      recipe_id?: string | null
       /**
        * Slot
        * @enum {string}
@@ -947,6 +1164,7 @@ export interface components {
        * Format: date
        */
       day: string
+      dish: components['schemas']['TotalsOut']
       /** Eaten Out */
       eaten_out: boolean
       /**
@@ -955,10 +1173,16 @@ export interface components {
        */
       id: string
       intake: components['schemas']['TotalsOut'] | null
+      /** Joint */
+      joint: boolean
       /** Name */
       name: string | null
-      /** Saved Meal Id */
-      saved_meal_id: string | null
+      /** Participants */
+      participants: components['schemas']['ParticipantOut'][]
+      /** Recipe Id */
+      recipe_id: string | null
+      /** Recipe Portions */
+      recipe_portions: number | null
       /** Share */
       share: number | null
       /**
@@ -991,6 +1215,16 @@ export interface components {
        * @enum {string}
        */
       state: 'planned' | 'logged' | 'skipped'
+    }
+    /** ExactAmountsIn */
+    ExactAmountsIn: {
+      /**
+       * Amounts
+       * @description Component id to what I weighed out for myself; null goes back to my share.
+       */
+      amounts: {
+        [key: string]: number | null
+      }
     }
     /** FavouriteIn */
     FavouriteIn: {
@@ -1037,7 +1271,7 @@ export interface components {
       /** Max Members */
       max_members: number
       /** Members */
-      members: components['schemas']['MemberOut'][]
+      members: components['schemas']['mahlzeit__api__schemas__MemberOut'][]
       /** Name */
       name: string
     }
@@ -1412,22 +1646,13 @@ export interface components {
       /** Time Zone */
       time_zone?: string | null
     }
-    /** MemberOut */
-    MemberOut: {
-      /** Display Name */
-      display_name: string
+    /** MoveEntryIn */
+    MoveEntryIn: {
       /**
-       * Id
-       * Format: uuid
+       * Before Id
+       * @description Stand before this entry of my day; null puts it last.
        */
-      id: string
-      /** Is Me */
-      is_me: boolean
-      /**
-       * Joined At
-       * Format: date-time
-       */
-      joined_at: string
+      before_id: string | null
     }
     /** NutrientsIn */
     NutrientsIn: {
@@ -1471,6 +1696,121 @@ export interface components {
       /** Sugar */
       sugar: number | null
     }
+    /** OfferEffectOut */
+    OfferEffectOut: {
+      incoming: components['schemas']['TotalsOut']
+      projection_after: components['schemas']['TargetsOut'] | null
+      projection_before: components['schemas']['TargetsOut'] | null
+      targets: components['schemas']['TargetsOut'] | null
+    }
+    /** OfferIn */
+    OfferIn: {
+      /**
+       * Entry Id
+       * Format: uuid
+       */
+      entry_id: string
+      /**
+       * Share
+       * @description The receiver's share of the dish.
+       * @default 0.5
+       */
+      share: number
+      /**
+       * To User Id
+       * Format: uuid
+       */
+      to_user_id: string
+    }
+    /** OfferOut */
+    OfferOut: {
+      /** Counter Of Id */
+      counter_of_id: string | null
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /**
+       * Day
+       * Format: date
+       */
+      day: string
+      effect: components['schemas']['OfferEffectOut'] | null
+      /** From Name */
+      from_name: string
+      /**
+       * From User Id
+       * Format: uuid
+       */
+      from_user_id: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Incoming */
+      incoming: boolean
+      meal: components['schemas']['EntryOut'] | null
+      /** Responded At */
+      responded_at: string | null
+      /** Share */
+      share: number
+      /**
+       * Slot
+       * @enum {string}
+       */
+      slot: 'breakfast' | 'lunch' | 'dinner' | 'snack'
+      /**
+       * State
+       * @enum {string}
+       */
+      state: 'pending' | 'accepted' | 'declined' | 'countered' | 'withdrawn' | 'expired'
+      /** To Name */
+      to_name: string
+      /**
+       * To User Id
+       * Format: uuid
+       */
+      to_user_id: string
+    }
+    /** OfferResponseIn */
+    OfferResponseIn: {
+      /**
+       * Action
+       * @enum {string}
+       */
+      action: 'accept' | 'decline' | 'counter'
+      /**
+       * Counter Entry Id
+       * @description Counter with one of my own plans for the same slot.
+       */
+      counter_entry_id?: string | null
+      /** @description Or with a new meal. */
+      counter_meal?: components['schemas']['CounterMealIn'] | null
+    }
+    /** ParticipantOut */
+    ParticipantOut: {
+      /** Display Name */
+      display_name: string
+      /** Exact Amounts */
+      exact_amounts: {
+        [key: string]: number
+      }
+      intake: components['schemas']['TotalsOut']
+      /** Share */
+      share: number
+      /**
+       * State
+       * @enum {string}
+       */
+      state: 'planned' | 'logged' | 'skipped'
+      /**
+       * User Id
+       * Format: uuid
+       */
+      user_id: string
+    }
     /** PasswordChangeIn */
     PasswordChangeIn: {
       /** Current Password */
@@ -1501,6 +1841,25 @@ export interface components {
        * Format: uuid
        */
       user_id: string
+    }
+    /** PlanDayOut */
+    PlanDayOut: {
+      /**
+       * Day
+       * Format: date
+       */
+      day: string
+      /** Entries */
+      entries: components['schemas']['EntryOut'][]
+    }
+    /** PlanOut */
+    PlanOut: {
+      /** Days */
+      days: components['schemas']['PlanDayOut'][]
+      /** Members */
+      members: components['schemas']['mahlzeit__views__MemberOut'][]
+      /** Offers */
+      offers: components['schemas']['OfferOut'][]
     }
     /** ProfileOut */
     ProfileOut: {
@@ -1558,6 +1917,78 @@ export interface components {
       /** Endpoint */
       endpoint: string
     }
+    /** RecipeIn */
+    RecipeIn: {
+      /** Cooked Yield G */
+      cooked_yield_g?: number | null
+      /** Ingredients */
+      ingredients: components['schemas']['IngredientIn'][]
+      /**
+       * Kind
+       * @default recipe
+       * @enum {string}
+       */
+      kind: 'recipe' | 'saved_meal'
+      /** Name */
+      name: string
+      /** Notes */
+      notes?: string | null
+      /**
+       * Servings
+       * @default 1
+       */
+      servings: number
+      /**
+       * Staple
+       * @default false
+       */
+      staple: boolean
+    }
+    /** RecipeOut */
+    RecipeOut: {
+      /** Cooked Yield G */
+      cooked_yield_g: number | null
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Ingredients */
+      ingredients: components['schemas']['IngredientOut'][]
+      /**
+       * Kind
+       * @enum {string}
+       */
+      kind: 'recipe' | 'saved_meal'
+      /** Name */
+      name: string
+      /** Notes */
+      notes: string | null
+      per_100g_cooked: components['schemas']['NutrientsOut'] | null
+      per_serving: components['schemas']['TotalsOut']
+      /** Servings */
+      servings: number
+      /** Staple */
+      staple: boolean
+    }
+    /**
+     * RecipePatchIn
+     * @description Only the fields that are sent change; send null to clear the cooked yield or the notes.
+     */
+    RecipePatchIn: {
+      /** Cooked Yield G */
+      cooked_yield_g?: number | null
+      /** Ingredients */
+      ingredients?: components['schemas']['IngredientIn'][] | null
+      /** Name */
+      name?: string | null
+      /** Notes */
+      notes?: string | null
+      /** Servings */
+      servings?: number | null
+      /** Staple */
+      staple?: boolean | null
+    }
     /** ResetConfirmIn */
     ResetConfirmIn: {
       /** Password */
@@ -1575,33 +2006,6 @@ export interface components {
       /** Name */
       name?: string | null
     }
-    /** SavedMealIn */
-    SavedMealIn: {
-      /** Ingredients */
-      ingredients: components['schemas']['IngredientIn'][]
-      /** Name */
-      name: string
-    }
-    /** SavedMealOut */
-    SavedMealOut: {
-      /**
-       * Id
-       * Format: uuid
-       */
-      id: string
-      /** Ingredients */
-      ingredients: components['schemas']['IngredientOut'][]
-      /** Name */
-      name: string
-      per_serving: components['schemas']['TotalsOut']
-    }
-    /** SavedMealPatchIn */
-    SavedMealPatchIn: {
-      /** Ingredients */
-      ingredients?: components['schemas']['IngredientIn'][] | null
-      /** Name */
-      name?: string | null
-    }
     /** ServingIn */
     ServingIn: {
       /** Amount */
@@ -1615,6 +2019,14 @@ export interface components {
       amount: number
       /** Label */
       label: string
+    }
+    /** ShareIn */
+    ShareIn: {
+      /**
+       * Share
+       * @description My share of the dish, between 0.05 and 0.95 when shared.
+       */
+      share: number
     }
     /** StoreIn */
     StoreIn: {
@@ -1726,6 +2138,35 @@ export interface components {
     WeekPatternIn: {
       /** Pattern */
       pattern: string
+    }
+    /** MemberOut */
+    mahlzeit__api__schemas__MemberOut: {
+      /** Display Name */
+      display_name: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Is Me */
+      is_me: boolean
+      /**
+       * Joined At
+       * Format: date-time
+       */
+      joined_at: string
+    }
+    /** MemberOut */
+    mahlzeit__views__MemberOut: {
+      /** Display Name */
+      display_name: string
+      /** Is Me */
+      is_me: boolean
+      /**
+       * User Id
+       * Format: uuid
+       */
+      user_id: string
     }
   }
   responses: never
@@ -2242,6 +2683,76 @@ export interface operations {
       }
     }
   }
+  set_exact_amounts_api_entries__entry_id__exact_amounts_put: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        entry_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ExactAmountsIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['EntryOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  move_entry_api_entries__entry_id__move_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        entry_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MoveEntryIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['EntryOut'][]
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   save_entry_as_meal_api_entries__entry_id__save_as_meal_post: {
     parameters: {
       query?: never
@@ -2263,7 +2774,42 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['SavedMealOut']
+          'application/json': components['schemas']['RecipeOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  set_share_api_entries__entry_id__share_put: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        entry_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ShareIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['EntryOut']
         }
       }
       /** @description Validation Error */
@@ -2855,6 +3401,167 @@ export interface operations {
       }
     }
   }
+  list_offers_api_offers_get: {
+    parameters: {
+      query?: {
+        closed?: boolean
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['OfferOut'][]
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  send_offer_api_offers_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OfferIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['OfferOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_offer_api_offers__offer_id__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        offer_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['OfferOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  respond_to_offer_api_offers__offer_id__respond_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        offer_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OfferResponseIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['OfferOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  withdraw_offer_api_offers__offer_id__withdraw_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        offer_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['OfferOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
   search_online_api_online_search_get: {
     parameters: {
       query: {
@@ -2873,6 +3580,38 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['ItemDraftOut'][]
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_plan_api_plan_get: {
+    parameters: {
+      query: {
+        start: string
+        days?: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PlanOut']
         }
       }
       /** @description Validation Error */
@@ -2988,9 +3727,12 @@ export interface operations {
       }
     }
   }
-  list_saved_meals_api_saved_meals_get: {
+  list_recipes_api_recipes_get: {
     parameters: {
-      query?: never
+      query?: {
+        kind?: ('recipe' | 'saved_meal') | null
+        staples_only?: boolean
+      }
       header?: never
       path?: never
       cookie?: never
@@ -3003,31 +3745,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['SavedMealOut'][]
-        }
-      }
-    }
-  }
-  create_saved_meal_api_saved_meals_post: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SavedMealIn']
-      }
-    }
-    responses: {
-      /** @description Successful Response */
-      201: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          'application/json': components['schemas']['SavedMealOut']
+          'application/json': components['schemas']['RecipeOut'][]
         }
       }
       /** @description Validation Error */
@@ -3041,12 +3759,76 @@ export interface operations {
       }
     }
   }
-  delete_saved_meal_api_saved_meals__meal_id__delete: {
+  create_recipe_api_recipes_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RecipeIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['RecipeOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_recipe_api_recipes__recipe_id__get: {
     parameters: {
       query?: never
       header?: never
       path: {
-        meal_id: string
+        recipe_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['RecipeOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  delete_recipe_api_recipes__recipe_id__delete: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        recipe_id: string
       }
       cookie?: never
     }
@@ -3070,18 +3852,18 @@ export interface operations {
       }
     }
   }
-  update_saved_meal_api_saved_meals__meal_id__patch: {
+  update_recipe_api_recipes__recipe_id__patch: {
     parameters: {
       query?: never
       header?: never
       path: {
-        meal_id: string
+        recipe_id: string
       }
       cookie?: never
     }
     requestBody: {
       content: {
-        'application/json': components['schemas']['SavedMealPatchIn']
+        'application/json': components['schemas']['RecipePatchIn']
       }
     }
     responses: {
@@ -3091,7 +3873,42 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          'application/json': components['schemas']['SavedMealOut']
+          'application/json': components['schemas']['RecipeOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  add_to_list_api_recipes__recipe_id__add_to_list_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        recipe_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AddToListIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['AddedToListOut']
         }
       }
       /** @description Validation Error */

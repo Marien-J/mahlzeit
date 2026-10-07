@@ -51,6 +51,45 @@
         "title": "AcceptInviteIn",
         "type": "object"
       },
+      "AddToListIn": {
+        "properties": {
+          "portions": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Default: the whole recipe.",
+            "title": "Portions"
+          }
+        },
+        "title": "AddToListIn",
+        "type": "object"
+      },
+      "AddedToListOut": {
+        "properties": {
+          "added": {
+            "items": {
+              "$ref": "#/components/schemas/ListItemOut"
+            },
+            "title": "Added",
+            "type": "array"
+          },
+          "already_listed": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Already Listed",
+            "type": "array"
+          }
+        },
+        "required": ["added", "already_listed"],
+        "title": "AddedToListOut",
+        "type": "object"
+      },
       "BarcodeOut": {
         "properties": {
           "draft": {
@@ -396,6 +435,73 @@
         "title": "CopyEntryIn",
         "type": "object"
       },
+      "CounterMealIn": {
+        "description": "A new meal for the offer's day and slot.",
+        "properties": {
+          "at": {
+            "anyOf": [
+              {
+                "format": "time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "At"
+          },
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/ComponentIn"
+            },
+            "maxItems": 50,
+            "title": "Components",
+            "type": "array"
+          },
+          "cooked_grams": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cooked Grams"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "portions": {
+            "default": 1.0,
+            "title": "Portions",
+            "type": "number"
+          },
+          "recipe_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipe Id"
+          }
+        },
+        "title": "CounterMealIn",
+        "type": "object"
+      },
       "DayOut": {
         "properties": {
           "day": {
@@ -456,6 +562,18 @@
             "title": "Components",
             "type": "array"
           },
+          "cooked_grams": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "A portion weighed after cooking, instead of portions.",
+            "title": "Cooked Grams"
+          },
           "day": {
             "format": "date",
             "title": "Day",
@@ -464,6 +582,12 @@
           "eaten_out": {
             "default": false,
             "title": "Eaten Out",
+            "type": "boolean"
+          },
+          "joint": {
+            "default": false,
+            "description": "For everyone else in the household too.",
+            "title": "Joint",
             "type": "boolean"
           },
           "name": {
@@ -478,12 +602,18 @@
             ],
             "title": "Name"
           },
+          "plan": {
+            "default": false,
+            "description": "A plan for today or later, never eaten yet.",
+            "title": "Plan",
+            "type": "boolean"
+          },
           "portions": {
             "default": 1.0,
             "title": "Portions",
             "type": "number"
           },
-          "saved_meal_id": {
+          "recipe_id": {
             "anyOf": [
               {
                 "format": "uuid",
@@ -493,7 +623,7 @@
                 "type": "null"
               }
             ],
-            "title": "Saved Meal Id"
+            "title": "Recipe Id"
           },
           "slot": {
             "enum": ["breakfast", "lunch", "dinner", "snack"],
@@ -524,6 +654,9 @@
             "title": "Day",
             "type": "string"
           },
+          "dish": {
+            "$ref": "#/components/schemas/TotalsOut"
+          },
           "eaten_out": {
             "title": "Eaten Out",
             "type": "boolean"
@@ -543,6 +676,10 @@
               }
             ]
           },
+          "joint": {
+            "title": "Joint",
+            "type": "boolean"
+          },
           "name": {
             "anyOf": [
               {
@@ -554,7 +691,14 @@
             ],
             "title": "Name"
           },
-          "saved_meal_id": {
+          "participants": {
+            "items": {
+              "$ref": "#/components/schemas/ParticipantOut"
+            },
+            "title": "Participants",
+            "type": "array"
+          },
+          "recipe_id": {
             "anyOf": [
               {
                 "format": "uuid",
@@ -564,7 +708,18 @@
                 "type": "null"
               }
             ],
-            "title": "Saved Meal Id"
+            "title": "Recipe Id"
+          },
+          "recipe_portions": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recipe Portions"
           },
           "share": {
             "anyOf": [
@@ -602,11 +757,15 @@
           "at",
           "name",
           "eaten_out",
-          "saved_meal_id",
+          "recipe_id",
+          "recipe_portions",
+          "joint",
           "state",
           "share",
           "components",
-          "intake"
+          "participants",
+          "intake",
+          "dish"
         ],
         "title": "EntryOut",
         "type": "object"
@@ -703,6 +862,32 @@
         "title": "EntryStateIn",
         "type": "object"
       },
+      "ExactAmountsIn": {
+        "properties": {
+          "amounts": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "description": "Component id to what I weighed out for myself; null goes back to my share.",
+            "maxProperties": 50,
+            "propertyNames": {
+              "format": "uuid"
+            },
+            "title": "Amounts",
+            "type": "object"
+          }
+        },
+        "required": ["amounts"],
+        "title": "ExactAmountsIn",
+        "type": "object"
+      },
       "FavouriteIn": {
         "properties": {
           "on": {
@@ -777,7 +962,7 @@
           },
           "members": {
             "items": {
-              "$ref": "#/components/schemas/MemberOut"
+              "$ref": "#/components/schemas/mahlzeit__api__schemas__MemberOut"
             },
             "title": "Members",
             "type": "array"
@@ -1743,29 +1928,24 @@
         "title": "MePatch",
         "type": "object"
       },
-      "MemberOut": {
+      "MoveEntryIn": {
         "properties": {
-          "display_name": {
-            "title": "Display Name",
-            "type": "string"
-          },
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "is_me": {
-            "title": "Is Me",
-            "type": "boolean"
-          },
-          "joined_at": {
-            "format": "date-time",
-            "title": "Joined At",
-            "type": "string"
+          "before_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Stand before this entry of my day; null puts it last.",
+            "title": "Before Id"
           }
         },
-        "required": ["id", "display_name", "joined_at", "is_me"],
-        "title": "MemberOut",
+        "required": ["before_id"],
+        "title": "MoveEntryIn",
         "type": "object"
       },
       "NutrientsIn": {
@@ -1989,6 +2169,261 @@
         "title": "NutrientsOut",
         "type": "object"
       },
+      "OfferEffectOut": {
+        "properties": {
+          "incoming": {
+            "$ref": "#/components/schemas/TotalsOut"
+          },
+          "projection_after": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TargetsOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "projection_before": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TargetsOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "targets": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TargetsOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": ["incoming", "targets", "projection_before", "projection_after"],
+        "title": "OfferEffectOut",
+        "type": "object"
+      },
+      "OfferIn": {
+        "properties": {
+          "entry_id": {
+            "format": "uuid",
+            "title": "Entry Id",
+            "type": "string"
+          },
+          "share": {
+            "default": 0.5,
+            "description": "The receiver's share of the dish.",
+            "title": "Share",
+            "type": "number"
+          },
+          "to_user_id": {
+            "format": "uuid",
+            "title": "To User Id",
+            "type": "string"
+          }
+        },
+        "required": ["entry_id", "to_user_id"],
+        "title": "OfferIn",
+        "type": "object"
+      },
+      "OfferOut": {
+        "properties": {
+          "counter_of_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Counter Of Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "effect": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OfferEffectOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "from_name": {
+            "title": "From Name",
+            "type": "string"
+          },
+          "from_user_id": {
+            "format": "uuid",
+            "title": "From User Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "incoming": {
+            "title": "Incoming",
+            "type": "boolean"
+          },
+          "meal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EntryOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "responded_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Responded At"
+          },
+          "share": {
+            "title": "Share",
+            "type": "number"
+          },
+          "slot": {
+            "enum": ["breakfast", "lunch", "dinner", "snack"],
+            "title": "Slot",
+            "type": "string"
+          },
+          "state": {
+            "enum": ["pending", "accepted", "declined", "countered", "withdrawn", "expired"],
+            "title": "State",
+            "type": "string"
+          },
+          "to_name": {
+            "title": "To Name",
+            "type": "string"
+          },
+          "to_user_id": {
+            "format": "uuid",
+            "title": "To User Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "state",
+          "from_user_id",
+          "from_name",
+          "to_user_id",
+          "to_name",
+          "incoming",
+          "day",
+          "slot",
+          "share",
+          "counter_of_id",
+          "created_at",
+          "responded_at",
+          "meal",
+          "effect"
+        ],
+        "title": "OfferOut",
+        "type": "object"
+      },
+      "OfferResponseIn": {
+        "properties": {
+          "action": {
+            "enum": ["accept", "decline", "counter"],
+            "title": "Action",
+            "type": "string"
+          },
+          "counter_entry_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Counter with one of my own plans for the same slot.",
+            "title": "Counter Entry Id"
+          },
+          "counter_meal": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CounterMealIn"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Or with a new meal."
+          }
+        },
+        "required": ["action"],
+        "title": "OfferResponseIn",
+        "type": "object"
+      },
+      "ParticipantOut": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "exact_amounts": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "propertyNames": {
+              "format": "uuid"
+            },
+            "title": "Exact Amounts",
+            "type": "object"
+          },
+          "intake": {
+            "$ref": "#/components/schemas/TotalsOut"
+          },
+          "share": {
+            "title": "Share",
+            "type": "number"
+          },
+          "state": {
+            "enum": ["planned", "logged", "skipped"],
+            "title": "State",
+            "type": "string"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": ["user_id", "display_name", "state", "share", "exact_amounts", "intake"],
+        "title": "ParticipantOut",
+        "type": "object"
+      },
       "PasswordChangeIn": {
         "properties": {
           "current_password": {
@@ -2083,6 +2518,53 @@
           "entries"
         ],
         "title": "PersonDayOut",
+        "type": "object"
+      },
+      "PlanDayOut": {
+        "properties": {
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/EntryOut"
+            },
+            "title": "Entries",
+            "type": "array"
+          }
+        },
+        "required": ["day", "entries"],
+        "title": "PlanDayOut",
+        "type": "object"
+      },
+      "PlanOut": {
+        "properties": {
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/PlanDayOut"
+            },
+            "title": "Days",
+            "type": "array"
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/mahlzeit__views__MemberOut"
+            },
+            "title": "Members",
+            "type": "array"
+          },
+          "offers": {
+            "items": {
+              "$ref": "#/components/schemas/OfferOut"
+            },
+            "title": "Offers",
+            "type": "array"
+          }
+        },
+        "required": ["members", "days", "offers"],
+        "title": "PlanOut",
         "type": "object"
       },
       "ProfileOut": {
@@ -2245,6 +2727,226 @@
         "title": "PushUnsubscribeIn",
         "type": "object"
       },
+      "RecipeIn": {
+        "properties": {
+          "cooked_yield_g": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cooked Yield G"
+          },
+          "ingredients": {
+            "items": {
+              "$ref": "#/components/schemas/IngredientIn"
+            },
+            "maxItems": 50,
+            "title": "Ingredients",
+            "type": "array"
+          },
+          "kind": {
+            "default": "recipe",
+            "enum": ["recipe", "saved_meal"],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "servings": {
+            "default": 1,
+            "title": "Servings",
+            "type": "number"
+          },
+          "staple": {
+            "default": false,
+            "title": "Staple",
+            "type": "boolean"
+          }
+        },
+        "required": ["name", "ingredients"],
+        "title": "RecipeIn",
+        "type": "object"
+      },
+      "RecipeOut": {
+        "properties": {
+          "cooked_yield_g": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cooked Yield G"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "ingredients": {
+            "items": {
+              "$ref": "#/components/schemas/IngredientOut"
+            },
+            "title": "Ingredients",
+            "type": "array"
+          },
+          "kind": {
+            "enum": ["recipe", "saved_meal"],
+            "title": "Kind",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "per_100g_cooked": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/NutrientsOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "per_serving": {
+            "$ref": "#/components/schemas/TotalsOut"
+          },
+          "servings": {
+            "title": "Servings",
+            "type": "number"
+          },
+          "staple": {
+            "title": "Staple",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "servings",
+          "cooked_yield_g",
+          "staple",
+          "notes",
+          "ingredients",
+          "per_serving",
+          "per_100g_cooked"
+        ],
+        "title": "RecipeOut",
+        "type": "object"
+      },
+      "RecipePatchIn": {
+        "description": "Only the fields that are sent change; send null to clear the cooked yield or the notes.",
+        "properties": {
+          "cooked_yield_g": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cooked Yield G"
+          },
+          "ingredients": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/IngredientIn"
+                },
+                "maxItems": 50,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ingredients"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "servings": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Servings"
+          },
+          "staple": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Staple"
+          }
+        },
+        "title": "RecipePatchIn",
+        "type": "object"
+      },
       "ResetConfirmIn": {
         "properties": {
           "password": {
@@ -2292,85 +2994,6 @@
         "title": "SaveAsMealIn",
         "type": "object"
       },
-      "SavedMealIn": {
-        "properties": {
-          "ingredients": {
-            "items": {
-              "$ref": "#/components/schemas/IngredientIn"
-            },
-            "maxItems": 50,
-            "title": "Ingredients",
-            "type": "array"
-          },
-          "name": {
-            "maxLength": 120,
-            "title": "Name",
-            "type": "string"
-          }
-        },
-        "required": ["name", "ingredients"],
-        "title": "SavedMealIn",
-        "type": "object"
-      },
-      "SavedMealOut": {
-        "properties": {
-          "id": {
-            "format": "uuid",
-            "title": "Id",
-            "type": "string"
-          },
-          "ingredients": {
-            "items": {
-              "$ref": "#/components/schemas/IngredientOut"
-            },
-            "title": "Ingredients",
-            "type": "array"
-          },
-          "name": {
-            "title": "Name",
-            "type": "string"
-          },
-          "per_serving": {
-            "$ref": "#/components/schemas/TotalsOut"
-          }
-        },
-        "required": ["id", "name", "ingredients", "per_serving"],
-        "title": "SavedMealOut",
-        "type": "object"
-      },
-      "SavedMealPatchIn": {
-        "properties": {
-          "ingredients": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/IngredientIn"
-                },
-                "maxItems": 50,
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Ingredients"
-          },
-          "name": {
-            "anyOf": [
-              {
-                "maxLength": 120,
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Name"
-          }
-        },
-        "title": "SavedMealPatchIn",
-        "type": "object"
-      },
       "ServingIn": {
         "properties": {
           "amount": {
@@ -2400,6 +3023,18 @@
         },
         "required": ["label", "amount"],
         "title": "ServingOut",
+        "type": "object"
+      },
+      "ShareIn": {
+        "properties": {
+          "share": {
+            "description": "My share of the dish, between 0.05 and 0.95 when shared.",
+            "title": "Share",
+            "type": "number"
+          }
+        },
+        "required": ["share"],
+        "title": "ShareIn",
         "type": "object"
       },
       "StoreIn": {
@@ -2710,6 +3345,51 @@
         },
         "required": ["pattern"],
         "title": "WeekPatternIn",
+        "type": "object"
+      },
+      "mahlzeit__api__schemas__MemberOut": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "is_me": {
+            "title": "Is Me",
+            "type": "boolean"
+          },
+          "joined_at": {
+            "format": "date-time",
+            "title": "Joined At",
+            "type": "string"
+          }
+        },
+        "required": ["id", "display_name", "joined_at", "is_me"],
+        "title": "MemberOut",
+        "type": "object"
+      },
+      "mahlzeit__views__MemberOut": {
+        "properties": {
+          "display_name": {
+            "title": "Display Name",
+            "type": "string"
+          },
+          "is_me": {
+            "title": "Is Me",
+            "type": "boolean"
+          },
+          "user_id": {
+            "format": "uuid",
+            "title": "User Id",
+            "type": "string"
+          }
+        },
+        "required": ["user_id", "display_name", "is_me"],
+        "title": "MemberOut",
         "type": "object"
       }
     }
@@ -3310,6 +3990,113 @@
         "tags": ["day"]
       }
     },
+    "/api/entries/{entry_id}/exact-amounts": {
+      "put": {
+        "operationId": "set_exact_amounts_api_entries__entry_id__exact_amounts_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Entry Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExactAmountsIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Exact Amounts",
+        "tags": ["day"]
+      }
+    },
+    "/api/entries/{entry_id}/move": {
+      "post": {
+        "description": "Drag an entry before another of my day (or last); the entries whose time changed.",
+        "operationId": "move_entry_api_entries__entry_id__move_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Entry Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveEntryIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/EntryOut"
+                  },
+                  "title": "Response Move Entry Api Entries  Entry Id  Move Post",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Move Entry",
+        "tags": ["day"]
+      }
+    },
     "/api/entries/{entry_id}/save-as-meal": {
       "post": {
         "operationId": "save_entry_as_meal_api_entries__entry_id__save_as_meal_post",
@@ -3340,7 +4127,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SavedMealOut"
+                  "$ref": "#/components/schemas/RecipeOut"
                 }
               }
             },
@@ -3358,7 +4145,58 @@
           }
         },
         "summary": "Save Entry As Meal",
-        "tags": ["saved meals"]
+        "tags": ["recipes"]
+      }
+    },
+    "/api/entries/{entry_id}/share": {
+      "put": {
+        "operationId": "set_share_api_entries__entry_id__share_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Entry Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShareIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntryOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Share",
+        "tags": ["day"]
       }
     },
     "/api/entries/{entry_id}/state": {
@@ -4077,6 +4915,222 @@
         "tags": ["me"]
       }
     },
+    "/api/offers": {
+      "get": {
+        "description": "Offers to or from me: the open ones, or with `closed` also the last two weeks'.",
+        "operationId": "list_offers_api_offers_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "closed",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Closed",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/OfferOut"
+                  },
+                  "title": "Response List Offers Api Offers Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Offers",
+        "tags": ["plan"]
+      },
+      "post": {
+        "operationId": "send_offer_api_offers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Send Offer",
+        "tags": ["plan"]
+      }
+    },
+    "/api/offers/{offer_id}": {
+      "get": {
+        "operationId": "get_offer_api_offers__offer_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Offer Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Offer",
+        "tags": ["plan"]
+      }
+    },
+    "/api/offers/{offer_id}/respond": {
+      "post": {
+        "operationId": "respond_to_offer_api_offers__offer_id__respond_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Offer Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferResponseIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Respond To Offer",
+        "tags": ["plan"]
+      }
+    },
+    "/api/offers/{offer_id}/withdraw": {
+      "post": {
+        "operationId": "withdraw_offer_api_offers__offer_id__withdraw_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "offer_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Offer Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OfferOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Withdraw Offer",
+        "tags": ["plan"]
+      }
+    },
     "/api/online-search": {
       "get": {
         "operationId": "search_online_api_online_search_get",
@@ -4121,6 +5175,58 @@
         },
         "summary": "Search Online",
         "tags": ["catalogue"]
+      }
+    },
+    "/api/plan": {
+      "get": {
+        "description": "Every entry of the household for `days` days from `start`, with the open offers.",
+        "operationId": "get_plan_api_plan_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Start",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "days",
+            "required": false,
+            "schema": {
+              "default": 7,
+              "title": "Days",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Plan",
+        "tags": ["plan"]
       }
     },
     "/api/push": {
@@ -4223,46 +5329,48 @@
         "tags": ["push"]
       }
     },
-    "/api/saved-meals": {
+    "/api/recipes": {
       "get": {
-        "operationId": "list_saved_meals_api_saved_meals_get",
+        "operationId": "list_recipes_api_recipes_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": ["recipe", "saved_meal"],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Kind"
+            }
+          },
+          {
+            "in": "query",
+            "name": "staples_only",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Staples Only",
+              "type": "boolean"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/SavedMealOut"
+                    "$ref": "#/components/schemas/RecipeOut"
                   },
-                  "title": "Response List Saved Meals Api Saved Meals Get",
+                  "title": "Response List Recipes Api Recipes Get",
                   "type": "array"
-                }
-              }
-            },
-            "description": "Successful Response"
-          }
-        },
-        "summary": "List Saved Meals",
-        "tags": ["saved meals"]
-      },
-      "post": {
-        "operationId": "create_saved_meal_api_saved_meals_post",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SavedMealIn"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "201": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SavedMealOut"
                 }
               }
             },
@@ -4279,21 +5387,58 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Create Saved Meal",
-        "tags": ["saved meals"]
+        "summary": "List Recipes",
+        "tags": ["recipes"]
+      },
+      "post": {
+        "operationId": "create_recipe_api_recipes_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Recipe",
+        "tags": ["recipes"]
       }
     },
-    "/api/saved-meals/{meal_id}": {
+    "/api/recipes/{recipe_id}": {
       "delete": {
-        "operationId": "delete_saved_meal_api_saved_meals__meal_id__delete",
+        "operationId": "delete_recipe_api_recipes__recipe_id__delete",
         "parameters": [
           {
             "in": "path",
-            "name": "meal_id",
+            "name": "recipe_id",
             "required": true,
             "schema": {
               "format": "uuid",
-              "title": "Meal Id",
+              "title": "Recipe Id",
               "type": "string"
             }
           }
@@ -4313,39 +5458,29 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Delete Saved Meal",
-        "tags": ["saved meals"]
+        "summary": "Delete Recipe",
+        "tags": ["recipes"]
       },
-      "patch": {
-        "operationId": "update_saved_meal_api_saved_meals__meal_id__patch",
+      "get": {
+        "operationId": "get_recipe_api_recipes__recipe_id__get",
         "parameters": [
           {
             "in": "path",
-            "name": "meal_id",
+            "name": "recipe_id",
             "required": true,
             "schema": {
               "format": "uuid",
-              "title": "Meal Id",
+              "title": "Recipe Id",
               "type": "string"
             }
           }
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SavedMealPatchIn"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SavedMealOut"
+                  "$ref": "#/components/schemas/RecipeOut"
                 }
               }
             },
@@ -4362,8 +5497,108 @@
             "description": "Validation Error"
           }
         },
-        "summary": "Update Saved Meal",
-        "tags": ["saved meals"]
+        "summary": "Get Recipe",
+        "tags": ["recipes"]
+      },
+      "patch": {
+        "operationId": "update_recipe_api_recipes__recipe_id__patch",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipe_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Recipe Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecipePatchIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecipeOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Recipe",
+        "tags": ["recipes"]
+      }
+    },
+    "/api/recipes/{recipe_id}/add-to-list": {
+      "post": {
+        "operationId": "add_to_list_api_recipes__recipe_id__add_to_list_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recipe_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Recipe Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToListIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddedToListOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add To List",
+        "tags": ["recipes"]
       }
     },
     "/api/stores": {

@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 
 from mahlzeit import clock
 from mahlzeit.domain import shopping as rules
-from mahlzeit.domain.catalogue import Category, display_name
+from mahlzeit.domain.catalogue import Category
 from mahlzeit.domain.errors import Conflict, DomainError, Invalid, NotFound
 from mahlzeit.domain.permissions import Actor, require_household
 from mahlzeit.domain.search import normalize
@@ -219,10 +219,6 @@ def _uuid(value: Any) -> uuid.UUID:
         raise Invalid("id_invalid") from err
 
 
-def _names(item: Item) -> dict[str, str | None]:
-    return {"de": item.name_de, "en": item.name_en, "nl": item.name_nl}
-
-
 def _snapshot(row: ShoppingListItem) -> dict[str, Any]:
     return {
         "text": row.text,
@@ -233,7 +229,15 @@ def _snapshot(row: ShoppingListItem) -> dict[str, Any]:
     }
 
 
-def _add(db: Session, actor: Actor, op: Op, at: datetime, now: datetime, language: str) -> Status:
+def _add(
+    db: Session,
+    actor: Actor,
+    op: Op,
+    at: datetime,
+    now: datetime,
+    language: str,
+    origin: str,
+) -> Status:
     fields = dict(op.fields)
     parse = fields.pop("parse", True) is not False
     clean = _clean(db, actor, fields)
@@ -241,7 +245,7 @@ def _add(db: Session, actor: Actor, op: Op, at: datetime, now: datetime, languag
     if "text" not in clean:
         if item is None:
             raise Invalid("list_text_empty")
-        clean["text"] = rules.check_text(display_name(_names(item), language))
+        clean["text"] = rules.check_text(items.name_of(item, language))
     if parse and clean.get("quantity") is None and item is None:
         entry = rules.parse_entry(clean["text"])
         clean["text"], clean["quantity"] = entry.name, entry.quantity
@@ -264,7 +268,7 @@ def _add(db: Session, actor: Actor, op: Op, at: datetime, now: datetime, languag
         checked=checked,
         checked_at=at if checked else None,
         checked_by=actor.user_id if checked else None,
-        origin="manual",
+        origin=origin,
         field_times={name: at.isoformat() for name in rules.FIELDS},
         created_by=actor.user_id,
         created_at=now,
@@ -324,7 +328,7 @@ def _remove(db: Session, actor: Actor, row: ShoppingListItem, now: datetime) -> 
     return "applied"
 
 
-def _one(db: Session, actor: Actor, op: Op, now: datetime, language: str) -> Status:
+def _one(db: Session, actor: Actor, op: Op, now: datetime, language: str, origin: str) -> Status:
     at = op.at or now
     if at.tzinfo is None:
         at = at.replace(tzinfo=UTC)
@@ -337,14 +341,16 @@ def _one(db: Session, actor: Actor, op: Op, now: datetime, language: str) -> Sta
     match op.kind:
         case "add":
             # The same add sent again (a retry after a lost answer) changes nothing.
-            return "unchanged" if row else _add(db, actor, op, at, now, language)
+            return "unchanged" if row else _add(db, actor, op, at, now, language, origin)
         case "update":
             return _update(db, actor, row, op, at, now) if row else "not_found"
         case "remove":
             return _remove(db, actor, row, now) if row else "removed"
 
 
-def apply(db: Session, actor: Actor, ops: Sequence[Op], *, language: str = "de") -> list[OpResult]:
+def apply(
+    db: Session, actor: Actor, ops: Sequence[Op], *, language: str = "de", origin: str = "manual"
+) -> list[OpResult]:
     """Apply operations in order. Each one stands alone: a bad operation is reported and
     skipped, so one broken change can never block a phone's queue."""
     if len(ops) > MAX_OPS:
@@ -354,7 +360,7 @@ def apply(db: Session, actor: Actor, ops: Sequence[Op], *, language: str = "de")
     for op in ops:
         try:
             with db.begin_nested():
-                status = _one(db, actor, op, now, language)
+                status = _one(db, actor, op, now, language, origin)
             results.append(OpResult(op.id, status))
         except DomainError as err:
             results.append(OpResult(op.id, "invalid", err.code))

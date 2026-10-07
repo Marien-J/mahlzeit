@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from mahlzeit.mail import Mailer, SmtpMailer
 from mahlzeit.push import PushSender, WebPushSender
-from mahlzeit.services import email, maintenance, push
+from mahlzeit.services import email, maintenance, offers, push
 
 
 @dataclass
@@ -28,8 +28,10 @@ HANDLERS: dict[str, Handler] = {
     "email.password_reset": lambda db, p, d: email.send_password_reset(db, p, d.mailer),
     "push.deliver": lambda db, p, d: push.deliver(db, p, d.push_sender),
     "maintenance.purge": lambda db, p, d: maintenance.purge(db),
+    "offers.expire": lambda db, p, d: offers.expire_overdue(db),
 }
 
 RECURRING: dict[str, timedelta] = {
     "maintenance.purge": timedelta(hours=1),
+    "offers.expire": timedelta(hours=1),
 }

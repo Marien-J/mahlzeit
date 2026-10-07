@@ -93,3 +93,15 @@ class TestExactAmounts:
     def test_bounds(self, eaten: float) -> None:
         with pytest.raises(Invalid, match="exact_amount_invalid"):
             shares.exact_fraction(component_amount=400, eaten=eaten)
+
+
+class TestNormalize:
+    def test_when_a_partner_leaves_the_rest_takes_the_whole_dish(self) -> None:
+        assert shares.normalize([part("me", 0.5)]) == {"me": 1.0}
+
+    def test_open_parts_grow_in_proportion_to_fill_what_logged_parts_leave(self) -> None:
+        parts = [part("a", 0.2), part("b", 0.2), part("c", 0.3, logged=True)]
+        assert shares.normalize(parts) == {"a": pytest.approx(0.35), "b": pytest.approx(0.35)}
+
+    def test_nothing_to_do_when_everyone_has_eaten(self) -> None:
+        assert shares.normalize([part("a", 0.4, logged=True)]) == {}

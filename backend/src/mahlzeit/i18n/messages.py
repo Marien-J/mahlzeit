@@ -12,6 +12,10 @@ MESSAGES: dict[str, dict[str, str]] = {
         ),
         "push.test.title": "Mahlzeit",
         "push.test.body": "Benachrichtigungen funktionieren auf diesem Gerät.",
+        "push.offer.title": "{name} bietet dir eine Mahlzeit an",
+        "push.offer.body": "{meal}",
+        "push.counter.title": "{name} schlägt etwas anderes vor",
+        "push.counter.body": "{meal}",
     },
     "en": {
         "email.password_reset.subject": "Mahlzeit: reset your password",
@@ -24,6 +28,10 @@ MESSAGES: dict[str, dict[str, str]] = {
         ),
         "push.test.title": "Mahlzeit",
         "push.test.body": "Notifications work on this device.",
+        "push.offer.title": "{name} offers you a meal",
+        "push.offer.body": "{meal}",
+        "push.counter.title": "{name} suggests something else",
+        "push.counter.body": "{meal}",
     },
     "nl": {
         "email.password_reset.subject": "Mahlzeit: wachtwoord opnieuw instellen",
@@ -36,5 +44,9 @@ MESSAGES: dict[str, dict[str, str]] = {
         ),
         "push.test.title": "Mahlzeit",
         "push.test.body": "Meldingen werken op dit apparaat.",
+        "push.offer.title": "{name} stelt je een maaltijd voor",
+        "push.offer.body": "{meal}",
+        "push.counter.title": "{name} stelt iets anders voor",
+        "push.counter.body": "{meal}",
     },
 }

@@ -15,6 +15,9 @@ from mahlzeit.api.schemas import (
     EntryIn,
     EntryPatchIn,
     EntryStateIn,
+    ExactAmountsIn,
+    MoveEntryIn,
+    ShareIn,
 )
 from mahlzeit.domain.day import EntryState, Slot
 from mahlzeit.domain.targets import DayType
@@ -53,6 +56,29 @@ def set_entry_state(
 @router.delete("/entries/{entry_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_entry(entry_id: uuid.UUID, current: CurrentWrite, db: Db) -> None:
     day.delete_entry(db, current.actor, entry_id)
+
+
+@router.put("/entries/{entry_id}/share", response_model=views.EntryOut)
+def set_share(entry_id: uuid.UUID, body: ShareIn, current: CurrentWrite, db: Db) -> views.EntryOut:
+    entry = day.set_share(db, current.actor, entry_id, body.share)
+    return views.entry(entry, current.user.language, current.user.id)
+
+
+@router.put("/entries/{entry_id}/exact-amounts", response_model=views.EntryOut)
+def set_exact_amounts(
+    entry_id: uuid.UUID, body: ExactAmountsIn, current: CurrentWrite, db: Db
+) -> views.EntryOut:
+    entry = day.set_exact_amounts(db, current.actor, entry_id, body.amounts)
+    return views.entry(entry, current.user.language, current.user.id)
+
+
+@router.post("/entries/{entry_id}/move", response_model=list[views.EntryOut])
+def move_entry(
+    entry_id: uuid.UUID, body: MoveEntryIn, current: CurrentWrite, db: Db
+) -> list[views.EntryOut]:
+    """Drag an entry before another of my day (or last); the entries whose time changed."""
+    moved = day.move_entry(db, current.actor, entry_id, before_id=body.before_id)
+    return [views.entry(e, current.user.language, current.user.id) for e in moved]
 
 
 @router.post(

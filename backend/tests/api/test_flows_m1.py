@@ -164,13 +164,14 @@ class TestDay:
         meal = jonas.post(f"/api/entries/{entry['id']}/save-as-meal", json={}).json()
         assert meal["name"] == "Porridge" and meal["ingredients"][0]["amount"] == 70
         logged = jonas.post(
-            "/api/entries", json={"day": TODAY, "slot": "snack", "saved_meal_id": meal["id"]}
+            "/api/entries", json={"day": TODAY, "slot": "snack", "recipe_id": meal["id"]}
         )
-        assert logged.json()["saved_meal_id"] == meal["id"]
-        assert [m["name"] for m in jonas.get("/api/saved-meals").json()] == ["Porridge"]
-        renamed = jonas.patch(f"/api/saved-meals/{meal['id']}", json={"name": "Hafer"}).json()
+        assert logged.json()["recipe_id"] == meal["id"] and meal["kind"] == "saved_meal"
+        saved = jonas.get("/api/recipes", params={"kind": "saved_meal"}).json()
+        assert [m["name"] for m in saved] == ["Porridge"]
+        renamed = jonas.patch(f"/api/recipes/{meal['id']}", json={"name": "Hafer"}).json()
         assert renamed["name"] == "Hafer"
-        assert jonas.delete(f"/api/saved-meals/{meal['id']}").status_code == 204
+        assert jonas.delete(f"/api/recipes/{meal['id']}").status_code == 204
         day_copy = jonas.post("/api/days/2026-10-07/copy", json={"source_day": "2026-10-05"})
         assert day_copy.status_code == 201 and day_copy.json()[0]["state"] == "planned"
 

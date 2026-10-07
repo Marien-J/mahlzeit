@@ -72,7 +72,7 @@ export function AddPage() {
   })
   const logMeal = useMutation({
     mutationFn: (savedMealId: string) =>
-      logFood({ day, slot, at, eaten_out: eatenOut, portions: 1, saved_meal_id: savedMealId }),
+      logFood({ day, slot, at, eaten_out: eatenOut, portions: 1, recipe_id: savedMealId }),
     onSuccess: async () => {
       await refresh()
       back()

@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+from datetime import date
+
 from mahlzeit.api import schemas
 from mahlzeit.domain.catalogue import BaseUnit, Category, TrackingMode
 from mahlzeit.domain.day import Slot
 from mahlzeit.domain.nutrition import Nutrients
+from mahlzeit.domain.recipes import RecipeKind
 from mahlzeit.services.day import ComponentInput, EntryInput, EntryPatch
 from mahlzeit.services.items import ItemInput
+from mahlzeit.services.offers import Counter
+from mahlzeit.services.recipes import UNSET, Ingredient, RecipeInput, RecipePatch
 from mahlzeit.services.shopping import Op
 
 
@@ -38,8 +43,11 @@ def entry_input(body: schemas.EntryIn) -> EntryInput:
         name=body.name,
         eaten_out=body.eaten_out,
         components=[component(c) for c in body.components],
-        saved_meal_id=body.saved_meal_id,
+        recipe_id=body.recipe_id,
         portions=body.portions,
+        cooked_grams=body.cooked_grams,
+        plan=body.plan,
+        joint=body.joint,
     )
 
 
@@ -56,3 +64,49 @@ def entry_patch(body: schemas.EntryPatchIn) -> EntryPatch:
 
 def list_op(o: schemas.ListOpIn) -> Op:
     return Op(kind=o.kind, id=o.id, at=o.at, fields=o.fields.model_dump(exclude_unset=True))
+
+
+def recipe_input(body: schemas.RecipeIn) -> RecipeInput:
+    return RecipeInput(
+        name=body.name,
+        kind=RecipeKind(body.kind),
+        servings=body.servings,
+        cooked_yield_g=body.cooked_yield_g,
+        staple=body.staple,
+        notes=body.notes,
+        ingredients=[Ingredient(i.item_id, i.amount) for i in body.ingredients],
+    )
+
+
+def recipe_patch(body: schemas.RecipePatchIn) -> RecipePatch:
+    sent = body.model_fields_set
+    return RecipePatch(
+        name=body.name,
+        servings=body.servings,
+        cooked_yield_g=body.cooked_yield_g if "cooked_yield_g" in sent else UNSET,
+        staple=body.staple,
+        notes=body.notes if "notes" in sent else UNSET,
+        ingredients=[Ingredient(i.item_id, i.amount) for i in body.ingredients]
+        if body.ingredients is not None
+        else None,
+    )
+
+
+def counter(body: schemas.OfferResponseIn) -> Counter | None:
+    """The meal sent back with a counter-offer. Its day and slot come from the offer."""
+    if body.counter_meal is None:
+        return Counter(entry_id=body.counter_entry_id) if body.counter_entry_id else None
+    meal = body.counter_meal
+    return Counter(
+        entry_id=body.counter_entry_id,
+        meal=EntryInput(
+            day=date.min,  # replaced by the offer's day and slot
+            slot=Slot.DINNER,
+            at=meal.at,
+            name=meal.name,
+            components=[component(c) for c in meal.components],
+            recipe_id=meal.recipe_id,
+            portions=meal.portions,
+            cooked_grams=meal.cooked_grams,
+        ),
+    )

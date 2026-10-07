@@ -68,7 +68,9 @@ export function entry(over: Partial<Schemas['EntryOut']> = {}): Schemas['EntryOu
     at: '08:10:00',
     name: null,
     eaten_out: false,
-    saved_meal_id: null,
+    recipe_id: null,
+    recipe_portions: null,
+    joint: false,
     state: 'logged',
     share: 1,
     components: [
@@ -84,7 +86,18 @@ export function entry(over: Partial<Schemas['EntryOut']> = {}): Schemas['EntryOu
         nutrients: nutrients({ kcal: 94.5, protein: 16.5, carbs: 6, fat: 0.3 }),
       },
     ],
+    participants: [
+      {
+        user_id: ME.user.id,
+        display_name: 'Jonas',
+        state: 'logged',
+        share: 1,
+        exact_amounts: {},
+        intake: totals({ kcal: 94.5, protein: 16.5, carbs: 6, fat: 0.3 }),
+      },
+    ],
     intake: totals({ kcal: 94.5, protein: 16.5, carbs: 6, fat: 0.3 }),
+    dish: totals({ kcal: 94.5, protein: 16.5, carbs: 6, fat: 0.3 }),
     ...over,
   }
 }

@@ -21,8 +21,13 @@ export function useRefreshDays() {
   return () => client.invalidateQueries({ queryKey: ['day'] })
 }
 
-export function logFood(body: Schemas['EntryIn']) {
-  return call(api.POST('/api/entries', { body }))
+type EntryBody = Schemas['EntryIn']
+
+/** Log a meal; with `plan` it is a plan for today or later, with `joint` for both of us. */
+export function logFood(
+  body: Omit<EntryBody, 'plan' | 'joint'> & { plan?: boolean; joint?: boolean },
+) {
+  return call(api.POST('/api/entries', { body: { plan: false, joint: false, ...body } }))
 }
 
 export function updateEntry(id: string, body: Schemas['EntryPatchIn']) {

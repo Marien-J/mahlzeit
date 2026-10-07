@@ -10,8 +10,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from mahlzeit.domain.permissions import Actor
-from mahlzeit.models import Item, User
-from mahlzeit.services import admin, auth, invites
+from mahlzeit.domain.recipes import RecipeKind
+from mahlzeit.models import Item, Recipe, User
+from mahlzeit.services import admin, auth, invites, recipes
+from mahlzeit.services.recipes import Ingredient, RecipeInput
 
 PASSWORD = "correct horse battery"
 _seq = count(1)
@@ -64,3 +66,38 @@ def signed_in(client: TestClient, member: Member) -> str:
 def generic(db: Session, actor: Actor, bls_code: str) -> Item:
     """A generic seed food by its BLS code."""
     return db.scalars(select(Item).where(Item.source == "bls", Item.source_id == bls_code)).one()
+
+
+def saved_meal(db: Session, actor: Actor, name: str, *ingredients: tuple[Item, float]) -> Recipe:
+    """A one-serving recipe from (item, grams) pairs."""
+    return recipes.create(
+        db,
+        actor,
+        RecipeInput(
+            name=name,
+            kind=RecipeKind.SAVED_MEAL,
+            ingredients=[Ingredient(item.id, amount) for item, amount in ingredients],
+        ),
+    )
+
+
+def recipe(
+    db: Session,
+    actor: Actor,
+    name: str,
+    *ingredients: tuple[Item, float],
+    servings: float = 2,
+    staple: bool = False,
+    cooked_yield_g: float | None = None,
+) -> Recipe:
+    return recipes.create(
+        db,
+        actor,
+        RecipeInput(
+            name=name,
+            servings=servings,
+            staple=staple,
+            cooked_yield_g=cooked_yield_g,
+            ingredients=[Ingredient(item.id, amount) for item, amount in ingredients],
+        ),
+    )

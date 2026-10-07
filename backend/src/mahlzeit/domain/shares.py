@@ -72,3 +72,14 @@ def exact_fraction(*, component_amount: float, eaten: float) -> float:
     if component_amount <= 0 or not 0 < eaten <= MAX_AMOUNT:
         raise Invalid("exact_amount_invalid", max=MAX_AMOUNT)
     return eaten / component_amount
+
+
+def normalize(parts: Sequence[PartShare]) -> dict[Hashable, float]:
+    """Shares after someone leaves a meal: those who have not eaten yet fill what the logged
+    parts leave, in proportion to what they had."""
+    open_parts = [p for p in parts if not p.logged]
+    if not open_parts:
+        return {}
+    room = max(1 - sum(p.share for p in parts if p.logged), MIN_SHARE)
+    weight = sum(p.share for p in open_parts)
+    return {p.key: min(max(room * p.share / weight, MIN_SHARE), 1.0) for p in open_parts}

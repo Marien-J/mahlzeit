@@ -1,6 +1,6 @@
 """Day tools: get_day, get_household_snapshot, log_food, log_planned_meal, update_entry,
-delete_entry, copy_meals, get_targets, set_targets, set_day_type, and the saved-meal tools
-list_recipes, get_recipe, create_recipe, update_recipe, delete_recipe."""
+delete_entry, copy_meals, get_targets, set_targets, set_day_type, and the recipe tools
+list_recipes, get_recipe, create_recipe, update_recipe, delete_recipe (recipes and saved meals)."""
 
 from __future__ import annotations
 
@@ -14,10 +14,11 @@ from pydantic import BaseModel, Field, model_validator
 from mahlzeit import views
 from mahlzeit.domain.day import EntryState, Slot
 from mahlzeit.domain.errors import Invalid
+from mahlzeit.domain.recipes import RecipeKind
 from mahlzeit.domain.targets import DayType, Targets
-from mahlzeit.services import day, saved_meals, snapshot, targets
+from mahlzeit.services import day, recipes, snapshot, targets
 from mahlzeit.services.day import ComponentInput, EntryInput, EntryPatch
-from mahlzeit.services.saved_meals import Ingredient
+from mahlzeit.services.recipes import UNSET, Ingredient, RecipeInput, RecipePatch
 from mahlzeit.tools.registry import ToolContext, tool
 
 SlotName = Literal["breakfast", "lunch", "dinner", "snack"]
@@ -82,8 +83,19 @@ class LogFoodIn(BaseModel):
         max_length=20,
         description="Foods without a catalogue item: name and kcal, macros optional.",
     )
-    saved_meal_id: uuid.UUID | None = Field(default=None, description="From list_recipes.")
-    portions: float = Field(default=1.0, description="Portions of the saved meal.")
+    recipe_id: uuid.UUID | None = Field(
+        default=None, description="A recipe or saved meal, from list_recipes."
+    )
+    portions: float = Field(default=1.0, description="Portions of the recipe.")
+    cooked_grams: float | None = Field(
+        default=None,
+        description="A portion weighed after cooking (needs the recipe's cooked yield); "
+        "used instead of portions.",
+    )
+    joint: bool = Field(
+        default=False,
+        description="Also for the rest of the household, half and half. Everyone logs it.",
+    )
 
 
 class EntryIdIn(BaseModel):
@@ -150,20 +162,6 @@ class RecipeIdIn(BaseModel):
     recipe_id: uuid.UUID
 
 
-class CreateRecipeIn(BaseModel):
-    name: str = Field(max_length=120)
-    ingredients: list[IngredientIn] = Field(default_factory=list, max_length=50)
-    from_entry_id: uuid.UUID | None = Field(
-        default=None, description="Save the foods of a logged entry instead."
-    )
-
-
-class UpdateRecipeIn(BaseModel):
-    recipe_id: uuid.UUID
-    name: str | None = Field(default=None, max_length=120)
-    ingredients: list[IngredientIn] | None = None
-
-
 # --- day ------------------------------------------------------------------------------------
 
 
@@ -182,7 +180,8 @@ def get_day(ctx: ToolContext, args: DayIn) -> views.DayOut:
 @tool(
     "get_household_snapshot",
     "Everything for 'what should we cook tonight' in one call: both people's remaining macros "
-    "today, tonight's dinner plans, the shopping list, and (in later versions) offers and stock.",
+    "today, tonight's dinner plans, open offers, the shopping list, and (in later versions) "
+    "stock.",
     EmptyIn,
     writes=False,
 )
@@ -195,7 +194,8 @@ def get_household_snapshot(ctx: ToolContext, args: EmptyIn) -> views.SnapshotOut
 @tool(
     "log_food",
     "Log a meal for the signed-in person: catalogue foods with amounts or servings, quick-add "
-    "foods, or a saved meal. Past and today are logged; future days are planned.",
+    "foods, or a recipe. Past and today are logged; future days are planned (use plan_meal to "
+    "plan today).",
     LogFoodIn,
     writes=True,
 )
@@ -210,15 +210,21 @@ def log_food(ctx: ToolContext, args: LogFoodIn) -> views.EntryOut:
             name=args.name,
             eaten_out=args.eaten_out,
             components=_components(args.foods, args.quick_add),
-            saved_meal_id=args.saved_meal_id,
+            recipe_id=args.recipe_id,
             portions=args.portions,
+            cooked_grams=args.cooked_grams,
+            joint=args.joint,
         ),
     )
     return views.entry(entry, ctx.language, ctx.actor.user_id)
 
 
 @tool(
-    "log_planned_meal", "Mark one of the person's planned entries as eaten.", EntryIdIn, writes=True
+    "log_planned_meal",
+    "Mark one of the person's planned entries as eaten. On a joint meal everyone's planned part "
+    "is logged.",
+    EntryIdIn,
+    writes=True,
 )
 def log_planned_meal(ctx: ToolContext, args: EntryIdIn) -> views.EntryOut:
     entry = day.set_state(ctx.db, ctx.actor, args.entry_id, EntryState.LOGGED)
@@ -323,73 +329,133 @@ def set_day_type(ctx: ToolContext, args: SetDayTypeIn) -> dict[str, bool]:
     return {"ok": True}
 
 
-# --- saved meals (recipes arrive in M3 on the same tools) ------------------------------------
+# --- recipes and saved meals -----------------------------------------------------------------
+
+
+class ListRecipesIn(BaseModel):
+    kind: Literal["recipe", "saved_meal"] | None = Field(
+        default=None, description="Only recipes, or only saved meals (one-serving, for logging)."
+    )
+    staples_only: bool = Field(default=False, description="Only recipes marked as staples.")
+
+
+class CreateRecipeIn(BaseModel):
+    name: str = Field(max_length=120)
+    kind: Literal["recipe", "saved_meal"] = Field(
+        default="recipe", description="A saved meal is a one-serving recipe for one-tap logging."
+    )
+    servings: float = Field(default=1, description="How many servings the ingredients make.")
+    cooked_yield_g: float | None = Field(
+        default=None, description="Weight of the whole dish after cooking, to log by cooked weight."
+    )
+    staple: bool = Field(default=False, description="A recipe the household cooks regularly.")
+    notes: str | None = Field(default=None, max_length=4000)
+    ingredients: list[IngredientIn] = Field(default_factory=list, max_length=50)
+    from_entry_id: uuid.UUID | None = Field(
+        default=None, description="Save the foods of an entry as a saved meal instead."
+    )
+
+
+class UpdateRecipeIn(BaseModel):
+    recipe_id: uuid.UUID
+    name: str | None = Field(default=None, max_length=120)
+    servings: float | None = None
+    cooked_yield_g: float | None = Field(default=None, description="null clears it.")
+    staple: bool | None = None
+    notes: str | None = Field(default=None, max_length=4000, description="null clears it.")
+    ingredients: list[IngredientIn] | None = Field(
+        default=None, description="Replaces all ingredients when given."
+    )
 
 
 @tool(
     "list_recipes",
-    "The household's saved meals (one-serving meals for one-tap logging) with "
-    "nutrition per serving. Full recipes are added in a later version.",
-    EmptyIn,
+    "The household's recipes and saved meals with ingredients and nutrition per serving "
+    "(staples first). Use the ids with plan_meal, log_food and add_recipe_to_list.",
+    ListRecipesIn,
     writes=False,
 )
-def list_recipes(ctx: ToolContext, args: EmptyIn) -> list[views.SavedMealOut]:
-    return [views.saved_meal(r, ctx.language) for r in saved_meals.list_all(ctx.db, ctx.actor)]
+def list_recipes(ctx: ToolContext, args: ListRecipesIn) -> list[views.RecipeOut]:
+    found = recipes.list_all(
+        ctx.db,
+        ctx.actor,
+        kind=RecipeKind(args.kind) if args.kind else None,
+        staples_only=args.staples_only,
+    )
+    return [views.recipe(r, ctx.language) for r in found]
 
 
 @tool(
     "get_recipe",
-    "One saved meal with its ingredients and nutrition per serving.",
+    "One recipe or saved meal with its ingredients, notes and nutrition per serving (and per "
+    "100 g cooked when it has a cooked yield).",
     RecipeIdIn,
     writes=False,
 )
-def get_recipe(ctx: ToolContext, args: RecipeIdIn) -> views.SavedMealOut:
-    return views.saved_meal(saved_meals.get(ctx.db, ctx.actor, args.recipe_id), ctx.language)
+def get_recipe(ctx: ToolContext, args: RecipeIdIn) -> views.RecipeOut:
+    return views.recipe(recipes.get(ctx.db, ctx.actor, args.recipe_id), ctx.language)
 
 
 @tool(
     "create_recipe",
-    "Save a meal from catalogue foods, or from a logged entry, for one-tap "
-    "logging with log_food(saved_meal_id=...).",
+    "Create a recipe (servings, optional cooked yield, staple flag, notes, catalogue "
+    "ingredients), or a one-serving saved meal, or save the foods of an entry as a saved meal.",
     CreateRecipeIn,
     writes=True,
 )
-def create_recipe(ctx: ToolContext, args: CreateRecipeIn) -> views.SavedMealOut:
+def create_recipe(ctx: ToolContext, args: CreateRecipeIn) -> views.RecipeOut:
     if args.from_entry_id is not None:
-        recipe = saved_meals.create_from_entry(
-            ctx.db, ctx.actor, args.from_entry_id, name=args.name
-        )
+        recipe = recipes.create_from_entry(ctx.db, ctx.actor, args.from_entry_id, name=args.name)
     else:
-        recipe = saved_meals.create(
+        recipe = recipes.create(
             ctx.db,
             ctx.actor,
-            name=args.name,
-            ingredients=[Ingredient(i.item_id, i.amount) for i in args.ingredients],
+            RecipeInput(
+                name=args.name,
+                kind=RecipeKind(args.kind),
+                servings=args.servings,
+                cooked_yield_g=args.cooked_yield_g,
+                staple=args.staple,
+                notes=args.notes,
+                ingredients=[Ingredient(i.item_id, i.amount) for i in args.ingredients],
+            ),
         )
-    return views.saved_meal(recipe, ctx.language)
+    return views.recipe(recipe, ctx.language)
 
 
 @tool(
-    "update_recipe", "Rename a saved meal or replace its ingredients.", UpdateRecipeIn, writes=True
+    "update_recipe",
+    "Change a recipe: name, servings, cooked yield, staple flag, notes, or replace its "
+    "ingredients. Entries made from it earlier keep their own foods.",
+    UpdateRecipeIn,
+    writes=True,
 )
-def update_recipe(ctx: ToolContext, args: UpdateRecipeIn) -> views.SavedMealOut:
-    ingredients = (
-        [Ingredient(i.item_id, i.amount) for i in args.ingredients]
-        if args.ingredients is not None
-        else None
+def update_recipe(ctx: ToolContext, args: UpdateRecipeIn) -> views.RecipeOut:
+    sent = args.model_fields_set
+    recipe = recipes.update(
+        ctx.db,
+        ctx.actor,
+        args.recipe_id,
+        RecipePatch(
+            name=args.name,
+            servings=args.servings,
+            cooked_yield_g=args.cooked_yield_g if "cooked_yield_g" in sent else UNSET,
+            staple=args.staple,
+            notes=args.notes if "notes" in sent else UNSET,
+            ingredients=[Ingredient(i.item_id, i.amount) for i in args.ingredients]
+            if args.ingredients is not None
+            else None,
+        ),
     )
-    recipe = saved_meals.update(
-        ctx.db, ctx.actor, args.recipe_id, name=args.name, ingredients=ingredients
-    )
-    return views.saved_meal(recipe, ctx.language)
+    return views.recipe(recipe, ctx.language)
 
 
 @tool(
     "delete_recipe",
-    "Delete a saved meal. Entries logged from it stay as they are.",
+    "Delete a recipe or saved meal. Entries logged from it stay as they are.",
     RecipeIdIn,
     writes=True,
 )
 def delete_recipe(ctx: ToolContext, args: RecipeIdIn) -> dict[str, bool]:
-    saved_meals.delete(ctx.db, ctx.actor, args.recipe_id)
+    recipes.delete(ctx.db, ctx.actor, args.recipe_id)
     return {"ok": True}

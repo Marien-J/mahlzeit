@@ -10,11 +10,11 @@ from mahlzeit.domain.day import Slot
 from mahlzeit.domain.permissions import Actor
 from mahlzeit.models import MealEntry, ShoppingListItem, Store, User
 from mahlzeit.services import day as day_service
-from mahlzeit.services import shopping
+from mahlzeit.services import offers, shopping
 from mahlzeit.services.targets import today_for
 
 # Parts of the snapshot that later milestones fill in.
-NOT_YET = ("offers", "stock")
+NOT_YET = ("stock",)
 
 
 @dataclass(frozen=True)
@@ -23,6 +23,7 @@ class Snapshot:
     tonight: list[MealEntry]
     shopping_list: list[ShoppingListItem]
     stores: list[Store]
+    offers: list[offers.OfferView]
     not_yet_available: tuple[str, ...] = NOT_YET
 
 
@@ -39,4 +40,5 @@ def household_snapshot(db: Session, actor: Actor) -> Snapshot:
         tonight=list(seen.values()),
         shopping_list=shopping.open_items(db, actor),
         stores=shopping.stores(db, actor),
+        offers=offers.list_offers(db, actor),
     )
