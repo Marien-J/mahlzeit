@@ -249,7 +249,13 @@
     "offer_receiver_required": "Say who the offer is for.",
     "eaten_in_future": "A meal on a later day cannot have been eaten yet.",
     "stock_amount_invalid": "Enter an amount between 0 and {{max}}.",
-    "plan_days_invalid": "Choose 1 to {{max}} days."
+    "plan_days_invalid": "Choose 1 to {{max}} days.",
+    "price_invalid": "Enter a price between 0 and €10,000.",
+    "purchase_day_invalid": "A purchase is from today or the past year.",
+    "purchase_empty": "A purchase needs at least one line.",
+    "purchase_not_found": "This purchase does not exist.",
+    "purchase_too_long": "At most {{max}} lines per purchase.",
+    "stock_change_invalid": "Change one thing at a time: amount, waste or status."
   },
   "day": {
     "today": "Today",

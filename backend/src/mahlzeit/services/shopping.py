@@ -95,7 +95,7 @@ def history(db: Session, actor: Actor, *, limit: int = HISTORY_LIMIT) -> list[Li
 # --- stores -------------------------------------------------------------------------------
 
 
-def _store(db: Session, actor: Actor, store_id: uuid.UUID) -> Store:
+def get_store(db: Session, actor: Actor, store_id: uuid.UUID) -> Store:
     store = db.get(Store, store_id)
     if store is None or (
         store.household_id is not None and store.household_id != actor.household_id
@@ -130,7 +130,7 @@ def create_store(db: Session, actor: Actor, name: str) -> Store:
 
 def delete_store(db: Session, actor: Actor, store_id: uuid.UUID) -> None:
     """Custom stores only; list items and memories that used it keep no store."""
-    store = _store(db, actor, store_id)
+    store = get_store(db, actor, store_id)
     if store.household_id is None:
         raise Invalid("store_builtin")
     audit.record(
@@ -206,7 +206,7 @@ def _clean(db: Session, actor: Actor, fields: dict[str, Any]) -> dict[str, Any]:
             case "checked":
                 clean[name] = bool(value)
             case "store_id":
-                clean[name] = _store(db, actor, _uuid(value)).id if value else None
+                clean[name] = get_store(db, actor, _uuid(value)).id if value else None
             case "item_id":
                 clean[name] = items.get(db, actor, _uuid(value)).id if value else None
     return clean
@@ -366,6 +366,14 @@ def apply(
             results.append(OpResult(op.id, "invalid", err.code))
     db.commit()
     return results
+
+
+def remove_rows(db: Session, actor: Actor, rows: Sequence[ShoppingListItem]) -> None:
+    """Take bought items off the list (inside the purchase's transaction)."""
+    now = clock.now()
+    for row in rows:
+        if row.household_id == actor.household_id and row.deleted_at is None:
+            _remove(db, actor, row, now)
 
 
 # --- conveniences for tools ---------------------------------------------------------------

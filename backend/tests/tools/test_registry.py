@@ -150,7 +150,7 @@ CASES: dict[str, Callable[[World], None]] = {
     ),
     "get_day": lambda w: assert_(len(w.call("get_day", {})["people"]) == 2),
     "get_household_snapshot": lambda w: assert_(
-        w.call("get_household_snapshot")["not_yet_available"] == ["stock"]
+        w.call("get_household_snapshot")["not_yet_available"] == []
     ),
     "log_food": lambda w: assert_(
         w.call(

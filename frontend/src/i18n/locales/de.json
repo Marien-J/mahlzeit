@@ -249,7 +249,13 @@
     "offer_receiver_required": "Gib an, für wen das Angebot ist.",
     "eaten_in_future": "Eine Mahlzeit an einem späteren Tag kann noch nicht gegessen sein.",
     "stock_amount_invalid": "Gib eine Menge zwischen 0 und {{max}} ein.",
-    "plan_days_invalid": "Wähle 1 bis {{max}} Tage."
+    "plan_days_invalid": "Wähle 1 bis {{max}} Tage.",
+    "price_invalid": "Gib einen Preis zwischen 0 und 10.000 € ein.",
+    "purchase_day_invalid": "Ein Einkauf ist von heute oder aus dem letzten Jahr.",
+    "purchase_empty": "Ein Einkauf braucht mindestens eine Zeile.",
+    "purchase_not_found": "Diesen Einkauf gibt es nicht.",
+    "purchase_too_long": "Höchstens {{max}} Zeilen pro Einkauf.",
+    "stock_change_invalid": "Ändere eine Sache auf einmal: Menge, Weggeworfenes oder Status."
   },
   "day": {
     "today": "Heute",

@@ -102,6 +102,119 @@ class TestConsumption:
         assert stock.consumption(dish, eaten=True, eaten_out=False) == {"rice": 200}
 
 
+MON, TUE = date(2026, 10, 5), date(2026, 10, 6)
+
+
+def changes(result: list[stock.Change]) -> set[tuple[str, date, Source, float]]:
+    return {(str(c.item), c.day, c.source, round(c.amount, 6)) for c in result}
+
+
+class TestEntrySync:
+    """An eaten meal's movements follow the meal: what it takes out, on its day, and the
+    shortfall it caused, which goes again when the meal does."""
+
+    def test_eating_takes_out_what_is_there_and_fills_the_rest_quietly(self) -> None:
+        result = stock.sync_entry(
+            booked={},
+            shortfalls={},
+            wanted={"rice": 300.0, "milk": 200.0},
+            day=MON,
+            levels={"rice": 500.0, "milk": 50.0},
+        )
+        assert changes(result) == {
+            ("rice", MON, Source.ENTRY, -300),
+            ("milk", MON, Source.ENTRY, -200),
+            ("milk", MON, Source.SHORTFALL, 150),
+        }
+
+    def test_nothing_changes_when_nothing_changed(self) -> None:
+        result = stock.sync_entry(
+            booked={("rice", MON): -300.0},
+            shortfalls={},
+            wanted={"rice": 300.0},
+            day=MON,
+            levels={"rice": 200.0},
+        )
+        assert result == []
+
+    def test_a_larger_portion_takes_the_difference(self) -> None:
+        result = stock.sync_entry(
+            booked={("rice", MON): -300.0},
+            shortfalls={},
+            wanted={"rice": 400.0},
+            day=MON,
+            levels={"rice": 50.0},
+        )
+        assert changes(result) == {
+            ("rice", MON, Source.ENTRY, -100),
+            ("rice", MON, Source.SHORTFALL, 50),
+        }
+
+    def test_undoing_a_meal_gives_back_what_it_took_but_not_its_shortfall(self) -> None:
+        # 50 g were there, 200 g eaten: 150 g were filled in. Undone, the 50 g are back.
+        result = stock.sync_entry(
+            booked={("milk", MON): -200.0},
+            shortfalls={("milk", MON): 150.0},
+            wanted={},
+            day=MON,
+            levels={"milk": 0.0},
+        )
+        assert changes(result) == {
+            ("milk", MON, Source.ENTRY, 200),
+            ("milk", MON, Source.SHORTFALL, -150),
+        }
+
+    def test_a_smaller_portion_gives_back_the_shortfall_first(self) -> None:
+        result = stock.sync_entry(
+            booked={("milk", MON): -200.0},
+            shortfalls={("milk", MON): 150.0},
+            wanted={"milk": 120.0},
+            day=MON,
+            levels={"milk": 0.0},
+        )
+        assert changes(result) == {
+            ("milk", MON, Source.ENTRY, 80),
+            ("milk", MON, Source.SHORTFALL, -80),
+        }
+
+    def test_a_meal_moved_to_another_day_moves_its_movements(self) -> None:
+        result = stock.sync_entry(
+            booked={("rice", MON): -300.0},
+            shortfalls={},
+            wanted={"rice": 300.0},
+            day=TUE,
+            levels={"rice": 200.0},
+        )
+        assert changes(result) == {
+            ("rice", MON, Source.ENTRY, 300),
+            ("rice", TUE, Source.ENTRY, -300),
+        }
+
+    def test_a_food_swapped_for_another(self) -> None:
+        result = stock.sync_entry(
+            booked={("rice", MON): -300.0},
+            shortfalls={},
+            wanted={"pasta": 250.0},
+            day=MON,
+            levels={"rice": 0.0, "pasta": 1000.0},
+        )
+        assert changes(result) == {
+            ("rice", MON, Source.ENTRY, 300),
+            ("pasta", MON, Source.ENTRY, -250),
+        }
+
+
+class TestPurchaseDay:
+    def test_today_or_up_to_a_year_back(self) -> None:
+        today = date(2026, 10, 7)
+        stock.check_purchase_day(today, today=today)
+        stock.check_purchase_day(date(2025, 10, 7), today=today)
+        for day in (date(2026, 10, 8), date(2025, 10, 6)):
+            with pytest.raises(Invalid) as err:
+                stock.check_purchase_day(day, today=today)
+            assert err.value.code == "purchase_day_invalid"
+
+
 class TestSuggestions:
     def test_planned_meals_need_what_is_not_in_stock(self) -> None:
         needs = {"rice": 400.0, "chicken": 300.0, "oats": 100.0}

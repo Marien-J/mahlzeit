@@ -10,7 +10,7 @@ from __future__ import annotations
 import re
 from collections.abc import Hashable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from enum import StrEnum
 
 from mahlzeit.domain.errors import Invalid
@@ -20,6 +20,7 @@ USUAL_MIN_PURCHASES = 3
 USUAL_WINDOW_DAYS = 90
 PLAN_DAYS_DEFAULT = 3
 PLAN_DAYS_MAX = 14
+PURCHASE_DAYS_BACK = 365
 _EPSILON = 1e-6
 
 
@@ -155,6 +156,51 @@ def consumption[K: Hashable](
     return dish_use(components)
 
 
+@dataclass(frozen=True, slots=True)
+class Change:
+    """A movement to write for a meal: what it takes out (source entry) or the shortfall it
+    fills in (source shortfall)."""
+
+    item: Hashable
+    day: date
+    source: Source
+    amount: float
+
+
+def sync_entry[K: Hashable](
+    *,
+    booked: Mapping[tuple[K, date], float],
+    shortfalls: Mapping[tuple[K, date], float],
+    wanted: Mapping[K, float],
+    day: date,
+    levels: Mapping[K, float],
+) -> list[Change]:
+    """Bring a meal's movements in line with what it now takes out of stock.
+
+    `booked` and `shortfalls` are the meal's movements so far by item and day, `wanted` what it
+    takes out now (on `day`), `levels` the household's levels with all movements. Taking more
+    than is there fills the rest with a shortfall; giving back undoes the meal's own shortfall
+    first, so a meal logged by mistake and removed leaves stock as it was."""
+    now = dict(levels)
+    result: list[Change] = []
+    keys = list(booked) + [(item, day) for item in wanted if (item, day) not in booked]
+    for key in keys:
+        item, on = key
+        target = -wanted.get(item, 0.0) if on == day else 0.0
+        delta = target - booked.get(key, 0.0)
+        if abs(delta) < _EPSILON:
+            continue
+        result.append(Change(item, on, Source.ENTRY, delta))
+        if delta < 0:
+            fill = shortfall(want=-delta, level_without=now.get(item, 0.0))
+        else:
+            fill = -min(delta, shortfalls.get(key, 0.0))
+        if abs(fill) > _EPSILON:
+            result.append(Change(item, on, Source.SHORTFALL, fill))
+        now[item] = now.get(item, 0.0) + delta + fill
+    return result
+
+
 # --- suggestions ------------------------------------------------------------------------------
 
 
@@ -171,6 +217,13 @@ def missing[K: Hashable](needs: Mapping[K, float], levels: Mapping[K, float]) ->
 def is_usual(*, purchases: int) -> bool:
     """Enough history to call something a usual purchase."""
     return purchases >= USUAL_MIN_PURCHASES
+
+
+def check_purchase_day(day: date, *, today: date) -> date:
+    """A purchase is from today or the past year (a receipt found later)."""
+    if not today - timedelta(days=PURCHASE_DAYS_BACK) <= day <= today:
+        raise Invalid("purchase_day_invalid", days=PURCHASE_DAYS_BACK)
+    return day
 
 
 def check_plan_days(days: int) -> int:

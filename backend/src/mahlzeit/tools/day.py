@@ -180,14 +180,16 @@ def get_day(ctx: ToolContext, args: DayIn) -> views.DayOut:
 @tool(
     "get_household_snapshot",
     "Everything for 'what should we cook tonight' in one call: both people's remaining macros "
-    "today, tonight's dinner plans, open offers, the shopping list, and (in later versions) "
-    "stock.",
+    "today, tonight's dinner plans, open offers, the shopping list, and what is in stock "
+    "(amounts of counted items, staples running low or out).",
     EmptyIn,
     writes=False,
 )
 def get_household_snapshot(ctx: ToolContext, args: EmptyIn) -> views.SnapshotOut:
     return views.snapshot(
-        snapshot.household_snapshot(ctx.db, ctx.actor), ctx.language, ctx.actor.user_id
+        snapshot.household_snapshot(ctx.db, ctx.actor, language=ctx.language),
+        ctx.language,
+        ctx.actor.user_id,
     )
 
 

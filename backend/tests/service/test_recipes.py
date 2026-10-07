@@ -6,9 +6,11 @@ from sqlalchemy.orm import Session
 from mahlzeit.domain.day import Slot
 from mahlzeit.domain.errors import Invalid, NotFound
 from mahlzeit.domain.recipes import RecipeKind
-from mahlzeit.services import day, recipes, shopping
+from mahlzeit.ids import uuid7
+from mahlzeit.services import day, recipes, shopping, stock
 from mahlzeit.services.day import EntryInput
 from mahlzeit.services.recipes import Ingredient, RecipeInput, RecipePatch
+from mahlzeit.services.stock import LineInput, PurchaseInput
 from tests import factories
 
 TODAY = date(2026, 10, 6)
@@ -195,6 +197,25 @@ class TestAddToList:
         again = recipes.add_to_list(db, sam.actor, chili.id)
         assert again.added == [] and len(again.already_listed) == 3
         assert len(shopping.open_items(db, jonas.actor)) == 3
+
+    def test_only_what_stock_does_not_cover(self, db: Session) -> None:
+        jonas, _ = factories.household(db)
+        chili, chicken, rice, oil = self.chili(db, jonas)
+        stock.record_purchase(
+            db,
+            jonas.actor,
+            PurchaseInput(
+                id=uuid7(),
+                lines=[
+                    LineInput(item_id=chicken.id, amount=300),
+                    LineInput(item_id=rice.id, amount=1000),
+                    LineInput(item_id=oil.id),  # status-only: now ok
+                ],
+            ),
+        )
+        result = recipes.add_to_list(db, jonas.actor, chili.id, language="de")
+        assert [(r.item_id, r.quantity) for r in result.added] == [(chicken.id, "100 g")]
+        assert sorted(result.in_stock) == sorted([rice.name_de, oil.name_de])
 
     def test_the_portions_are_bounded(self, db: Session) -> None:
         jonas, _ = factories.household(db)

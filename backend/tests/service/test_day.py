@@ -376,5 +376,6 @@ class TestSnapshot:
             None,
         ]
         assert [e.name for e in snap.tonight] == [None]
-        assert snap.not_yet_available == ("stock",)
+        assert snap.not_yet_available == ()
+        assert snap.stock.in_stock == []
         assert snap.shopping_list == []

@@ -31,7 +31,7 @@ from mahlzeit.models import (
     Recipe,
     User,
 )
-from mahlzeit.services import audit, items
+from mahlzeit.services import audit, items, stock
 from mahlzeit.services.targets import targets_on
 
 QUICK_KCAL_MAX = 10_000
@@ -509,6 +509,7 @@ def _add_entry(
     )
     db.add(entry)
     db.flush()
+    stock.sync_entry(db, actor, entry.id, entry)
     audit.record(
         db,
         actor=actor,
@@ -556,6 +557,7 @@ def update_entry(db: Session, actor: Actor, entry_id: uuid.UUID, patch: EntryPat
     if moved:  # an offer is for a date and slot
         for p in entry.participants:
             _withdraw_offers(db, actor, entry, p.user_id)
+    stock.sync_entry(db, actor, entry.id, entry)
     audit.record(
         db,
         actor=actor,
@@ -588,6 +590,7 @@ def set_state(db: Session, actor: Actor, entry_id: uuid.UUID, state: EntryState)
                 _withdraw_offers(db, actor, entry, other.user_id)
     if new != EntryState.PLANNED:
         _withdraw_offers(db, actor, entry, actor.user_id)
+    stock.sync_entry(db, actor, entry.id, entry)
     audit.record(
         db,
         actor=actor,
@@ -608,9 +611,11 @@ def remove_part(db: Session, actor: Actor, entry: MealEntry, part: MealParticipa
     entry.participants.remove(part)
     _withdraw_offers(db, actor, entry, user_id)
     if not entry.participants:
+        stock.sync_entry(db, actor, entry.id, None)
         db.delete(entry)
         return
     apply_shares(entry, share_rules.normalize(_part_shares(entry)))
+    stock.sync_entry(db, actor, entry.id, entry)
 
 
 def delete_entry(db: Session, actor: Actor, entry_id: uuid.UUID) -> None:

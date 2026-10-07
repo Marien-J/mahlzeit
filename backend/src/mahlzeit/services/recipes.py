@@ -24,7 +24,7 @@ from mahlzeit.domain.permissions import Actor, require_household
 from mahlzeit.domain.recipes import RecipeKind
 from mahlzeit.ids import uuid7
 from mahlzeit.models import Recipe, RecipeIngredient, ShoppingListItem
-from mahlzeit.services import audit, items, shopping
+from mahlzeit.services import audit, items, shopping, stock
 from mahlzeit.services.day import get_entry
 
 ENTITY = "recipe"
@@ -69,6 +69,7 @@ class RecipePatch:
 class AddedToList:
     added: list[ShoppingListItem]
     already_listed: list[str]
+    in_stock: list[str] = field(default_factory=list)
 
 
 # --- reading ----------------------------------------------------------------------------------
@@ -253,10 +254,9 @@ def add_to_list(
     portions: float | None = None,
     language: str = "de",
 ) -> AddedToList:
-    """Put the ingredients for `portions` (default: the whole recipe) on the shopping list.
-
-    Without stock (M4) 'missing' means not on the list yet: an item that is already there, ticked
-    or not, is left alone and reported."""
+    """Put what is missing for `portions` (default: the whole recipe) on the shopping list: what
+    stock does not cover. An item already on the list, ticked or not, is left alone; both are
+    reported. A status-only item (oil, spices) counts as there unless it is marked low or out."""
     recipe = get(db, actor, recipe_id)
     wanted = rules.check_portions(
         portions if portions is not None else recipe.servings, most=rules.MAX_SERVINGS
@@ -270,12 +270,18 @@ def add_to_list(
     )
     by_item = {i.item_id: i.item for i in recipe.ingredients}
     on_list = {r.item_id for r in shopping.open_items(db, actor) if r.item_id is not None}
+    have = stock.available(db, actor, list(by_item.values()))
     ops: list[shopping.Op] = []
     already: list[str] = []
-    for item_id, amount in amounts:
+    in_stock: list[str] = []
+    for item_id, wanted_amount in amounts:
         item = by_item[item_id]
         if item_id in on_list:
             already.append(items.name_of(item, language))
+            continue
+        amount = wanted_amount - have.get(item_id, 0.0)
+        if amount <= 0:
+            in_stock.append(items.name_of(item, language))
             continue
         ops.append(
             shopping.Op(
@@ -289,4 +295,4 @@ def add_to_list(
         )
     shopping.apply(db, actor, ops, language=language, origin="recipe")
     added = [shopping.get_row(db, actor, op.id) for op in ops]
-    return AddedToList(added=added, already_listed=already)
+    return AddedToList(added=added, already_listed=already, in_stock=in_stock)

@@ -249,7 +249,13 @@
     "offer_receiver_required": "Geef aan voor wie het voorstel is.",
     "eaten_in_future": "Een maaltijd op een latere dag kan nog niet gegeten zijn.",
     "stock_amount_invalid": "Vul een hoeveelheid in tussen 0 en {{max}}.",
-    "plan_days_invalid": "Kies 1 tot {{max}} dagen."
+    "plan_days_invalid": "Kies 1 tot {{max}} dagen.",
+    "price_invalid": "Vul een prijs in tussen 0 en € 10.000.",
+    "purchase_day_invalid": "Een aankoop is van vandaag of van het afgelopen jaar.",
+    "purchase_empty": "Een aankoop heeft minstens één regel nodig.",
+    "purchase_not_found": "Deze aankoop bestaat niet.",
+    "purchase_too_long": "Maximaal {{max}} regels per aankoop.",
+    "stock_change_invalid": "Wijzig één ding tegelijk: hoeveelheid, weggegooid of status."
   },
   "day": {
     "today": "Vandaag",
