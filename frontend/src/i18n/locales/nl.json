@@ -247,7 +247,9 @@
     "recipe_empty": "Een recept heeft minstens één levensmiddel uit de catalogus nodig.",
     "recipe_not_found": "Dit recept bestaat niet (meer).",
     "offer_receiver_required": "Geef aan voor wie het voorstel is.",
-    "eaten_in_future": "Een maaltijd op een latere dag kan nog niet gegeten zijn."
+    "eaten_in_future": "Een maaltijd op een latere dag kan nog niet gegeten zijn.",
+    "stock_amount_invalid": "Vul een hoeveelheid in tussen 0 en {{max}}.",
+    "plan_days_invalid": "Kies 1 tot {{max}} dagen."
   },
   "day": {
     "today": "Vandaag",

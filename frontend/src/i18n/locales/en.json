@@ -247,7 +247,9 @@
     "recipe_empty": "A recipe needs at least one food from the catalogue.",
     "recipe_not_found": "This recipe does not exist (any more).",
     "offer_receiver_required": "Say who the offer is for.",
-    "eaten_in_future": "A meal on a later day cannot have been eaten yet."
+    "eaten_in_future": "A meal on a later day cannot have been eaten yet.",
+    "stock_amount_invalid": "Enter an amount between 0 and {{max}}.",
+    "plan_days_invalid": "Choose 1 to {{max}} days."
   },
   "day": {
     "today": "Today",

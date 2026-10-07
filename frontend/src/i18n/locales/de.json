@@ -247,7 +247,9 @@
     "recipe_empty": "Ein Rezept braucht mindestens ein Lebensmittel aus dem Katalog.",
     "recipe_not_found": "Dieses Rezept gibt es nicht (mehr).",
     "offer_receiver_required": "Gib an, für wen das Angebot ist.",
-    "eaten_in_future": "Eine Mahlzeit an einem späteren Tag kann noch nicht gegessen sein."
+    "eaten_in_future": "Eine Mahlzeit an einem späteren Tag kann noch nicht gegessen sein.",
+    "stock_amount_invalid": "Gib eine Menge zwischen 0 und {{max}} ein.",
+    "plan_days_invalid": "Wähle 1 bis {{max}} Tage."
   },
   "day": {
     "today": "Heute",
