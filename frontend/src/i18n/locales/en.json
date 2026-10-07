@@ -255,7 +255,14 @@
     "copy": "Copy day",
     "copyFrom": "Copy from…",
     "copyExplain": "Copies your meals from another day to this one. On a future day they are planned.",
-    "sourceDay": "Copy meals from"
+    "sourceDay": "Copy meals from",
+    "drag": "Move {{name}}",
+    "dragHelp": "Press space to pick up the meal, use the arrow keys to move it to another meal and press space to drop it before that one.",
+    "dragStart": "Picked up {{name}}.",
+    "dragOver": "{{name}} is over {{target}}.",
+    "dragEnd": "Dropped {{name}}.",
+    "dragCancel": "Moving {{name}} cancelled.",
+    "dropLast": "To the end of the day"
   },
   "dayType": {
     "training": "Training day",

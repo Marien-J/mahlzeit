@@ -255,7 +255,14 @@
     "copy": "Tag kopieren",
     "copyFrom": "Kopieren von …",
     "copyExplain": "Kopiert deine Mahlzeiten von einem anderen Tag hierher. An einem zukünftigen Tag sind sie geplant.",
-    "sourceDay": "Mahlzeiten kopieren von"
+    "sourceDay": "Mahlzeiten kopieren von",
+    "drag": "{{name}} verschieben",
+    "dragHelp": "Leertaste drücken, um die Mahlzeit aufzunehmen, mit den Pfeiltasten zu einer anderen Mahlzeit bewegen und mit der Leertaste vor ihr ablegen.",
+    "dragStart": "{{name}} aufgenommen.",
+    "dragOver": "{{name}} liegt über {{target}}.",
+    "dragEnd": "{{name}} abgelegt.",
+    "dragCancel": "Verschieben von {{name}} abgebrochen.",
+    "dropLast": "Ans Ende des Tages"
   },
   "dayType": {
     "training": "Trainingstag",

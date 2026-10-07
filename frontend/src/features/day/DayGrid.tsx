@@ -1,9 +1,36 @@
+import {
+  closestCenter,
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  PointerSensor,
+  pointerWithin,
+  TouchSensor,
+  useDndContext,
+  useDraggable,
+  useDroppable,
+  useSensor,
+  useSensors,
+  type CollisionDetection,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import { useMutation } from '@tanstack/react-query'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
 import { grams, kcal, MACROS } from '../../lib/nutrition'
-import type { Entry, PersonDay } from './api'
-import { EntryCard } from './EntryCard'
+import { moveEntry, useRefreshDays, type Entry, type PersonDay } from './api'
+import { EntryCard, entryTitle, isOwn } from './EntryCard'
 import { layoutDay, type Cell } from './layout'
+import { moveTarget } from './reorder'
+
+const END = 'end-of-day'
+
+// The pointer decides when there is one; the keyboard has none, so the nearest card wins.
+const collision: CollisionDetection = (args) => {
+  const hits = pointerWithin(args)
+  return hits.length ? hits : closestCenter(args)
+}
 
 type Props = {
   people: PersonDay[]
@@ -24,27 +51,142 @@ export function DayGrid({ people, day, me, onOpen }: Props) {
   if (others.length > 1) return <Columns people={people} day={day} me={me} onOpen={onOpen} />
   const rows = layoutDay(mine, partner)
   return (
-    <div className={`day-grid people-${partner ? 2 : 1}`} data-testid="day-grid">
-      <Header person={mine} testId="column-me" />
-      {partner ? <Header person={partner} testId="column-partner" /> : null}
-      {rows.map((row) =>
-        row.kind === 'joint' ? (
-          <div key={row.key} className="cell joint-cell" data-testid="joint-row">
-            <EntryCard entry={row.mine} me={me} onOpen={() => onOpen(row.mine, mine)} />
-          </div>
-        ) : (
-          <SplitRow
-            key={row.key}
-            left={row.mine}
-            right={partner ? row.theirs : undefined}
-            mine={mine}
-            partner={partner}
-            day={day}
-            me={me}
-            onOpen={onOpen}
-          />
-        ),
-      )}
+    <Dragging mine={mine}>
+      <div className={`day-grid people-${partner ? 2 : 1}`} data-testid="day-grid">
+        <Header person={mine} testId="column-me" />
+        {partner ? <Header person={partner} testId="column-partner" /> : null}
+        {rows.map((row) =>
+          row.kind === 'joint' ? (
+            <div key={row.key} className="cell joint-cell" data-testid="joint-row">
+              <Movable entry={row.mine} me={me} onOpen={() => onOpen(row.mine, mine)} />
+            </div>
+          ) : (
+            <SplitRow
+              key={row.key}
+              left={row.mine}
+              right={partner ? row.theirs : undefined}
+              mine={mine}
+              partner={partner}
+              day={day}
+              me={me}
+              onOpen={onOpen}
+            />
+          ),
+        )}
+        <EndOfDay />
+      </div>
+    </Dragging>
+  )
+}
+
+/** Drag my meals into a new order: grab the handle, drop on the meal it should come before. */
+function Dragging({ mine, children }: { mine: PersonDay; children: React.ReactNode }) {
+  const { t } = useTranslation()
+  const refresh = useRefreshDays()
+  const [dragged, setDragged] = useState<Entry | null>(null)
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
+    useSensor(KeyboardSensor),
+  )
+  const move = useMutation({
+    mutationFn: ({ id, before }: { id: string; before: string | null }) => moveEntry(id, before),
+    onSuccess: refresh,
+  })
+  const order = mine.entries.map((e) => e.id)
+  const title = (id: unknown) => {
+    const found = mine.entries.find((e) => e.id === id)
+    return found ? entryTitle(found) : ''
+  }
+  const end = (event: DragEndEvent) => {
+    setDragged(null)
+    const id = String(event.active.id)
+    const over = event.over ? String(event.over.id) : undefined
+    if (over === undefined) return
+    const target = moveTarget(order, id, over === END ? null : over)
+    if (target) move.mutate({ id, before: target.before })
+  }
+  return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={collision}
+      onDragStart={(e) => setDragged(mine.entries.find((x) => x.id === e.active.id) ?? null)}
+      onDragEnd={end}
+      onDragCancel={() => setDragged(null)}
+      accessibility={{
+        screenReaderInstructions: { draggable: t('day.dragHelp') },
+        announcements: {
+          onDragStart: ({ active }) => t('day.dragStart', { name: title(active.id) }),
+          onDragOver: ({ active, over }) =>
+            over
+              ? t('day.dragOver', {
+                  name: title(active.id),
+                  target: over.id === END ? t('day.dropLast') : title(over.id),
+                })
+              : '',
+          onDragEnd: ({ active }) => t('day.dragEnd', { name: title(active.id) }),
+          onDragCancel: ({ active }) => t('day.dragCancel', { name: title(active.id) }),
+        },
+      }}
+    >
+      {children}
+      <DragOverlay>
+        {dragged ? <EntryCard entry={dragged} me={mine.user_id} onOpen={() => undefined} /> : null}
+      </DragOverlay>
+    </DndContext>
+  )
+}
+
+/** One of my meals: draggable by its handle, and a place another can be dropped before. */
+function Movable({ entry, me, onOpen }: { entry: Entry; me: string; onOpen: () => void }) {
+  const { t } = useTranslation()
+  // dnd-kit hands out callback refs; they are renamed so the refs lint rule sees what they are.
+  const { setNodeRef: dropHere, isOver, active } = useDroppable({ id: entry.id })
+  const {
+    setNodeRef: dragThis,
+    setActivatorNodeRef: gripHere,
+    listeners,
+    attributes,
+    isDragging,
+  } = useDraggable({ id: entry.id })
+  const target = isOver && active?.id !== entry.id
+  return (
+    <div
+      ref={dropHere}
+      className={`movable${target ? ' drop-before' : ''}${isDragging ? ' dragging' : ''}`}
+    >
+      <div ref={dragThis}>
+        <EntryCard
+          entry={entry}
+          me={me}
+          onOpen={onOpen}
+          handle={
+            <button
+              type="button"
+              className="grip"
+              aria-label={t('day.drag', { name: entryTitle(entry) })}
+              ref={gripHere}
+              {...listeners}
+              {...attributes}
+            >
+              <span className="grip-dots" aria-hidden="true" />
+            </button>
+          }
+        />
+      </div>
+    </div>
+  )
+}
+
+/** A drop zone after my last meal, only there while something is being dragged. */
+function EndOfDay() {
+  const { t } = useTranslation()
+  const { active } = useDndContext()
+  const { setNodeRef: dropHere, isOver } = useDroppable({ id: END })
+  if (!active) return null
+  return (
+    <div ref={dropHere} className={`drop-end${isOver ? ' over' : ''}`}>
+      {t('day.dropLast')}
     </div>
   )
 }
@@ -97,7 +239,12 @@ function CellView({
 }) {
   const { t } = useTranslation()
   if (cell.kind === 'entry') {
-    return <EntryCard entry={cell.entry} me={me} onOpen={() => onOpen(cell.entry, person)} />
+    const open = () => onOpen(cell.entry, person)
+    return isOwn(cell.entry, me) ? (
+      <Movable entry={cell.entry} me={me} onOpen={open} />
+    ) : (
+      <EntryCard entry={cell.entry} me={me} onOpen={open} />
+    )
   }
   return (
     <div className="entry empty">

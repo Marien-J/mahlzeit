@@ -255,7 +255,14 @@
     "copy": "Dag kopiëren",
     "copyFrom": "Kopiëren van …",
     "copyExplain": "Kopieert je maaltijden van een andere dag naar deze dag. Op een dag in de toekomst zijn ze gepland.",
-    "sourceDay": "Maaltijden kopiëren van"
+    "sourceDay": "Maaltijden kopiëren van",
+    "drag": "{{name}} verplaatsen",
+    "dragHelp": "Druk op de spatiebalk om de maaltijd op te pakken, verplaats hem met de pijltjestoetsen naar een andere maaltijd en druk op de spatiebalk om hem ervoor neer te zetten.",
+    "dragStart": "{{name}} opgepakt.",
+    "dragOver": "{{name}} staat boven {{target}}.",
+    "dragEnd": "{{name}} neergezet.",
+    "dragCancel": "Verplaatsen van {{name}} geannuleerd.",
+    "dropLast": "Naar het einde van de dag"
   },
   "dayType": {
     "training": "Trainingsdag",
