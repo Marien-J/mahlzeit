@@ -278,7 +278,7 @@ select {
   left: 0;
   right: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   background: var(--surface);
   border-top: 1px solid var(--border);
   padding-bottom: env(safe-area-inset-bottom);
@@ -490,7 +490,8 @@ dialog.sheet::backdrop {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .entry .time {
@@ -536,13 +537,14 @@ dialog.sheet::backdrop {
 /* Adding food */
 .tabs {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   gap: 0.25rem;
 }
 
 .tabs button {
   padding: 0 0.25rem;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .tabs button.active {
@@ -825,4 +827,281 @@ button.link {
   background: none;
   color: var(--bg);
   font-weight: 700;
+}
+
+/* Plan */
+.plan-days {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.plan-day h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.plan-entries {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.plan-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 0.5rem 0.75rem;
+}
+
+.plan-entry.planned {
+  border-style: dashed;
+}
+
+.plan-entry a {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.plan-entry .what {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.plan-entry .time {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+}
+
+/* Day grid: both people side by side, shared meals across */
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem 0.75rem;
+  align-items: start;
+}
+
+.day-grid.people-1 {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.day-grid .joint-cell {
+  grid-column: 1 / -1;
+}
+
+.column-head h2 {
+  margin-top: 0;
+}
+
+.cell {
+  min-width: 0;
+}
+
+.entry-card {
+  display: flex;
+  align-items: stretch;
+  gap: 0.25rem;
+}
+
+.entry-card .entry {
+  flex: 1;
+  min-width: 0;
+}
+
+.entry-card.joint .entry {
+  border-color: var(--accent);
+}
+
+.entry .shares {
+  font-size: 0.8rem;
+}
+
+.eaten {
+  min-width: var(--tap);
+  font-size: 1.25rem;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.component {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 0.5rem;
+}
+
+.component .amount.mine {
+  flex-basis: 100%;
+  justify-content: flex-end;
+}
+
+.chip.active,
+.chip[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Offers */
+.offer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.offer-card {
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 0.75rem;
+}
+
+.offer-card.outgoing {
+  border-color: var(--border);
+}
+
+.offer-card p {
+  margin: 0 0 0.5rem;
+}
+
+.eaten .check::before {
+  content: '\2713';
+}
+
+.tabbar .count {
+  display: inline-block;
+  min-width: 1.25rem;
+  margin-left: 0.25rem;
+  padding: 0 0.3rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  text-align: center;
+}
+
+/* Dragging meals into a new order */
+.grip {
+  min-width: 1.75rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: grab;
+  touch-action: none;
+}
+
+.grip-dots::before {
+  content: '\22EE\22EE';
+  letter-spacing: -0.4em;
+}
+
+.movable {
+  position: relative;
+}
+
+.movable.dragging {
+  opacity: 0.4;
+}
+
+.movable.drop-before::before {
+  content: '';
+  position: absolute;
+  top: -0.25rem;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.drop-end {
+  grid-column: 1;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+}
+
+.drop-end.over {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* In the two-column day grid a card is narrow: time and energy on one line, the title below.
+   A shared meal spans both columns and keeps the one-line layout. */
+.day-grid .cell:not(.joint-cell) .entry:not(.empty) {
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'time kcal'
+    'what what';
+  gap: 0.1rem 0.5rem;
+}
+
+.day-grid .cell:not(.joint-cell) .entry:not(.empty) .time {
+  grid-area: time;
+}
+
+.day-grid .cell:not(.joint-cell) .entry:not(.empty) .what {
+  grid-area: what;
+}
+
+.day-grid .cell:not(.joint-cell) .entry:not(.empty) .kcal {
+  grid-area: kcal;
+}
+
+/* An empty anchor meal: time and name stacked, the add link beside them. */
+.day-grid .entry.empty {
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'time add'
+    'what add';
+  gap: 0.1rem 0.25rem;
+  padding: 0.5rem;
+}
+
+.day-grid .entry.empty .time {
+  grid-area: time;
+}
+
+.day-grid .entry.empty .what {
+  grid-area: what;
+}
+
+.day-grid .entry.empty .add-here {
+  grid-area: add;
+}
+
+.grip {
+  min-width: 1.25rem;
+}
+
+.tabbar a {
+  hyphens: auto;
+  overflow-wrap: normal;
+  font-size: clamp(0.7rem, 3vw, 0.95rem);
 }

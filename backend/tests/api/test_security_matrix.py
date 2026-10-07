@@ -8,19 +8,19 @@ from __future__ import annotations
 import re
 import uuid
 from collections.abc import Callable
-from datetime import date
+from datetime import date, timedelta
 from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
+from mahlzeit import clock
 from mahlzeit.domain.day import Slot
 from mahlzeit.main import app
-from mahlzeit.services import day, invites, items, saved_meals, shopping
+from mahlzeit.services import day, invites, items, offers, shopping
 from mahlzeit.services.day import ComponentInput, EntryInput
 from mahlzeit.services.items import ItemInput
-from mahlzeit.services.saved_meals import Ingredient
 from tests import factories
 
 UNSAFE = {"post", "put", "patch", "delete"}
@@ -119,13 +119,30 @@ def _entry(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[s
             components=[ComponentInput(quick_name="Soup", kcal=300)],
         ),
     )
-    return {"entry_id": entry.id}, {"state": "skipped", "day": "2026-10-02", "name": "x"}
+    body = {"state": "skipped", "day": "2026-10-02", "name": "x"}
+    return {"entry_id": entry.id}, body | {"share": 0.5, "amounts": {}, "before_id": None}
 
 
-def _saved_meal(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[str, Any]]:
+def _recipe(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[str, Any]]:
     oats = factories.generic(db, other.actor, "C133000")
-    meal = saved_meals.create(db, other.actor, name="Theirs", ingredients=[Ingredient(oats.id, 50)])
-    return {"meal_id": meal.id}, {"name": "Mine now"}
+    meal = factories.recipe(db, other.actor, "Theirs", (oats, 50))
+    return {"recipe_id": meal.id}, {"name": "Mine now"}
+
+
+def _offer(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[str, Any]]:
+    tomorrow = clock.now().date() + timedelta(days=1)
+    entry = day.plan_meal(
+        db,
+        other.actor,
+        EntryInput(
+            day=tomorrow,
+            slot=Slot.DINNER,
+            components=[ComponentInput(quick_name="Pasta", kcal=800)],
+        ),
+    )
+    (partner,) = day.others(db, other.actor)
+    sent = offers.send(db, other.actor, entry_id=entry.id, to_user_id=partner.id)
+    return {"offer_id": sent.offer.id}, {"action": "accept"}
 
 
 def _store(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -142,8 +159,16 @@ CROSS_HOUSEHOLD: dict[tuple[str, str], CrossCase] = {
     ("post", "/api/entries/{entry_id}/state"): _entry,
     ("post", "/api/entries/{entry_id}/copy"): _entry,
     ("post", "/api/entries/{entry_id}/save-as-meal"): _entry,
-    ("patch", "/api/saved-meals/{meal_id}"): _saved_meal,
-    ("delete", "/api/saved-meals/{meal_id}"): _saved_meal,
+    ("put", "/api/entries/{entry_id}/share"): _entry,
+    ("put", "/api/entries/{entry_id}/exact-amounts"): _entry,
+    ("post", "/api/entries/{entry_id}/move"): _entry,
+    ("get", "/api/offers/{offer_id}"): _offer,
+    ("post", "/api/offers/{offer_id}/respond"): _offer,
+    ("post", "/api/offers/{offer_id}/withdraw"): _offer,
+    ("get", "/api/recipes/{recipe_id}"): _recipe,
+    ("patch", "/api/recipes/{recipe_id}"): _recipe,
+    ("delete", "/api/recipes/{recipe_id}"): _recipe,
+    ("post", "/api/recipes/{recipe_id}/add-to-list"): _recipe,
     ("delete", "/api/stores/{store_id}"): _store,
 }
 

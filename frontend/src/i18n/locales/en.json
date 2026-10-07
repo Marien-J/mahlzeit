@@ -16,7 +16,10 @@
     "household": "Household",
     "settings": "Settings",
     "main": "Main",
-    "list": "List"
+    "list": "List",
+    "plan": "Plan",
+    "offersWaiting_one": "{{count}} offer waiting",
+    "offersWaiting_other": "{{count}} offers waiting"
   },
   "common": {
     "save": "Save",
@@ -139,7 +142,8 @@
     "foods": "My foods and saved meals",
     "startScreen": "Open the app on",
     "startToday": "Today",
-    "startList": "Shopping list"
+    "startList": "Shopping list",
+    "recipes": "Recipes"
   },
   "about": {
     "title": "About",
@@ -206,11 +210,8 @@
     "amount_required": "Enter an amount.",
     "quick_add_invalid": "Quick add needs a name and calories.",
     "entry_empty": "Add at least one food.",
-    "saved_meal_not_found": "This saved meal does not exist (any more).",
     "portions_invalid": "Enter between 0 and 20 portions.",
     "nothing_to_copy": "There is nothing to copy on that day.",
-    "saved_meal_empty": "A saved meal needs at least one food from the catalogue.",
-    "saved_meal_name_required": "Give the meal a name.",
     "nothing_to_set": "Give at least one target or a week pattern.",
     "category_unknown": "This aisle does not exist.",
     "id_invalid": "This id is not valid.",
@@ -221,7 +222,31 @@
     "store_name_empty": "Give the store a name.",
     "store_name_taken": "There is already a store called {{name}}.",
     "store_not_found": "This store does not exist.",
-    "too_many_operations": "Too many changes at once (at most {{max}})."
+    "too_many_operations": "Too many changes at once (at most {{max}}).",
+    "cooked_yield_invalid": "Enter a weight after cooking between 0 and {{max}} g.",
+    "cooked_yield_missing": "This recipe has no weight after cooking yet. Add one to log by weight.",
+    "exact_amount_invalid": "Enter an amount between 0 and {{max}}.",
+    "offer_not_pending": "This offer has already been answered or has expired.",
+    "offer_not_yours": "This offer is not yours to change.",
+    "offer_to_self": "You can only offer a meal to someone else.",
+    "order_invalid": "Those entries do not belong to this day.",
+    "plan_in_past": "Plans are for today or later. To record a meal from the past, log it as eaten.",
+    "recipe_name_required": "Give the recipe a name.",
+    "reorder_no_room": "There is no room left at the end of the day to move it there.",
+    "servings_invalid": "Servings must be more than 0 and at most {{max}}.",
+    "share_invalid": "That share is not possible: everyone on a meal keeps at least 5 %.",
+    "counter_meal_required": "Choose one of your own plans for this slot or enter a new meal to suggest.",
+    "counter_other_slot": "Your suggestion must be for the same day and meal as the offer.",
+    "no_partner": "There is nobody to share this meal with.",
+    "offer_action_invalid": "That is not something you can do with an offer.",
+    "offer_already_joint": "You are already on this meal.",
+    "offer_meal_gone": "The offered meal has changed or is gone, so this offer no longer applies.",
+    "offer_meal_not_planned": "Only a meal you have planned can be offered, not one you have already eaten.",
+    "offer_not_found": "This offer does not exist (any more).",
+    "range_invalid": "Choose a range of 1 to {{max}} days.",
+    "recipe_empty": "A recipe needs at least one food from the catalogue.",
+    "recipe_not_found": "This recipe does not exist (any more).",
+    "offer_receiver_required": "Say who the offer is for."
   },
   "day": {
     "today": "Today",
@@ -230,7 +255,14 @@
     "copy": "Copy day",
     "copyFrom": "Copy from…",
     "copyExplain": "Copies your meals from another day to this one. On a future day they are planned.",
-    "sourceDay": "Copy meals from"
+    "sourceDay": "Copy meals from",
+    "drag": "Move {{name}}",
+    "dragHelp": "Press space to pick up the meal, use the arrow keys to move it to another meal and press space to drop it before that one.",
+    "dragStart": "Picked up {{name}}.",
+    "dragOver": "{{name}} is over {{target}}.",
+    "dragEnd": "Dropped {{name}}.",
+    "dragCancel": "Moving {{name}} cancelled.",
+    "dropLast": "To the end of the day"
   },
   "dayType": {
     "training": "Training day",
@@ -275,7 +307,24 @@
     "saveAsMeal": "Save as meal",
     "savedAsMeal": "Saved as meal",
     "copyToToday": "Copy to today",
-    "copyToMyDay": "Copy to my day"
+    "copyToMyDay": "Copy to my day",
+    "together": "Eating together",
+    "jointShort": "together",
+    "eatenFor": "Mark {{name}} as eaten",
+    "shares": "Shares",
+    "myShare": "My share",
+    "myShareValue": "My share: {{percent}} %",
+    "applyShare": "Apply share",
+    "iAte": "Me:",
+    "myAmountOf": "My amount of {{name}}",
+    "byShare": "by share",
+    "state": {
+      "planned": "planned",
+      "logged": "eaten",
+      "skipped": "skipped"
+    },
+    "planOnly": "Only plan it (not eaten yet)",
+    "shareLine": "{{percent}} % · {{kcal}} kcal"
   },
   "log": {
     "title": "Add food",
@@ -288,7 +337,8 @@
       "search": "Search",
       "scan": "Scan",
       "quick": "Quick add",
-      "meals": "Saved meals"
+      "meals": "Saved meals",
+      "recipes": "Recipes"
     },
     "search": "Search foods",
     "favouritesAndRecent": "Favourites and recent foods",
@@ -306,11 +356,13 @@
     "twice": "2 × {{label}}",
     "label": "Amount ({{unit}})",
     "addMore": "Add more",
-    "logNow": "Log now"
+    "logNow": "Log now",
+    "planNow": "Plan it"
   },
   "quick": {
     "name": "What was it?",
-    "kcal": "Energy (kcal)"
+    "kcal": "Energy (kcal)",
+    "kcalOptionalWhenPlanning": "A name is enough when planning."
   },
   "serving": {
     "egg": "1 egg",
@@ -447,5 +499,74 @@
     "createStore": "Create",
     "aisle": "Aisle",
     "remove": "Remove from list"
+  },
+  "recipes": {
+    "title": "Recipes",
+    "new": "New recipe",
+    "edit": "Edit recipe",
+    "none": "No recipes yet. Add one, and mark the ones you cook often as staples: they come first when planning.",
+    "staples": "Staples",
+    "others": "Other recipes",
+    "savedMeals": "See saved meals",
+    "servings": "Servings",
+    "servingsCount_one": "{{count}} serving",
+    "servingsCount_other": "{{count}} servings",
+    "perServing": "{{kcal}} kcal per serving",
+    "nutrition": "Per serving: {{kcal}} kcal, protein {{protein}} g",
+    "cookedYield": "Weight after cooking (g)",
+    "cookedYieldHint": "Optional. Lets you log a portion by weight.",
+    "cookedYieldValue": "{{grams}} g after cooking",
+    "staple": "Staple recipe",
+    "notes": "Notes",
+    "ingredients": "Ingredients",
+    "noIngredients": "Add at least one ingredient.",
+    "addIngredient": "Add ingredient",
+    "searchIngredient": "Search ingredient",
+    "removeIngredient": "Remove {{name}}",
+    "listPortions": "For how many portions?",
+    "addToList": "Add ingredients to list",
+    "addedToList_one": "{{count}} ingredient added to the list.",
+    "addedToList_other": "{{count}} ingredients added to the list.",
+    "alreadyListed": "Already on the list: {{names}}.",
+    "toList": "Go to the list",
+    "delete": "Delete recipe",
+    "confirmDelete": "Really delete",
+    "cookedWeight": "Or: weight on the plate (g)"
+  },
+  "plan": {
+    "addTitle": "Plan a meal",
+    "planBasket_one": "Plan {{count}} food ({{kcal}} kcal)",
+    "planBasket_other": "Plan {{count}} foods ({{kcal}} kcal)",
+    "title": "Plan",
+    "tomorrow": "Tomorrow",
+    "nothing": "Nothing planned yet.",
+    "planFor": "Plan a meal for {{day}}",
+    "more": "Show more days",
+    "offered": "Offer open",
+    "dishKcal": "{{kcal}} kcal in total"
+  },
+  "offers": {
+    "title": "Offers",
+    "offerFrom": "{{name}} offers you a meal",
+    "counterFrom": "{{name}} suggests something else",
+    "yourShare": "Your share: {{percent}} %, {{kcal}} kcal, protein {{protein}} g.",
+    "effect": "Your day: {{before}} kcal left, then {{after}} kcal.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "counter": "Suggest something else",
+    "waitingFor": "Waiting for {{name}}",
+    "withdraw": "Withdraw",
+    "offerTitle": "Offer to {{name}}",
+    "shareIntro": "What share would {{name}} eat?",
+    "theirShare": "{{name}}'s share",
+    "send": "Send offer",
+    "counterTitle": "Counter-offer to {{name}}",
+    "myPlans": "One of my plans",
+    "somethingElse": "Or something new",
+    "recipe": "Recipe",
+    "orName": "Or just a name",
+    "suggest": "Suggest it",
+    "offer": "Offer it",
+    "yourShareUnknown": "Your share: {{percent}} %. The nutrition is not known yet."
   }
 }

@@ -61,7 +61,7 @@ scripts/init-env.sh             # once: .env with generated secrets
 docker compose up -d --build    # http://localhost
 docker compose exec -T -e MAHLZEIT_PASSWORD app mahlzeit create-admin --email you@example.org --name You
 docker compose exec app mahlzeit --help    # invite-household, reset-password, list-users, ...
-scripts/e2e.sh                  # Playwright on a phone viewport; restarts the stack with the OFF stub
+scripts/e2e.sh                  # Playwright on a phone viewport (smoke, track, list, plan); restarts the stack with the OFF stub
 scripts/backup.sh               # encrypted backup into ./backups
 scripts/restore.sh <file> <age key>
 scripts/restore-drill.sh        # full backup/wipe/restore check in a separate Compose project
@@ -101,6 +101,12 @@ Playwright needs `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium`.
 - **Shopping list writes** are operations with client-made ids (`services.shopping.apply`); the
   UI queues them in an outbox (`features/list/sync.ts`) and never calls the API for list
   writes directly.
+- **Recipes and saved meals** are one table and one service (`services.recipes`, kind `recipe` or
+  `saved_meal`). **Plans** are entries whose parts are `planned` (`day.plan_meal`); a **joint meal**
+  is one entry with a part per person (shares in `domain.shares`).
+- **Offers** change state only through `domain.offers.next_state`. A person's pending offers of a
+  meal end when it stops being theirs to give: `day` calls `offers.withdraw_open` when a part is
+  eaten, moved or removed. Pending offers of a past day read as expired; the hourly job writes it.
 - **Open Food Facts** is reached only through `off_client` behind `services.items` (rate limit,
   cache); tests use `tests/fakes.FakeOff`, end-to-end tests `scripts/offstub.py`.
 - **Definition of done** for a feature: UI path, registered tools (from M1), tests for both,

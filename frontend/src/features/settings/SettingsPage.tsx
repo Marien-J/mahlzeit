@@ -22,6 +22,7 @@ export function SettingsPage() {
       <nav className="stack links">
         <Link to="/targets">{t('settings.targets')}</Link>
         <Link to="/foods">{t('settings.foods')}</Link>
+        <Link to="/recipes">{t('settings.recipes')}</Link>
       </nav>
       <AccountSettings me={me} />
       <StartScreenSetting me={me} />

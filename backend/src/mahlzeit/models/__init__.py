@@ -21,9 +21,11 @@ from mahlzeit.models.catalogue import (
 from mahlzeit.models.connector import ConnectorToken, OffCache, RateWindow
 from mahlzeit.models.day import (
     DayTypeOverride,
+    ExactAmount,
     MealComponent,
     MealEntry,
     MealParticipant,
+    Offer,
     TargetSet,
 )
 from mahlzeit.models.jobs import Job
@@ -35,6 +37,7 @@ __all__ = [
     "ChangeRecord",
     "ConnectorToken",
     "DayTypeOverride",
+    "ExactAmount",
     "Favourite",
     "Household",
     "Invite",
@@ -47,6 +50,7 @@ __all__ = [
     "MealEntry",
     "MealParticipant",
     "OffCache",
+    "Offer",
     "PasswordReset",
     "Profile",
     "PushSubscription",

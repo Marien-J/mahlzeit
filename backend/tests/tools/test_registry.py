@@ -16,11 +16,10 @@ from mahlzeit.domain.permissions import Client
 from mahlzeit.ids import uuid7
 from mahlzeit.models import ChangeRecord
 from mahlzeit.off_client import set_off_client
-from mahlzeit.services import day, items, saved_meals, shopping
+from mahlzeit.services import day, items, offers, shopping
 from mahlzeit.services.auth import actor_for
 from mahlzeit.services.day import ComponentInput, EntryInput
 from mahlzeit.services.items import ItemInput
-from mahlzeit.services.saved_meals import Ingredient
 from mahlzeit.services.shopping import Op
 from mahlzeit.tools import registry
 from mahlzeit.tools.registry import ToolContext, ToolError
@@ -64,11 +63,43 @@ class World:
     def meal(self, member: factories.Member | None = None) -> str:
         m = member or self.me
         oats = factories.generic(self.db, m.actor, "C133000")
-        return str(
-            saved_meals.create(
-                self.db, m.actor, name="Hafer", ingredients=[Ingredient(oats.id, 60)]
-            ).id
+        return str(factories.saved_meal(self.db, m.actor, "Hafer", (oats, 60)).id)
+
+    def recipe(self, member: factories.Member | None = None) -> str:
+        m = member or self.me
+        oats = factories.generic(self.db, m.actor, "C133000")
+        return str(factories.recipe(self.db, m.actor, "Porridge", (oats, 100), servings=2).id)
+
+    def planned(
+        self,
+        member: factories.Member | None = None,
+        *,
+        joint: bool = False,
+        slot: Slot = Slot.DINNER,
+    ) -> day.MealEntry:
+        e = day.plan_meal(
+            self.db,
+            (member or self.me).actor,
+            EntryInput(
+                day=TODAY,
+                slot=slot,
+                name="Pasta",
+                components=[
+                    ComponentInput(
+                        item_id=factories.generic(self.db, self.me.actor, "C352000").id, amount=200
+                    )
+                ],
+                joint=joint,
+            ),
         )
+        return e
+
+    def offer(self, sender: factories.Member | None = None) -> str:
+        """A pending offer from `sender` to the other person in their household."""
+        s = sender or self.partner
+        (to,) = day.others(self.db, s.actor)
+        sent = offers.send(self.db, s.actor, entry_id=self.planned(s).id, to_user_id=to.id)
+        return str(sent.offer.id)
 
     def list_item(self, member: factories.Member | None = None, text: str = "Milch") -> str:
         op = Op(kind="add", id=uuid7(), fields={"text": text})
@@ -119,7 +150,7 @@ CASES: dict[str, Callable[[World], None]] = {
     ),
     "get_day": lambda w: assert_(len(w.call("get_day", {})["people"]) == 2),
     "get_household_snapshot": lambda w: assert_(
-        w.call("get_household_snapshot")["not_yet_available"] == ["offers", "stock"]
+        w.call("get_household_snapshot")["not_yet_available"] == ["stock"]
     ),
     "log_food": lambda w: assert_(
         w.call(
@@ -172,6 +203,56 @@ CASES: dict[str, Callable[[World], None]] = {
     ),
     "delete_recipe": lambda w: assert_(
         w.call("delete_recipe", {"recipe_id": w.meal()}) == {"ok": True}
+    ),
+    "get_meal_plan": lambda w: assert_(len(w.call("get_meal_plan", {"days": 3})["days"]) == 3),
+    "plan_meal": lambda w: assert_(
+        w.call("plan_meal", {"slot": "dinner", "name": "Pizza"})["state"] == "planned"
+    ),
+    "set_share": lambda w: assert_(
+        w.call("set_share", {"entry_id": str(w.planned(joint=True).id), "share": 0.7})["share"]
+        == 0.7
+    ),
+    "set_exact_amounts": lambda w: assert_(
+        w.call(
+            "set_exact_amounts",
+            {
+                "entry_id": str(e.id),
+                "amounts": [{"component_id": str(e.components[0].id), "amount": 150}],
+            },
+        )["participants"][0]["exact_amounts"]
+        == {str(e.components[0].id): 150}
+        if (e := w.planned(joint=True))
+        else None
+    ),
+    "move_entry": lambda w: assert_(
+        [
+            m["at"]
+            for m in w.call(
+                "move_entry",
+                {"entry_id": str(w.planned(slot=Slot.DINNER).id), "before_id": w.entry()},
+            )["items"]
+        ]
+        == ["07:30:00"]
+    ),
+    "add_recipe_to_list": lambda w: assert_(
+        w.call("add_recipe_to_list", {"recipe_id": w.recipe(), "portions": 2})["added"][0][
+            "quantity"
+        ]
+        == "100 g"
+    ),
+    "list_offers": lambda w: (
+        w.offer(),
+        assert_(w.call("list_offers")["items"][0]["incoming"] is True),
+    ),
+    "send_offer": lambda w: assert_(
+        w.call("send_offer", {"entry_id": str(w.planned().id)})["state"] == "pending"
+    ),
+    "respond_to_offer": lambda w: assert_(
+        w.call("respond_to_offer", {"offer_id": w.offer(), "action": "accept"})["state"]
+        == "accepted"
+    ),
+    "withdraw_offer": lambda w: assert_(
+        w.call("withdraw_offer", {"offer_id": w.offer(w.me)})["state"] == "withdrawn"
     ),
     "get_shopping_list": lambda w: (
         w.list_item(w.partner),
@@ -275,6 +356,17 @@ CROSS: dict[str, Callable[[World, factories.Member], dict[str, Any]]] = {
     "create_recipe": lambda w, s: {"name": "x", "from_entry_id": w.entry(s)},
     "update_recipe": lambda w, s: {"recipe_id": w.meal(s), "name": "x"},
     "delete_recipe": lambda w, s: {"recipe_id": w.meal(s)},
+    "plan_meal": lambda w, s: {"slot": "dinner", "recipe_id": w.recipe(s)},
+    "set_share": lambda w, s: {"entry_id": str(w.planned(s).id), "share": 0.5},
+    "set_exact_amounts": lambda w, s: {"entry_id": str(w.planned(s).id), "amounts": []},
+    "move_entry": lambda w, s: {"entry_id": str(w.planned(s).id), "before_id": None},
+    "add_recipe_to_list": lambda w, s: {"recipe_id": w.recipe(s)},
+    "send_offer": lambda w, s: {
+        "entry_id": str(w.planned(s).id),
+        "to_user_id": str(day.others(w.db, s.actor)[0].id),
+    },
+    "respond_to_offer": lambda w, s: {"offer_id": w.offer(s), "action": "accept"},
+    "withdraw_offer": lambda w, s: {"offer_id": w.offer(s)},
     "add_list_items": lambda w, s: {"items": [{"text": "x", "item_id": w.own_item(s)}]},
     "check_list_items": lambda w, s: {"ids": [w.list_item(s)]},
     "update_list_items": lambda w, s: {"changes": [{"id": w.list_item(s), "quantity": "9"}]},
@@ -301,7 +393,7 @@ def test_saved_meal_of_another_household_cannot_be_logged(
     world: World, stranger: factories.Member
 ) -> None:
     with pytest.raises(ToolError) as err:
-        world.call("log_food", {"slot": "lunch", "saved_meal_id": world.meal(stranger)})
+        world.call("log_food", {"slot": "lunch", "recipe_id": world.meal(stranger)})
     assert err.value.code.endswith("not_found")
 
 
@@ -328,3 +420,26 @@ def test_the_list_of_another_household_stays_hidden(
     world.list_item(stranger, "Geheim")
     assert world.call("get_shopping_list")["items"] == []
     assert world.call("get_household_snapshot")["shopping_list"]["items"] == []
+
+
+def test_a_pending_offer_shows_up_with_its_meal_and_effect(world: World) -> None:
+    world.offer()
+    (offer,) = world.call("list_offers")["items"]
+    assert offer["incoming"] and offer["state"] == "pending"
+    assert offer["meal"]["name"] == "Pasta" and offer["effect"]["incoming"]["values"]["kcal"] > 0
+    assert world.call("get_household_snapshot")["offers"][0]["id"] == offer["id"]
+
+
+def test_without_a_partner_there_is_nobody_to_offer_to(db: Session, clock) -> None:
+    (alone,) = factories.household(db, "Alone")
+    ctx = ToolContext(db=db, actor=actor_for(alone.user, Client.CONNECTOR), user=alone.user)
+    meal = day.plan_meal(
+        db,
+        alone.actor,
+        EntryInput(
+            day=TODAY, slot=Slot.DINNER, components=[ComponentInput(quick_name="x", kcal=1)]
+        ),
+    )
+    with pytest.raises(ToolError) as err:
+        registry.call(ctx, "send_offer", {"entry_id": str(meal.id)})
+    assert err.value.code == "no_partner"

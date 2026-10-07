@@ -143,14 +143,14 @@ function SavedMealSheet({ meal, onClose }: { meal: SavedMeal; onClose: () => voi
   const client = useQueryClient()
   const [name, setName] = useState(meal.name)
   const done = () => {
-    void client.invalidateQueries({ queryKey: ['saved-meals'] })
+    void client.invalidateQueries({ queryKey: ['recipes'] })
     onClose()
   }
   const rename = useMutation({
     mutationFn: () =>
       call(
-        api.PATCH('/api/saved-meals/{meal_id}', {
-          params: { path: { meal_id: meal.id } },
+        api.PATCH('/api/recipes/{recipe_id}', {
+          params: { path: { recipe_id: meal.id } },
           body: { name },
         }),
       ),
@@ -158,7 +158,7 @@ function SavedMealSheet({ meal, onClose }: { meal: SavedMeal; onClose: () => voi
   })
   const remove = useMutation({
     mutationFn: () =>
-      call(api.DELETE('/api/saved-meals/{meal_id}', { params: { path: { meal_id: meal.id } } })),
+      call(api.DELETE('/api/recipes/{recipe_id}', { params: { path: { recipe_id: meal.id } } })),
     onSuccess: done,
   })
   const submit = (e: FormEvent) => {

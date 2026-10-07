@@ -15,14 +15,26 @@ export function useDay(day: string) {
   })
 }
 
-/** Refetch every open day view after a change (entries can move between days). */
+/** Refetch every open day view after a change (entries can move between days). The plan and the
+ * offers show the same meals, so they follow. */
 export function useRefreshDays() {
   const client = useQueryClient()
-  return () => client.invalidateQueries({ queryKey: ['day'] })
+  return async () => {
+    await Promise.all([
+      client.invalidateQueries({ queryKey: ['day'] }),
+      client.invalidateQueries({ queryKey: ['plan'] }),
+      client.invalidateQueries({ queryKey: ['offers'] }),
+    ])
+  }
 }
 
-export function logFood(body: Schemas['EntryIn']) {
-  return call(api.POST('/api/entries', { body }))
+type EntryBody = Schemas['EntryIn']
+
+/** Log a meal; with `plan` it is a plan for today or later, with `joint` for both of us. */
+export function logFood(
+  body: Omit<EntryBody, 'plan' | 'joint'> & { plan?: boolean; joint?: boolean },
+) {
+  return call(api.POST('/api/entries', { body: { plan: false, joint: false, ...body } }))
 }
 
 export function updateEntry(id: string, body: Schemas['EntryPatchIn']) {
@@ -71,6 +83,35 @@ export function saveAsMeal(id: string, name?: string) {
     api.POST('/api/entries/{entry_id}/save-as-meal', {
       params: { path: { entry_id: id } },
       body: { name: name ?? null },
+    }),
+  )
+}
+
+export function setShare(id: string, share: number) {
+  return call(
+    api.PUT('/api/entries/{entry_id}/share', {
+      params: { path: { entry_id: id } },
+      body: { share },
+    }),
+  )
+}
+
+/** What I weighed out for myself per component; null goes back to my share. */
+export function setExactAmounts(id: string, amounts: Record<string, number | null>) {
+  return call(
+    api.PUT('/api/entries/{entry_id}/exact-amounts', {
+      params: { path: { entry_id: id } },
+      body: { amounts },
+    }),
+  )
+}
+
+/** Drag an entry of my day before another one (or last). */
+export function moveEntry(id: string, beforeId: string | null) {
+  return call(
+    api.POST('/api/entries/{entry_id}/move', {
+      params: { path: { entry_id: id } },
+      body: { before_id: beforeId },
     }),
   )
 }

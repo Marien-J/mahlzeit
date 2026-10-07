@@ -4,7 +4,8 @@ import { api, call, type Schemas } from '../../api/client'
 export type Item = Schemas['ItemOut']
 export type Draft = Schemas['ItemDraftOut']
 export type ItemIn = Schemas['ItemIn']
-export type SavedMeal = Schemas['SavedMealOut']
+export type Recipe = Schemas['RecipeOut']
+export type SavedMeal = Recipe
 
 export function useItemSearch(query: string) {
   return useQuery({
@@ -15,8 +16,16 @@ export function useItemSearch(query: string) {
   })
 }
 
+export function useRecipes(kind?: Recipe['kind']) {
+  return useQuery({
+    queryKey: ['recipes', kind ?? 'all'],
+    queryFn: () => call(api.GET('/api/recipes', { params: { query: kind ? { kind } : {} } })),
+  })
+}
+
+/** One-serving recipes for one-tap logging. */
 export function useSavedMeals() {
-  return useQuery({ queryKey: ['saved-meals'], queryFn: () => call(api.GET('/api/saved-meals')) })
+  return useRecipes('saved_meal')
 }
 
 export function lookupBarcode(code: string) {

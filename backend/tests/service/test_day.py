@@ -8,9 +8,9 @@ from mahlzeit.domain.day import EntryState, Slot
 from mahlzeit.domain.errors import Forbidden, Invalid, NotFound
 from mahlzeit.domain.targets import DayType, Targets
 from mahlzeit.models import ChangeRecord, MealEntry
-from mahlzeit.services import day, saved_meals, snapshot, targets
+from mahlzeit.services import day, recipes, snapshot, targets
 from mahlzeit.services.day import ComponentInput, EntryInput, EntryPatch
-from mahlzeit.services.saved_meals import Ingredient
+from mahlzeit.services.recipes import Ingredient, RecipeInput, RecipePatch
 from tests import factories
 
 TODAY = date(2026, 10, 6)
@@ -290,16 +290,11 @@ class TestSavedMeals:
             factories.generic(db, jonas.actor, OATS),
             factories.generic(db, jonas.actor, EGG),
         )
-        meal = saved_meals.create(
-            db,
-            jonas.actor,
-            name="Usual breakfast",
-            ingredients=[Ingredient(oats.id, 80), Ingredient(egg.id, 110)],
-        )
+        meal = factories.saved_meal(db, jonas.actor, "Usual breakfast", (oats, 80), (egg, 110))
         expected = oats.kcal * 0.8 + egg.kcal * 1.1
-        assert saved_meals.nutrition(meal).values.kcal == pytest.approx(expected)
+        assert recipes.nutrition(meal).values.kcal == pytest.approx(expected)
         e = day.log_food(
-            db, sam.actor, EntryInput(day=TODAY, slot=Slot.BREAKFAST, saved_meal_id=meal.id)
+            db, sam.actor, EntryInput(day=TODAY, slot=Slot.BREAKFAST, recipe_id=meal.id)
         )
         assert e.name == "Usual breakfast" and e.recipe_id == meal.id
         assert day.get_day(db, sam.actor, TODAY).people[0].logged.values.kcal == pytest.approx(
@@ -309,13 +304,11 @@ class TestSavedMeals:
     def test_half_portion(self, db: Session, clock) -> None:
         jonas, _ = factories.household(db)
         oats = factories.generic(db, jonas.actor, OATS)
-        meal = saved_meals.create(
-            db, jonas.actor, name="Oats", ingredients=[Ingredient(oats.id, 100)]
-        )
+        meal = factories.saved_meal(db, jonas.actor, "Oats", (oats, 100))
         e = day.log_food(
             db,
             jonas.actor,
-            EntryInput(day=TODAY, slot=Slot.BREAKFAST, saved_meal_id=meal.id, portions=0.5),
+            EntryInput(day=TODAY, slot=Slot.BREAKFAST, recipe_id=meal.id, portions=0.5),
         )
         assert e.components[0].amount == 50
 
@@ -329,7 +322,7 @@ class TestSavedMeals:
             ComponentInput(quick_name="Coffee", kcal=5),
             name="Frühstück",
         )
-        meal = saved_meals.create_from_entry(db, jonas.actor, e.id)
+        meal = recipes.create_from_entry(db, jonas.actor, e.id)
         assert meal.name == "Frühstück" and len(meal.ingredients) == 1
 
     def test_logging_a_saved_meal_keeps_its_amounts_when_the_meal_changes(
@@ -337,31 +330,26 @@ class TestSavedMeals:
     ) -> None:
         jonas, _ = factories.household(db)
         oats = factories.generic(db, jonas.actor, OATS)
-        meal = saved_meals.create(
-            db, jonas.actor, name="Oats", ingredients=[Ingredient(oats.id, 100)]
-        )
+        meal = factories.saved_meal(db, jonas.actor, "Oats", (oats, 100))
         e = day.log_food(
-            db, jonas.actor, EntryInput(day=TODAY, slot=Slot.BREAKFAST, saved_meal_id=meal.id)
+            db, jonas.actor, EntryInput(day=TODAY, slot=Slot.BREAKFAST, recipe_id=meal.id)
         )
-        saved_meals.update(db, jonas.actor, meal.id, ingredients=[Ingredient(oats.id, 40)])
+        recipes.update(db, jonas.actor, meal.id, RecipePatch(ingredients=[Ingredient(oats.id, 40)]))
         assert day.get_entry(db, jonas.actor, e.id).components[0].amount == 100
 
     def test_cross_household(self, db: Session, clock) -> None:
         jonas, _ = factories.household(db)
         stranger, _ = factories.household(db)
-        meal = saved_meals.create(
-            db,
-            jonas.actor,
-            name="Mine",
-            ingredients=[Ingredient(factories.generic(db, jonas.actor, OATS).id, 50)],
+        meal = factories.saved_meal(
+            db, jonas.actor, "Mine", (factories.generic(db, jonas.actor, OATS), 50)
         )
-        assert saved_meals.list_all(db, stranger.actor) == []
+        assert recipes.list_all(db, stranger.actor) == []
         for attempt in (
-            lambda: saved_meals.get(db, stranger.actor, meal.id),
-            lambda: saved_meals.update(db, stranger.actor, meal.id, name="x"),
-            lambda: saved_meals.delete(db, stranger.actor, meal.id),
+            lambda: recipes.get(db, stranger.actor, meal.id),
+            lambda: recipes.update(db, stranger.actor, meal.id, RecipePatch(name="x")),
+            lambda: recipes.delete(db, stranger.actor, meal.id),
             lambda: day.log_food(
-                db, stranger.actor, EntryInput(day=TODAY, slot=Slot.LUNCH, saved_meal_id=meal.id)
+                db, stranger.actor, EntryInput(day=TODAY, slot=Slot.LUNCH, recipe_id=meal.id)
             ),
         ):
             with pytest.raises(NotFound):
@@ -370,7 +358,7 @@ class TestSavedMeals:
     def test_validation(self, db: Session, clock) -> None:
         jonas, _ = factories.household(db)
         with pytest.raises(Invalid):
-            saved_meals.create(db, jonas.actor, name=" ", ingredients=[])
+            recipes.create(db, jonas.actor, RecipeInput(name=" ", ingredients=[]))
 
 
 class TestSnapshot:
@@ -385,5 +373,5 @@ class TestSnapshot:
             None,
         ]
         assert [e.name for e in snap.tonight] == [None]
-        assert snap.not_yet_available == ("offers", "stock")
+        assert snap.not_yet_available == ("stock",)
         assert snap.shopping_list == []

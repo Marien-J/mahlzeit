@@ -110,6 +110,17 @@ test('live on two phones, and a shop in airplane mode syncs cleanly', async ({ b
   await a.getByRole('button', { name: 'Speichern' }).click()
 
   // --- Back online: the queue goes out, both phones agree, nothing twice ---
+  // Jonas's changes are on the server before Sam reconnects (a cold server can be slow).
+  await expect
+    .poll(async () => {
+      const response = await a.request.get('/api/list')
+      const list = (await response.json()) as { items: { text: string; quantity: string | null }[] }
+      return (
+        list.items.some((i) => i.text === 'Eier') &&
+        list.items.find((i) => i.text === 'Spülmittel')?.quantity === '2'
+      )
+    })
+    .toBe(true)
   await b.context().setOffline(false)
   await expect(b.getByTestId('pending')).toHaveCount(0)
   const expected: [string, boolean][] = [
@@ -117,15 +128,17 @@ test('live on two phones, and a shop in airplane mode syncs cleanly', async ({ b
     ['Eier', false],
     ['Kaffee', false],
   ]
-  await expect.poll(async () => (await rows(b)).filter(([, done]) => !done)).toEqual(expected)
-  await expect.poll(async () => (await rows(a)).filter(([, done]) => !done)).toEqual(expected)
+  // The phone retries every 10 s while changes wait, so allow for one retry.
+  const sync = { timeout: 30_000 }
+  await expect.poll(async () => (await rows(b)).filter(([, done]) => !done), sync).toEqual(expected)
+  await expect.poll(async () => (await rows(a)).filter(([, done]) => !done), sync).toEqual(expected)
   const checked = async (p: Page) =>
     (await rows(p))
       .filter(([, done]) => done)
       .map(([text]) => text)
       .sort()
-  await expect.poll(() => checked(a)).toEqual(['Brot', 'Milch', 'Äpfel'])
-  await expect.poll(() => checked(b)).toEqual(['Brot', 'Milch', 'Äpfel'])
+  await expect.poll(() => checked(a), sync).toEqual(['Brot', 'Milch', 'Äpfel'])
+  await expect.poll(() => checked(b), sync).toEqual(['Brot', 'Milch', 'Äpfel'])
   await expect(b.getByRole('button', { name: /Spülmittel/ })).toContainText('2')
   await b.reload()
   expect((await rows(b)).length).toBe(6)

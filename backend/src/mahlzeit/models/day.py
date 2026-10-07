@@ -19,6 +19,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from mahlzeit.db import Base
 from mahlzeit.models._types import OptTimestamp, Timestamp, UuidPk
+from mahlzeit.models.accounts import User
 from mahlzeit.models.catalogue import Item, Recipe
 
 
@@ -52,7 +53,7 @@ class MealEntry(Base):
         back_populates="entry", cascade="all, delete-orphan", order_by="MealComponent.position"
     )
     participants: Mapped[list[MealParticipant]] = relationship(
-        back_populates="entry", cascade="all, delete-orphan"
+        back_populates="entry", cascade="all, delete-orphan", order_by="MealParticipant.id"
     )
     recipe: Mapped[Recipe | None] = relationship()
 
@@ -106,6 +107,69 @@ class MealParticipant(Base):
     logged_at: Mapped[OptTimestamp]
 
     entry: Mapped[MealEntry] = relationship(back_populates="participants")
+    user: Mapped[User] = relationship()
+    exact_amounts: Mapped[list[ExactAmount]] = relationship(
+        back_populates="participant", cascade="all, delete-orphan"
+    )
+
+
+class ExactAmount(Base):
+    """What a person weighed out for themselves of one component of a shared dish. It replaces
+    their share for that component. It goes when the component or the participant goes."""
+
+    __tablename__ = "meal_exact_amount"
+    __table_args__ = (CheckConstraint("amount > 0", name="amount_positive"),)
+
+    participant_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("meal_participant.id", ondelete="CASCADE"), primary_key=True
+    )
+    component_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("meal_component.id", ondelete="CASCADE"), primary_key=True
+    )
+    amount: Mapped[float] = mapped_column(Float)
+
+    participant: Mapped[MealParticipant] = relationship(back_populates="exact_amounts")
+
+
+class Offer(Base):
+    """A planned meal proposed by one member to another for a date and slot.
+
+    `day` and `slot` are copied from the offered entry so the offer still reads right after the
+    entry is gone. A counter-offer points at the offer it answers."""
+
+    __tablename__ = "offer"
+    __table_args__ = (
+        CheckConstraint("slot IN ('breakfast', 'lunch', 'dinner', 'snack')", name="slot"),
+        CheckConstraint(
+            "state IN ('pending', 'accepted', 'declined', 'countered', 'withdrawn', 'expired')",
+            name="state",
+        ),
+        CheckConstraint("from_user_id <> to_user_id", name="not_to_self"),
+        CheckConstraint("share > 0 AND share < 1", name="share"),
+        Index("ix_offer_to_user_state", "to_user_id", "state"),
+        Index("ix_offer_household_day", "household_id", "day"),
+    )
+
+    id: Mapped[UuidPk]
+    household_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("household.id", ondelete="CASCADE"))
+    from_user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("user_account.id", ondelete="CASCADE")
+    )
+    to_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user_account.id", ondelete="CASCADE"))
+    entry_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("meal_entry.id", ondelete="SET NULL"), index=True
+    )
+    counter_of_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("offer.id", ondelete="SET NULL")
+    )
+    day: Mapped[date] = mapped_column(Date)
+    slot: Mapped[str] = mapped_column(String(10))
+    share: Mapped[float] = mapped_column(Float, default=0.5)  # the receiver's share if accepted
+    state: Mapped[str] = mapped_column(String(10), default="pending")
+    created_at: Mapped[Timestamp]
+    responded_at: Mapped[OptTimestamp]
+
+    entry: Mapped[MealEntry | None] = relationship()
 
 
 class TargetSet(Base):

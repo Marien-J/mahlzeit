@@ -244,8 +244,13 @@ class EntryIn(BaseModel):
     name: str | None = Field(default=None, max_length=120)
     eaten_out: bool = False
     components: list[ComponentIn] = Field(default_factory=list, max_length=50)
-    saved_meal_id: uuid.UUID | None = None
+    recipe_id: uuid.UUID | None = None
     portions: float = 1.0
+    cooked_grams: float | None = Field(
+        default=None, description="A portion weighed after cooking, instead of portions."
+    )
+    plan: bool = Field(default=False, description="A plan for today or later, never eaten yet.")
+    joint: bool = Field(default=False, description="For everyone else in the household too.")
 
 
 class EntryPatchIn(BaseModel):
@@ -292,14 +297,29 @@ class IngredientIn(BaseModel):
     amount: float
 
 
-class SavedMealIn(BaseModel):
+class RecipeIn(BaseModel):
+    kind: Literal["recipe", "saved_meal"] = "recipe"
     name: str = Field(max_length=120)
+    servings: float = 1
+    cooked_yield_g: float | None = None
+    staple: bool = False
+    notes: str | None = Field(default=None, max_length=4000)
     ingredients: list[IngredientIn] = Field(max_length=50)
 
 
-class SavedMealPatchIn(BaseModel):
+class RecipePatchIn(BaseModel):
+    """Only the fields that are sent change; send null to clear the cooked yield or the notes."""
+
     name: str | None = Field(default=None, max_length=120)
+    servings: float | None = None
+    cooked_yield_g: float | None = None
+    staple: bool | None = None
+    notes: str | None = Field(default=None, max_length=4000)
     ingredients: list[IngredientIn] | None = Field(default=None, max_length=50)
+
+
+class AddToListIn(BaseModel):
+    portions: float | None = Field(default=None, description="Default: the whole recipe.")
 
 
 class SaveAsMealIn(BaseModel):
@@ -336,3 +356,48 @@ class ListOpsIn(BaseModel):
 
 class StoreIn(BaseModel):
     name: str = Field(max_length=80)
+
+
+# --- plan, shares, offers -----------------------------------------------------------------
+
+
+class ShareIn(BaseModel):
+    share: float = Field(description="My share of the dish, between 0.05 and 0.95 when shared.")
+
+
+class ExactAmountsIn(BaseModel):
+    amounts: dict[uuid.UUID, float | None] = Field(
+        description="Component id to what I weighed out for myself; null goes back to my share.",
+        max_length=50,
+    )
+
+
+class MoveEntryIn(BaseModel):
+    before_id: uuid.UUID | None = Field(
+        description="Stand before this entry of my day; null puts it last."
+    )
+
+
+class OfferIn(BaseModel):
+    entry_id: uuid.UUID
+    to_user_id: uuid.UUID
+    share: float = Field(default=0.5, description="The receiver's share of the dish.")
+
+
+class CounterMealIn(BaseModel):
+    """A new meal for the offer's day and slot."""
+
+    at: time | None = None
+    name: str | None = Field(default=None, max_length=120)
+    components: list[ComponentIn] = Field(default_factory=list, max_length=50)
+    recipe_id: uuid.UUID | None = None
+    portions: float = 1.0
+    cooked_grams: float | None = None
+
+
+class OfferResponseIn(BaseModel):
+    action: Literal["accept", "decline", "counter"]
+    counter_entry_id: uuid.UUID | None = Field(
+        default=None, description="Counter with one of my own plans for the same slot."
+    )
+    counter_meal: CounterMealIn | None = Field(default=None, description="Or with a new meal.")

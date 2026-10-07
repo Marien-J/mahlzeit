@@ -16,7 +16,10 @@
     "household": "Haushalt",
     "settings": "Einstellungen",
     "main": "Hauptmenü",
-    "list": "Liste"
+    "list": "Liste",
+    "plan": "Plan",
+    "offersWaiting_one": "{{count}} Angebot wartet",
+    "offersWaiting_other": "{{count}} Angebote warten"
   },
   "common": {
     "save": "Speichern",
@@ -139,7 +142,8 @@
     "foods": "Meine Lebensmittel und Mahlzeiten",
     "startScreen": "App öffnen mit",
     "startToday": "Heute",
-    "startList": "Einkaufsliste"
+    "startList": "Einkaufsliste",
+    "recipes": "Rezepte"
   },
   "about": {
     "title": "Über",
@@ -206,11 +210,8 @@
     "amount_required": "Gib eine Menge ein.",
     "quick_add_invalid": "Schnelleintrag braucht einen Namen und Kalorien.",
     "entry_empty": "Füge mindestens ein Lebensmittel hinzu.",
-    "saved_meal_not_found": "Diese gespeicherte Mahlzeit gibt es nicht (mehr).",
     "portions_invalid": "Gib zwischen 0 und 20 Portionen ein.",
     "nothing_to_copy": "An diesem Tag gibt es nichts zu kopieren.",
-    "saved_meal_empty": "Eine gespeicherte Mahlzeit braucht mindestens ein Lebensmittel aus dem Katalog.",
-    "saved_meal_name_required": "Gib der Mahlzeit einen Namen.",
     "nothing_to_set": "Gib mindestens ein Ziel oder ein Wochenmuster an.",
     "category_unknown": "Diese Abteilung gibt es nicht.",
     "id_invalid": "Diese Kennung ist ungültig.",
@@ -221,7 +222,31 @@
     "store_name_empty": "Gib dem Geschäft einen Namen.",
     "store_name_taken": "Es gibt schon ein Geschäft namens {{name}}.",
     "store_not_found": "Dieses Geschäft gibt es nicht.",
-    "too_many_operations": "Zu viele Änderungen auf einmal (höchstens {{max}})."
+    "too_many_operations": "Zu viele Änderungen auf einmal (höchstens {{max}}).",
+    "cooked_yield_invalid": "Gib ein Gewicht nach dem Kochen zwischen 0 und {{max}} g ein.",
+    "cooked_yield_missing": "Dieses Rezept hat noch kein Gewicht nach dem Kochen. Trage eines ein, um nach Gewicht zu erfassen.",
+    "exact_amount_invalid": "Gib eine Menge zwischen 0 und {{max}} ein.",
+    "offer_not_pending": "Dieses Angebot wurde schon beantwortet oder ist abgelaufen.",
+    "offer_not_yours": "Dieses Angebot kannst du nicht ändern.",
+    "offer_to_self": "Du kannst eine Mahlzeit nur jemand anderem anbieten.",
+    "order_invalid": "Diese Einträge gehören nicht zu diesem Tag.",
+    "plan_in_past": "Planen geht für heute und später. Eine vergangene Mahlzeit trägst du als gegessen ein.",
+    "recipe_name_required": "Gib dem Rezept einen Namen.",
+    "reorder_no_room": "Am Ende des Tages ist kein Platz mehr, um dorthin zu verschieben.",
+    "servings_invalid": "Die Portionenzahl muss größer als 0 und höchstens {{max}} sein.",
+    "share_invalid": "Dieser Anteil geht nicht: Jede Person an einer Mahlzeit behält mindestens 5 %.",
+    "counter_meal_required": "Wähle einen eigenen Plan für diese Mahlzeit oder gib eine neue Mahlzeit als Vorschlag ein.",
+    "counter_other_slot": "Dein Vorschlag muss für denselben Tag und dieselbe Mahlzeit wie das Angebot sein.",
+    "no_partner": "Es gibt niemanden, mit dem du diese Mahlzeit teilen kannst.",
+    "offer_action_invalid": "Das kannst du mit einem Angebot nicht tun.",
+    "offer_already_joint": "Du bist schon bei dieser Mahlzeit dabei.",
+    "offer_meal_gone": "Die angebotene Mahlzeit wurde geändert oder gelöscht, das Angebot gilt nicht mehr.",
+    "offer_meal_not_planned": "Nur eine geplante Mahlzeit kann angeboten werden, keine, die schon gegessen wurde.",
+    "offer_not_found": "Dieses Angebot gibt es nicht (mehr).",
+    "range_invalid": "Wähle einen Zeitraum von 1 bis {{max}} Tagen.",
+    "recipe_empty": "Ein Rezept braucht mindestens ein Lebensmittel aus dem Katalog.",
+    "recipe_not_found": "Dieses Rezept gibt es nicht (mehr).",
+    "offer_receiver_required": "Gib an, für wen das Angebot ist."
   },
   "day": {
     "today": "Heute",
@@ -230,7 +255,14 @@
     "copy": "Tag kopieren",
     "copyFrom": "Kopieren von …",
     "copyExplain": "Kopiert deine Mahlzeiten von einem anderen Tag hierher. An einem zukünftigen Tag sind sie geplant.",
-    "sourceDay": "Mahlzeiten kopieren von"
+    "sourceDay": "Mahlzeiten kopieren von",
+    "drag": "{{name}} verschieben",
+    "dragHelp": "Leertaste drücken, um die Mahlzeit aufzunehmen, mit den Pfeiltasten zu einer anderen Mahlzeit bewegen und mit der Leertaste vor ihr ablegen.",
+    "dragStart": "{{name}} aufgenommen.",
+    "dragOver": "{{name}} liegt über {{target}}.",
+    "dragEnd": "{{name}} abgelegt.",
+    "dragCancel": "Verschieben von {{name}} abgebrochen.",
+    "dropLast": "Ans Ende des Tages"
   },
   "dayType": {
     "training": "Trainingstag",
@@ -275,7 +307,24 @@
     "saveAsMeal": "Als Mahlzeit speichern",
     "savedAsMeal": "Als Mahlzeit gespeichert",
     "copyToToday": "Für heute übernehmen",
-    "copyToMyDay": "In meinen Tag übernehmen"
+    "copyToMyDay": "In meinen Tag übernehmen",
+    "together": "Gemeinsam essen",
+    "jointShort": "gemeinsam",
+    "eatenFor": "{{name}} als gegessen markieren",
+    "shares": "Anteile",
+    "myShare": "Mein Anteil",
+    "myShareValue": "Mein Anteil: {{percent}} %",
+    "applyShare": "Anteil übernehmen",
+    "iAte": "Ich:",
+    "myAmountOf": "Meine Menge von {{name}}",
+    "byShare": "nach Anteil",
+    "state": {
+      "planned": "geplant",
+      "logged": "gegessen",
+      "skipped": "ausgelassen"
+    },
+    "planOnly": "Nur planen (noch nicht gegessen)",
+    "shareLine": "{{percent}} % · {{kcal}} kcal"
   },
   "log": {
     "title": "Essen eintragen",
@@ -288,7 +337,8 @@
       "search": "Suchen",
       "scan": "Scannen",
       "quick": "Schnell",
-      "meals": "Mahlzeiten"
+      "meals": "Mahlzeiten",
+      "recipes": "Rezepte"
     },
     "search": "Lebensmittel suchen",
     "favouritesAndRecent": "Favoriten und zuletzt gegessen",
@@ -306,11 +356,13 @@
     "twice": "2 × {{label}}",
     "label": "Menge ({{unit}})",
     "addMore": "Weiteres hinzufügen",
-    "logNow": "Jetzt eintragen"
+    "logNow": "Jetzt eintragen",
+    "planNow": "Planen"
   },
   "quick": {
     "name": "Was war es?",
-    "kcal": "Energie (kcal)"
+    "kcal": "Energie (kcal)",
+    "kcalOptionalWhenPlanning": "Beim Planen reicht der Name."
   },
   "serving": {
     "egg": "1 Ei",
@@ -447,5 +499,74 @@
     "createStore": "Anlegen",
     "aisle": "Abteilung",
     "remove": "Von der Liste nehmen"
+  },
+  "recipes": {
+    "title": "Rezepte",
+    "new": "Neues Rezept",
+    "edit": "Rezept bearbeiten",
+    "none": "Noch keine Rezepte. Lege eins an und markiere die, die ihr oft kocht, als Standardrezepte: Sie stehen beim Planen oben.",
+    "staples": "Standardrezepte",
+    "others": "Weitere Rezepte",
+    "savedMeals": "Gespeicherte Mahlzeiten ansehen",
+    "servings": "Portionen",
+    "servingsCount_one": "{{count}} Portion",
+    "servingsCount_other": "{{count}} Portionen",
+    "perServing": "{{kcal}} kcal pro Portion",
+    "nutrition": "Pro Portion: {{kcal}} kcal, Eiweiß {{protein}} g",
+    "cookedYield": "Gewicht nach dem Kochen (g)",
+    "cookedYieldHint": "Optional. Damit lässt sich eine Portion nach Gewicht eintragen.",
+    "cookedYieldValue": "{{grams}} g nach dem Kochen",
+    "staple": "Standardrezept",
+    "notes": "Notizen",
+    "ingredients": "Zutaten",
+    "noIngredients": "Füge mindestens eine Zutat hinzu.",
+    "addIngredient": "Zutat hinzufügen",
+    "searchIngredient": "Zutat suchen",
+    "removeIngredient": "{{name}} entfernen",
+    "listPortions": "Für wie viele Portionen?",
+    "addToList": "Zutaten auf die Liste",
+    "addedToList_one": "{{count}} Zutat auf die Liste gesetzt.",
+    "addedToList_other": "{{count}} Zutaten auf die Liste gesetzt.",
+    "alreadyListed": "Schon auf der Liste: {{names}}.",
+    "toList": "Zur Liste",
+    "delete": "Rezept löschen",
+    "confirmDelete": "Wirklich löschen",
+    "cookedWeight": "Oder: Gewicht auf dem Teller (g)"
+  },
+  "plan": {
+    "addTitle": "Mahlzeit planen",
+    "planBasket_one": "{{count}} Lebensmittel planen ({{kcal}} kcal)",
+    "planBasket_other": "{{count}} Lebensmittel planen ({{kcal}} kcal)",
+    "title": "Plan",
+    "tomorrow": "Morgen",
+    "nothing": "Noch nichts geplant.",
+    "planFor": "Mahlzeit planen für {{day}}",
+    "more": "Weitere Tage zeigen",
+    "offered": "Angebot offen",
+    "dishKcal": "{{kcal}} kcal gesamt"
+  },
+  "offers": {
+    "title": "Angebote",
+    "offerFrom": "{{name}} bietet dir eine Mahlzeit an",
+    "counterFrom": "{{name}} schlägt etwas anderes vor",
+    "yourShare": "Dein Anteil: {{percent}} %, {{kcal}} kcal, Eiweiß {{protein}} g.",
+    "effect": "Dein Tag: noch {{before}} kcal übrig, danach {{after}} kcal.",
+    "accept": "Annehmen",
+    "decline": "Ablehnen",
+    "counter": "Anderes vorschlagen",
+    "waitingFor": "Wartet auf {{name}}",
+    "withdraw": "Zurückziehen",
+    "offerTitle": "{{name}} anbieten",
+    "shareIntro": "Welchen Anteil würde {{name}} essen?",
+    "theirShare": "Anteil von {{name}}",
+    "send": "Angebot senden",
+    "counterTitle": "Gegenvorschlag an {{name}}",
+    "myPlans": "Einer meiner Pläne",
+    "somethingElse": "Oder etwas Neues",
+    "recipe": "Rezept",
+    "orName": "Oder nur ein Name",
+    "suggest": "Vorschlagen",
+    "offer": "Anbieten",
+    "yourShareUnknown": "Dein Anteil: {{percent}} %. Die Nährwerte sind noch nicht bekannt."
   }
 }

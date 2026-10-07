@@ -16,7 +16,10 @@
     "household": "Huishouden",
     "settings": "Instellingen",
     "main": "Hoofdmenu",
-    "list": "Lijst"
+    "list": "Lijst",
+    "plan": "Plan",
+    "offersWaiting_one": "{{count}} voorstel wacht",
+    "offersWaiting_other": "{{count}} voorstellen wachten"
   },
   "common": {
     "save": "Opslaan",
@@ -139,7 +142,8 @@
     "foods": "Mijn producten en maaltijden",
     "startScreen": "App openen op",
     "startToday": "Vandaag",
-    "startList": "Boodschappenlijst"
+    "startList": "Boodschappenlijst",
+    "recipes": "Recepten"
   },
   "about": {
     "title": "Over",
@@ -206,11 +210,8 @@
     "amount_required": "Vul een hoeveelheid in.",
     "quick_add_invalid": "Snel invoeren heeft een naam en calorieën nodig.",
     "entry_empty": "Voeg minstens één product toe.",
-    "saved_meal_not_found": "Deze opgeslagen maaltijd bestaat niet (meer).",
     "portions_invalid": "Vul tussen 0 en 20 porties in.",
     "nothing_to_copy": "Er is op die dag niets om te kopiëren.",
-    "saved_meal_empty": "Een opgeslagen maaltijd heeft minstens één product uit de catalogus nodig.",
-    "saved_meal_name_required": "Geef de maaltijd een naam.",
     "nothing_to_set": "Geef minstens één doel of een weekpatroon op.",
     "category_unknown": "Deze afdeling bestaat niet.",
     "id_invalid": "Deze id is ongeldig.",
@@ -221,7 +222,31 @@
     "store_name_empty": "Geef de winkel een naam.",
     "store_name_taken": "Er is al een winkel met de naam {{name}}.",
     "store_not_found": "Deze winkel bestaat niet.",
-    "too_many_operations": "Te veel wijzigingen tegelijk (maximaal {{max}})."
+    "too_many_operations": "Te veel wijzigingen tegelijk (maximaal {{max}}).",
+    "cooked_yield_invalid": "Vul een gewicht na het koken in tussen 0 en {{max}} g.",
+    "cooked_yield_missing": "Dit recept heeft nog geen gewicht na het koken. Vul er een in om op gewicht te registreren.",
+    "exact_amount_invalid": "Vul een hoeveelheid in tussen 0 en {{max}}.",
+    "offer_not_pending": "Dit voorstel is al beantwoord of verlopen.",
+    "offer_not_yours": "Dit voorstel kun je niet wijzigen.",
+    "offer_to_self": "Je kunt een maaltijd alleen aan iemand anders voorstellen.",
+    "order_invalid": "Deze items horen niet bij deze dag.",
+    "plan_in_past": "Plannen kan voor vandaag en later. Een maaltijd uit het verleden leg je vast als gegeten.",
+    "recipe_name_required": "Geef het recept een naam.",
+    "reorder_no_room": "Er is aan het einde van de dag geen ruimte meer om het daarheen te verplaatsen.",
+    "servings_invalid": "Het aantal porties moet groter zijn dan 0 en hoogstens {{max}}.",
+    "share_invalid": "Dit aandeel kan niet: iedereen bij een maaltijd houdt minstens 5 %.",
+    "counter_meal_required": "Kies een eigen plan voor deze maaltijd of vul een nieuwe maaltijd in als tegenvoorstel.",
+    "counter_other_slot": "Je tegenvoorstel moet voor dezelfde dag en maaltijd zijn als het voorstel.",
+    "no_partner": "Er is niemand om deze maaltijd mee te delen.",
+    "offer_action_invalid": "Dat kun je met een voorstel niet doen.",
+    "offer_already_joint": "Je doet al mee met deze maaltijd.",
+    "offer_meal_gone": "De voorgestelde maaltijd is gewijzigd of verwijderd, dus het voorstel geldt niet meer.",
+    "offer_meal_not_planned": "Alleen een geplande maaltijd kan worden voorgesteld, geen maaltijd die al gegeten is.",
+    "offer_not_found": "Dit voorstel bestaat niet (meer).",
+    "range_invalid": "Kies een periode van 1 tot {{max}} dagen.",
+    "recipe_empty": "Een recept heeft minstens één levensmiddel uit de catalogus nodig.",
+    "recipe_not_found": "Dit recept bestaat niet (meer).",
+    "offer_receiver_required": "Geef aan voor wie het voorstel is."
   },
   "day": {
     "today": "Vandaag",
@@ -230,7 +255,14 @@
     "copy": "Dag kopiëren",
     "copyFrom": "Kopiëren van …",
     "copyExplain": "Kopieert je maaltijden van een andere dag naar deze dag. Op een dag in de toekomst zijn ze gepland.",
-    "sourceDay": "Maaltijden kopiëren van"
+    "sourceDay": "Maaltijden kopiëren van",
+    "drag": "{{name}} verplaatsen",
+    "dragHelp": "Druk op de spatiebalk om de maaltijd op te pakken, verplaats hem met de pijltjestoetsen naar een andere maaltijd en druk op de spatiebalk om hem ervoor neer te zetten.",
+    "dragStart": "{{name}} opgepakt.",
+    "dragOver": "{{name}} staat boven {{target}}.",
+    "dragEnd": "{{name}} neergezet.",
+    "dragCancel": "Verplaatsen van {{name}} geannuleerd.",
+    "dropLast": "Naar het einde van de dag"
   },
   "dayType": {
     "training": "Trainingsdag",
@@ -275,7 +307,24 @@
     "saveAsMeal": "Als maaltijd bewaren",
     "savedAsMeal": "Als maaltijd bewaard",
     "copyToToday": "Naar vandaag kopiëren",
-    "copyToMyDay": "Naar mijn dag kopiëren"
+    "copyToMyDay": "Naar mijn dag kopiëren",
+    "together": "Samen eten",
+    "jointShort": "samen",
+    "eatenFor": "{{name}} als gegeten markeren",
+    "shares": "Aandelen",
+    "myShare": "Mijn aandeel",
+    "myShareValue": "Mijn aandeel: {{percent}} %",
+    "applyShare": "Aandeel toepassen",
+    "iAte": "Ik:",
+    "myAmountOf": "Mijn hoeveelheid {{name}}",
+    "byShare": "naar aandeel",
+    "state": {
+      "planned": "gepland",
+      "logged": "gegeten",
+      "skipped": "overgeslagen"
+    },
+    "planOnly": "Alleen plannen (nog niet gegeten)",
+    "shareLine": "{{percent}} % · {{kcal}} kcal"
   },
   "log": {
     "title": "Eten toevoegen",
@@ -288,7 +337,8 @@
       "search": "Zoeken",
       "scan": "Scannen",
       "quick": "Snel",
-      "meals": "Maaltijden"
+      "meals": "Maaltijden",
+      "recipes": "Recepten"
     },
     "search": "Producten zoeken",
     "favouritesAndRecent": "Favorieten en recent gegeten",
@@ -306,11 +356,13 @@
     "twice": "2 × {{label}}",
     "label": "Hoeveelheid ({{unit}})",
     "addMore": "Nog iets toevoegen",
-    "logNow": "Nu toevoegen"
+    "logNow": "Nu toevoegen",
+    "planNow": "Plannen"
   },
   "quick": {
     "name": "Wat was het?",
-    "kcal": "Energie (kcal)"
+    "kcal": "Energie (kcal)",
+    "kcalOptionalWhenPlanning": "Bij plannen is een naam genoeg."
   },
   "serving": {
     "egg": "1 ei",
@@ -447,5 +499,74 @@
     "createStore": "Aanmaken",
     "aisle": "Afdeling",
     "remove": "Van de lijst halen"
+  },
+  "recipes": {
+    "title": "Recepten",
+    "new": "Nieuw recept",
+    "edit": "Recept bewerken",
+    "none": "Nog geen recepten. Voeg er een toe en markeer wat je vaak kookt als vast recept: die staan bij het plannen bovenaan.",
+    "staples": "Vaste recepten",
+    "others": "Andere recepten",
+    "savedMeals": "Opgeslagen maaltijden bekijken",
+    "servings": "Porties",
+    "servingsCount_one": "{{count}} portie",
+    "servingsCount_other": "{{count}} porties",
+    "perServing": "{{kcal}} kcal per portie",
+    "nutrition": "Per portie: {{kcal}} kcal, eiwit {{protein}} g",
+    "cookedYield": "Gewicht na het koken (g)",
+    "cookedYieldHint": "Optioneel. Zo kun je een portie op gewicht vastleggen.",
+    "cookedYieldValue": "{{grams}} g na het koken",
+    "staple": "Vast recept",
+    "notes": "Notities",
+    "ingredients": "Ingrediënten",
+    "noIngredients": "Voeg minstens één ingrediënt toe.",
+    "addIngredient": "Ingrediënt toevoegen",
+    "searchIngredient": "Ingrediënt zoeken",
+    "removeIngredient": "{{name}} verwijderen",
+    "listPortions": "Voor hoeveel porties?",
+    "addToList": "Ingrediënten op de lijst",
+    "addedToList_one": "{{count}} ingrediënt op de lijst gezet.",
+    "addedToList_other": "{{count}} ingrediënten op de lijst gezet.",
+    "alreadyListed": "Staat al op de lijst: {{names}}.",
+    "toList": "Naar de lijst",
+    "delete": "Recept verwijderen",
+    "confirmDelete": "Echt verwijderen",
+    "cookedWeight": "Of: gewicht op het bord (g)"
+  },
+  "plan": {
+    "addTitle": "Maaltijd plannen",
+    "planBasket_one": "{{count}} levensmiddel plannen ({{kcal}} kcal)",
+    "planBasket_other": "{{count}} levensmiddelen plannen ({{kcal}} kcal)",
+    "title": "Plan",
+    "tomorrow": "Morgen",
+    "nothing": "Nog niets gepland.",
+    "planFor": "Maaltijd plannen voor {{day}}",
+    "more": "Meer dagen tonen",
+    "offered": "Voorstel open",
+    "dishKcal": "{{kcal}} kcal in totaal"
+  },
+  "offers": {
+    "title": "Voorstellen",
+    "offerFrom": "{{name}} stelt je een maaltijd voor",
+    "counterFrom": "{{name}} stelt iets anders voor",
+    "yourShare": "Jouw aandeel: {{percent}} %, {{kcal}} kcal, eiwit {{protein}} g.",
+    "effect": "Jouw dag: nog {{before}} kcal over, daarna {{after}} kcal.",
+    "accept": "Accepteren",
+    "decline": "Afwijzen",
+    "counter": "Iets anders voorstellen",
+    "waitingFor": "Wacht op {{name}}",
+    "withdraw": "Intrekken",
+    "offerTitle": "{{name}} voorstellen",
+    "shareIntro": "Welk aandeel zou {{name}} eten?",
+    "theirShare": "Aandeel van {{name}}",
+    "send": "Voorstel versturen",
+    "counterTitle": "Tegenvoorstel aan {{name}}",
+    "myPlans": "Een van mijn plannen",
+    "somethingElse": "Of iets nieuws",
+    "recipe": "Recept",
+    "orName": "Of alleen een naam",
+    "suggest": "Voorstellen",
+    "offer": "Voorstellen",
+    "yourShareUnknown": "Jouw aandeel: {{percent}} %. De voedingswaarden zijn nog niet bekend."
   }
 }

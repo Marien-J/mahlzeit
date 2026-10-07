@@ -96,13 +96,13 @@ describe('adding food', () => {
       ingredients: [],
       per_serving: totals({ kcal: 480 }),
     }
-    const server = mockApi(routes({ 'GET /api/saved-meals': () => [meal] }))
+    const server = mockApi(routes({ 'GET /api/recipes': () => [meal] }))
     renderApp('/add?slot=breakfast')
     const user = userEvent.setup()
     await user.click(await screen.findByRole('button', { name: 'Mahlzeiten' }))
     await user.click(await screen.findByRole('button', { name: /Porridge/ }))
     await vi.waitFor(() => expect(posted(server)).toBeDefined())
-    expect(posted(server)).toMatchObject({ saved_meal_id: meal.id, slot: 'breakfast' })
+    expect(posted(server)).toMatchObject({ recipe_id: meal.id, slot: 'breakfast' })
   })
 
   it('scans by typing the code when there is no camera', async () => {

@@ -104,7 +104,7 @@ describe('my foods', () => {
     const server = mockApi({
       'GET /api/auth/me': () => ME,
       'GET /api/items': () => [SKYR],
-      'GET /api/saved-meals': () => [],
+      'GET /api/recipes': () => [],
       [`PUT /api/items/${SKYR.id}`]: () => SKYR,
     })
     renderApp('/foods')
@@ -146,9 +146,9 @@ describe('my foods', () => {
     const server = mockApi({
       'GET /api/auth/me': () => ME,
       'GET /api/items': () => [],
-      'GET /api/saved-meals': () => [meal],
-      [`PATCH /api/saved-meals/${meal.id}`]: () => ({ ...meal, name: 'Haferbrei' }),
-      [`DELETE /api/saved-meals/${meal.id}`]: () => reply(204),
+      'GET /api/recipes': () => [meal],
+      [`PATCH /api/recipes/${meal.id}`]: () => ({ ...meal, name: 'Haferbrei' }),
+      [`DELETE /api/recipes/${meal.id}`]: () => reply(204),
     })
     renderApp('/foods')
     const user = userEvent.setup()

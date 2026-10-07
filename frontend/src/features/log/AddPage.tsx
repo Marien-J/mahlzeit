@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useCallback, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router'
-import { ApiError } from '../../api/client'
+import { api, ApiError, call } from '../../api/client'
 import { ErrorMessage } from '../../components/ErrorMessage'
 import { Field, SelectField, Toggle } from '../../components/Field'
 import { Sheet } from '../../components/Sheet'
@@ -15,17 +15,19 @@ import {
   lookupBarcode,
   searchOnline,
   useItemSearch,
+  useRecipes,
   useSavedMeals,
   type Draft,
   type Item,
   type ItemIn,
+  type Recipe,
 } from '../catalogue/api'
 import { EMPTY_ITEM, LabelForm } from '../catalogue/LabelForm'
 import { logFood, useRefreshDays } from '../day/api'
 import { AmountSheet, type Picked } from './AmountSheet'
 import { Scanner } from './Scanner'
 
-const MODES = ['search', 'scan', 'quick', 'meals'] as const
+const MODES = ['search', 'scan', 'quick', 'meals', 'recipes'] as const
 type Mode = (typeof MODES)[number]
 const SLOTS: SlotName[] = ['breakfast', 'lunch', 'dinner', 'snack']
 const DEFAULT_TIMES: Partial<Record<SlotName, string>> = {
@@ -44,17 +46,30 @@ export function AddPage() {
   const zone = me?.user.time_zone ?? 'Europe/Berlin'
   const now = nowTimeIn(zone)
   const day = params.get('day') ?? todayIn(zone)
+  // A plan for today or later: the same screen, but nothing is eaten yet.
+  const [plan, setPlan] = useState(params.get('plan') === '1')
+  const household = useQuery({
+    queryKey: ['household'],
+    queryFn: () => call(api.GET('/api/household')),
+  })
+  const hasPartner = (household.data?.members.length ?? 1) > 1
+  const [joint, setJoint] = useState(false)
   const [slot, setSlot] = useState<SlotName>(
     (params.get('slot') as SlotName | null) ?? slotForTime(now),
   )
   const [at, setAt] = useState(DEFAULT_TIMES[slot] ?? now)
   const [eatenOut, setEatenOut] = useState(false)
-  const [mode, setMode] = useState<Mode>((params.get('mode') as Mode | null) ?? 'search')
+  const [mode, setMode] = useState<Mode>(
+    (params.get('mode') as Mode | null) ?? (plan ? 'recipes' : 'search'),
+  )
   const [basket, setBasket] = useState<Picked[]>([])
   const [picking, setPicking] = useState<Item | null>(null)
   const [labelling, setLabelling] = useState<{ initial: ItemIn; missing: string[] } | null>(null)
 
-  const back = () => void navigate(day === todayIn(zone) ? '/' : `/day/${day}`)
+  const back = () =>
+    void navigate(
+      params.get('from') === 'plan' ? '/plan' : day === todayIn(zone) ? '/' : `/day/${day}`,
+    )
   const log = useMutation({
     mutationFn: (items: Picked[]) =>
       logFood({
@@ -63,17 +78,31 @@ export function AddPage() {
         at,
         eaten_out: eatenOut,
         portions: 1,
+        plan,
+        joint,
         components: items.map((p) => p.component),
       }),
     onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: ['plan'] })
       await refresh()
       back()
     },
   })
   const logMeal = useMutation({
-    mutationFn: (savedMealId: string) =>
-      logFood({ day, slot, at, eaten_out: eatenOut, portions: 1, saved_meal_id: savedMealId }),
+    mutationFn: (pick: { recipe: string; portions?: number; cooked_grams?: number }) =>
+      logFood({
+        day,
+        slot,
+        at,
+        eaten_out: eatenOut,
+        portions: pick.portions ?? 1,
+        cooked_grams: pick.cooked_grams ?? null,
+        recipe_id: pick.recipe,
+        plan,
+        joint,
+      }),
     onSuccess: async () => {
+      await client.invalidateQueries({ queryKey: ['plan'] })
       await refresh()
       back()
     },
@@ -98,7 +127,7 @@ export function AddPage() {
   return (
     <section className="stack add">
       <header className="row spread">
-        <h1>{t('log.title')}</h1>
+        <h1>{plan ? t('plan.addTitle') : t('log.title')}</h1>
         <button type="button" onClick={back}>
           {t('common.cancel')}
         </button>
@@ -144,16 +173,33 @@ export function AddPage() {
       ) : null}
       {mode === 'quick' ? (
         <QuickAdd
+          plan={plan}
           onAdd={(p) => setBasket((b) => [...b, p])}
           onLogNow={(p) => log.mutate([...basket, p])}
           busy={log.isPending}
         />
       ) : null}
       {mode === 'meals' ? (
-        <SavedMeals onPick={(id) => logMeal.mutate(id)} busy={logMeal.isPending} />
+        <SavedMeals onPick={(id) => logMeal.mutate({ recipe: id })} busy={logMeal.isPending} />
+      ) : null}
+      {mode === 'recipes' ? (
+        <RecipePanel
+          joint={joint}
+          plan={plan}
+          busy={logMeal.isPending}
+          onPick={(pick) => logMeal.mutate(pick)}
+        />
       ) : null}
 
-      <Toggle label={t('entry.eatenOut')} checked={eatenOut} onChange={setEatenOut} />
+      {day === todayIn(zone) ? (
+        <Toggle label={t('entry.planOnly')} checked={plan} onChange={setPlan} />
+      ) : null}
+      {hasPartner ? (
+        <Toggle label={t('entry.together')} checked={joint} onChange={setJoint} />
+      ) : null}
+      {plan ? null : (
+        <Toggle label={t('entry.eatenOut')} checked={eatenOut} onChange={setEatenOut} />
+      )}
       <ErrorMessage error={log.error ?? logMeal.error} />
 
       {basket.length ? (
@@ -180,7 +226,7 @@ export function AddPage() {
             disabled={log.isPending}
             onClick={() => log.mutate(basket)}
           >
-            {t('log.logBasket', {
+            {t(plan ? 'plan.planBasket' : 'log.logBasket', {
               count: basket.length,
               kcal: kcal(basket.reduce((sum, p) => sum + (p.kcal ?? 0), 0)),
             })}
@@ -191,6 +237,7 @@ export function AddPage() {
       {picking ? (
         <AmountSheet
           item={picking}
+          plan={plan}
           busy={log.isPending}
           onClose={() => setPicking(null)}
           onAdd={(p) => {
@@ -326,10 +373,12 @@ function ScanPanel({
 }
 
 function QuickAdd({
+  plan,
   onAdd,
   onLogNow,
   busy,
 }: {
+  plan: boolean
   onAdd: (p: Picked) => void
   onLogNow: (p: Picked) => void
   busy: boolean
@@ -362,7 +411,8 @@ function QuickAdd({
       />
       <Field
         label={t('quick.kcal')}
-        required
+        required={!plan}
+        hint={plan ? t('quick.kcalOptionalWhenPlanning') : undefined}
         inputMode="decimal"
         value={form.kcal}
         onChange={(e) => setForm({ ...form, kcal: e.target.value })}
@@ -381,13 +431,13 @@ function QuickAdd({
       <div className="row">
         <button
           type="button"
-          disabled={!form.name || !form.kcal || busy}
+          disabled={!form.name || (!plan && !form.kcal) || busy}
           onClick={() => onAdd(picked())}
         >
           {t('amount.addMore')}
         </button>
-        <button type="submit" className="primary" disabled={busy}>
-          {t('amount.logNow')}
+        <button type="submit" className="primary" disabled={busy || (plan && !form.name.trim())}>
+          {t(plan ? 'amount.planNow' : 'amount.logNow')}
         </button>
       </div>
     </form>
@@ -411,5 +461,112 @@ function SavedMeals({ onPick, busy }: { onPick: (id: string) => void; busy: bool
         </li>
       ))}
     </ul>
+  )
+}
+
+/** Recipes, staples first. A portion can be given as a number or, with a cooked yield, as the
+ * weight of the cooked dish on the plate. */
+function RecipePanel({
+  joint,
+  plan,
+  busy,
+  onPick,
+}: {
+  joint: boolean
+  plan: boolean
+  busy: boolean
+  onPick: (pick: { recipe: string; portions?: number; cooked_grams?: number }) => void
+}) {
+  const { t } = useTranslation()
+  const recipes = useRecipes('recipe')
+  const [open, setOpen] = useState<Recipe | null>(null)
+  if (recipes.data && recipes.data.length === 0) return <p className="muted">{t('recipes.none')}</p>
+  return (
+    <>
+      <ul className="list results" data-testid="recipe-picks">
+        {(recipes.data ?? []).map((r) => (
+          <li key={r.id}>
+            <button type="button" className="result" disabled={busy} onClick={() => setOpen(r)}>
+              <span>
+                {r.staple ? <Star /> : null}
+                {r.name}
+              </span>
+              <small className="muted">
+                {t('recipes.perServing', { kcal: kcal(r.per_serving.values.kcal) })}
+              </small>
+            </button>
+          </li>
+        ))}
+      </ul>
+      {open ? (
+        <PortionSheet
+          recipe={open}
+          joint={joint}
+          plan={plan}
+          busy={busy}
+          onPick={onPick}
+          onClose={() => setOpen(null)}
+        />
+      ) : null}
+    </>
+  )
+}
+
+function PortionSheet({
+  recipe,
+  joint,
+  plan,
+  busy,
+  onPick,
+  onClose,
+}: {
+  recipe: Recipe
+  joint: boolean
+  plan: boolean
+  busy: boolean
+  onPick: (pick: { recipe: string; portions?: number; cooked_grams?: number }) => void
+  onClose: () => void
+}) {
+  const { t } = useTranslation()
+  // Both of us eating one dish: two portions by default.
+  const [portions, setPortions] = useState(joint ? '2' : '1')
+  const [cooked, setCooked] = useState('')
+  const number = (v: string) => Number(v.replace(',', '.'))
+  const byWeight = cooked.trim() !== ''
+  const valid = byWeight ? number(cooked) > 0 : number(portions) > 0
+  return (
+    <Sheet title={recipe.name} onClose={onClose}>
+      <form
+        className="stack"
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (!valid) return
+          onPick(
+            byWeight
+              ? { recipe: recipe.id, cooked_grams: number(cooked) }
+              : { recipe: recipe.id, portions: number(portions) },
+          )
+        }}
+      >
+        <Field
+          label={t('recipes.servings')}
+          inputMode="decimal"
+          value={portions}
+          disabled={byWeight}
+          onChange={(e) => setPortions(e.target.value)}
+        />
+        {recipe.cooked_yield_g != null ? (
+          <Field
+            label={t('recipes.cookedWeight')}
+            inputMode="decimal"
+            value={cooked}
+            onChange={(e) => setCooked(e.target.value)}
+          />
+        ) : null}
+        <button type="submit" className="primary" disabled={!valid || busy}>
+          {t(plan ? 'amount.planNow' : 'amount.logNow')}
+        </button>
+      </form>
+    </Sheet>
   )
 }

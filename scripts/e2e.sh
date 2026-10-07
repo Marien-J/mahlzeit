@@ -13,7 +13,8 @@ invite() {
 smoke="$(invite smoke)"
 track="$(invite track)"
 list="$(invite list)"
-[ -n "$smoke" ] && [ -n "$track" ] && [ -n "$list" ] || { echo "could not create invites" >&2; exit 1; }
+plan="$(invite plan)"
+[ -n "$smoke" ] && [ -n "$track" ] && [ -n "$list" ] && [ -n "$plan" ] || { echo "could not create invites" >&2; exit 1; }
 cd frontend
-E2E_INVITE_CODE="$smoke" E2E_TRACK_INVITE_CODE="$track" E2E_LIST_INVITE_CODE="$list" \
+E2E_INVITE_CODE="$smoke" E2E_TRACK_INVITE_CODE="$track" E2E_LIST_INVITE_CODE="$list" E2E_PLAN_INVITE_CODE="$plan" \
   npx playwright test "$@"

@@ -13,7 +13,7 @@ from pydantic import BaseModel
 
 from mahlzeit import clock
 from mahlzeit.domain.catalogue import display_name
-from mahlzeit.domain.nutrition import Nutrients, Totals, rounded
+from mahlzeit.domain.nutrition import Nutrients, Totals, rounded, total
 from mahlzeit.domain.off import ItemDraft
 from mahlzeit.domain.targets import Targets
 from mahlzeit.models import (
@@ -21,13 +21,15 @@ from mahlzeit.models import (
     ListMemory,
     MealComponent,
     MealEntry,
+    MealParticipant,
     Recipe,
     ShoppingListItem,
     Store,
 )
 from mahlzeit.services import day as day_service
 from mahlzeit.services import items as item_service
-from mahlzeit.services import saved_meals
+from mahlzeit.services import offers as offer_service
+from mahlzeit.services import recipes
 from mahlzeit.services import shopping as shopping_service
 from mahlzeit.services.snapshot import Snapshot
 from mahlzeit.services.targets import TargetPlan
@@ -112,6 +114,15 @@ class ComponentOut(BaseModel):
     nutrients: NutrientsOut
 
 
+class ParticipantOut(BaseModel):
+    user_id: uuid.UUID
+    display_name: str
+    state: Literal["planned", "logged", "skipped"]
+    share: float
+    exact_amounts: dict[uuid.UUID, float]
+    intake: TotalsOut
+
+
 class EntryOut(BaseModel):
     id: uuid.UUID
     day: date
@@ -119,11 +130,15 @@ class EntryOut(BaseModel):
     at: time
     name: str | None
     eaten_out: bool
-    saved_meal_id: uuid.UUID | None
+    recipe_id: uuid.UUID | None
+    recipe_portions: float | None
+    joint: bool
     state: Literal["planned", "logged", "skipped"] | None
     share: float | None
     components: list[ComponentOut]
+    participants: list[ParticipantOut]
     intake: TotalsOut | None
+    dish: TotalsOut
 
 
 class PersonDayOut(BaseModel):
@@ -162,16 +177,70 @@ class IngredientOut(BaseModel):
     base_unit: str
 
 
-class SavedMealOut(BaseModel):
+class RecipeOut(BaseModel):
     id: uuid.UUID
+    kind: Literal["recipe", "saved_meal"]
     name: str
+    servings: float
+    cooked_yield_g: float | None
+    staple: bool
+    notes: str | None
     ingredients: list[IngredientOut]
     per_serving: TotalsOut
+    per_100g_cooked: NutrientsOut | None
+
+
+class AddedToListOut(BaseModel):
+    added: list[ListItemOut]
+    already_listed: list[str]
+
+
+class PlanDayOut(BaseModel):
+    day: date
+    entries: list[EntryOut]
+
+
+class PlanMemberOut(BaseModel):
+    user_id: uuid.UUID
+    display_name: str
+    is_me: bool
+
+
+class OfferEffectOut(BaseModel):
+    incoming: TotalsOut
+    targets: TargetsOut | None
+    projection_before: TargetsOut | None
+    projection_after: TargetsOut | None
+
+
+class OfferOut(BaseModel):
+    id: uuid.UUID
+    state: Literal["pending", "accepted", "declined", "countered", "withdrawn", "expired"]
+    from_user_id: uuid.UUID
+    from_name: str
+    to_user_id: uuid.UUID
+    to_name: str
+    incoming: bool
+    day: date
+    slot: Literal["breakfast", "lunch", "dinner", "snack"]
+    share: float
+    counter_of_id: uuid.UUID | None
+    created_at: datetime
+    responded_at: datetime | None
+    meal: EntryOut | None
+    effect: OfferEffectOut | None
+
+
+class PlanOut(BaseModel):
+    members: list[PlanMemberOut]
+    days: list[PlanDayOut]
+    offers: list[OfferOut]
 
 
 class SnapshotOut(BaseModel):
     today: DayOut
     tonight: list[EntryOut]
+    offers: list[OfferOut]
     shopping_list: ListOut
     not_yet_available: list[str]
 
@@ -321,8 +390,20 @@ def component(c: MealComponent, language: str) -> ComponentOut:
     )
 
 
+def participant(e: MealEntry, p: MealParticipant) -> ParticipantOut:
+    return ParticipantOut(
+        user_id=p.user_id,
+        display_name=p.user.display_name,
+        state=p.state,
+        share=round(p.share, 4),
+        exact_amounts={x.component_id: x.amount for x in p.exact_amounts},
+        intake=totals(day_service.participant_intake(e, p)),
+    )
+
+
 def entry(e: MealEntry, language: str, person: uuid.UUID | None = None) -> EntryOut:
-    """An entry as seen in one person's column (their state, share and intake)."""
+    """An entry as seen in one person's column (their state, share and intake). Without a
+    person it is the meal itself, with everyone who is on it."""
     part = day_service.participant_of(e, person) if person else None
     return EntryOut(
         id=e.id,
@@ -331,11 +412,15 @@ def entry(e: MealEntry, language: str, person: uuid.UUID | None = None) -> Entry
         at=e.at,
         name=e.name,
         eaten_out=e.eaten_out,
-        saved_meal_id=e.recipe_id,
+        recipe_id=e.recipe_id,
+        recipe_portions=e.recipe_portions,
+        joint=len(e.participants) > 1,
         state=part.state if part else None,
         share=part.share if part else None,
         components=[component(c, language) for c in e.components],
+        participants=[participant(e, p) for p in e.participants],
         intake=totals(day_service.participant_intake(e, part)) if part else None,
+        dish=totals(total(day_service.component_nutrients(c) for c in e.components)),
     )
 
 
@@ -372,10 +457,16 @@ def target_plan(p: TargetPlan) -> TargetPlanOut:
     )
 
 
-def saved_meal(r: Recipe, language: str) -> SavedMealOut:
-    return SavedMealOut(
+def recipe(r: Recipe, language: str) -> RecipeOut:
+    per_100 = recipes.nutrition_per_100g_cooked(r)
+    return RecipeOut(
         id=r.id,
+        kind=r.kind,
         name=r.name,
+        servings=r.servings,
+        cooked_yield_g=r.cooked_yield_g,
+        staple=r.staple,
+        notes=r.notes,
         ingredients=[
             IngredientOut(
                 item_id=i.item_id,
@@ -385,7 +476,61 @@ def saved_meal(r: Recipe, language: str) -> SavedMealOut:
             )
             for i in r.ingredients
         ],
-        per_serving=totals(saved_meals.nutrition(r)),
+        per_serving=totals(recipes.nutrition(r)),
+        per_100g_cooked=nutrients(per_100) if per_100 else None,
+    )
+
+
+def added_to_list(r: recipes.AddedToList) -> AddedToListOut:
+    return AddedToListOut(added=[list_item(i) for i in r.added], already_listed=r.already_listed)
+
+
+def plan(
+    result: day_service.PlanResult,
+    offers: list[offer_service.OfferView],
+    language: str,
+    viewer: uuid.UUID,
+) -> PlanOut:
+    return PlanOut(
+        members=[
+            PlanMemberOut(user_id=m.id, display_name=m.display_name, is_me=m.id == viewer)
+            for m in result.members
+        ],
+        days=[
+            PlanDayOut(day=d.day, entries=[entry(e, language) for e in d.entries])
+            for d in result.days
+        ],
+        offers=[offer(v, language, viewer) for v in offers],
+    )
+
+
+def offer_effect(e: offer_service.Effect) -> OfferEffectOut:
+    return OfferEffectOut(
+        incoming=totals(e.incoming),
+        targets=targets(e.targets),
+        projection_before=targets(e.projection_before),
+        projection_after=targets(e.projection_after),
+    )
+
+
+def offer(v: offer_service.OfferView, language: str, viewer: uuid.UUID) -> OfferOut:
+    o = v.offer
+    return OfferOut(
+        id=o.id,
+        state=v.state.value,
+        from_user_id=o.from_user_id,
+        from_name=v.sender.display_name,
+        to_user_id=o.to_user_id,
+        to_name=v.receiver.display_name,
+        incoming=o.to_user_id == viewer,
+        day=o.day,
+        slot=o.slot,
+        share=o.share,
+        counter_of_id=o.counter_of_id,
+        created_at=o.created_at,
+        responded_at=o.responded_at,
+        meal=entry(v.entry, language) if v.entry else None,
+        effect=offer_effect(v.effect) if v.effect else None,
     )
 
 
@@ -393,6 +538,7 @@ def snapshot(s: Snapshot, language: str, viewer: uuid.UUID) -> SnapshotOut:
     return SnapshotOut(
         today=day(s.today, language, viewer),
         tonight=[entry(e, language) for e in s.tonight],
+        offers=[offer(v, language, viewer) for v in s.offers],
         shopping_list=shopping_list(s.shopping_list, s.stores, clock.now()),
         not_yet_available=list(s.not_yet_available),
     )
