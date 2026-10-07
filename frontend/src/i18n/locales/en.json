@@ -221,7 +221,19 @@
     "store_name_empty": "Give the store a name.",
     "store_name_taken": "There is already a store called {{name}}.",
     "store_not_found": "This store does not exist.",
-    "too_many_operations": "Too many changes at once (at most {{max}})."
+    "too_many_operations": "Too many changes at once (at most {{max}}).",
+    "cooked_yield_invalid": "Enter a weight after cooking between 0 and {{max}} g.",
+    "cooked_yield_missing": "This recipe has no weight after cooking yet. Add one to log by weight.",
+    "exact_amount_invalid": "Enter an amount between 0 and {{max}}.",
+    "offer_not_pending": "This offer has already been answered or has expired.",
+    "offer_not_yours": "This offer is not yours to change.",
+    "offer_to_self": "You can only offer a meal to someone else.",
+    "order_invalid": "Those entries do not belong to this day.",
+    "plan_in_past": "Plans are for today or later. To record a meal from the past, log it as eaten.",
+    "recipe_name_required": "Give the recipe a name.",
+    "reorder_no_room": "There is no room left at the end of the day to move it there.",
+    "servings_invalid": "Servings must be more than 0 and at most {{max}}.",
+    "share_invalid": "That share is not possible: everyone on a meal keeps at least 5 %."
   },
   "day": {
     "today": "Today",

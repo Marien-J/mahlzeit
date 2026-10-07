@@ -221,7 +221,19 @@
     "store_name_empty": "Geef de winkel een naam.",
     "store_name_taken": "Er is al een winkel met de naam {{name}}.",
     "store_not_found": "Deze winkel bestaat niet.",
-    "too_many_operations": "Te veel wijzigingen tegelijk (maximaal {{max}})."
+    "too_many_operations": "Te veel wijzigingen tegelijk (maximaal {{max}}).",
+    "cooked_yield_invalid": "Vul een gewicht na het koken in tussen 0 en {{max}} g.",
+    "cooked_yield_missing": "Dit recept heeft nog geen gewicht na het koken. Vul er een in om op gewicht te registreren.",
+    "exact_amount_invalid": "Vul een hoeveelheid in tussen 0 en {{max}}.",
+    "offer_not_pending": "Dit voorstel is al beantwoord of verlopen.",
+    "offer_not_yours": "Dit voorstel kun je niet wijzigen.",
+    "offer_to_self": "Je kunt een maaltijd alleen aan iemand anders voorstellen.",
+    "order_invalid": "Deze items horen niet bij deze dag.",
+    "plan_in_past": "Plannen kan voor vandaag en later. Een maaltijd uit het verleden leg je vast als gegeten.",
+    "recipe_name_required": "Geef het recept een naam.",
+    "reorder_no_room": "Er is aan het einde van de dag geen ruimte meer om het daarheen te verplaatsen.",
+    "servings_invalid": "Het aantal porties moet groter zijn dan 0 en hoogstens {{max}}.",
+    "share_invalid": "Dit aandeel kan niet: iedereen bij een maaltijd houdt minstens 5 %."
   },
   "day": {
     "today": "Vandaag",

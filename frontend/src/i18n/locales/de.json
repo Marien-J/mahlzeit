@@ -221,7 +221,19 @@
     "store_name_empty": "Gib dem Geschäft einen Namen.",
     "store_name_taken": "Es gibt schon ein Geschäft namens {{name}}.",
     "store_not_found": "Dieses Geschäft gibt es nicht.",
-    "too_many_operations": "Zu viele Änderungen auf einmal (höchstens {{max}})."
+    "too_many_operations": "Zu viele Änderungen auf einmal (höchstens {{max}}).",
+    "cooked_yield_invalid": "Gib ein Gewicht nach dem Kochen zwischen 0 und {{max}} g ein.",
+    "cooked_yield_missing": "Dieses Rezept hat noch kein Gewicht nach dem Kochen. Trage eines ein, um nach Gewicht zu erfassen.",
+    "exact_amount_invalid": "Gib eine Menge zwischen 0 und {{max}} ein.",
+    "offer_not_pending": "Dieses Angebot wurde schon beantwortet oder ist abgelaufen.",
+    "offer_not_yours": "Dieses Angebot kannst du nicht ändern.",
+    "offer_to_self": "Du kannst eine Mahlzeit nur jemand anderem anbieten.",
+    "order_invalid": "Diese Einträge gehören nicht zu diesem Tag.",
+    "plan_in_past": "Planen geht für heute und später. Eine vergangene Mahlzeit trägst du als gegessen ein.",
+    "recipe_name_required": "Gib dem Rezept einen Namen.",
+    "reorder_no_room": "Am Ende des Tages ist kein Platz mehr, um dorthin zu verschieben.",
+    "servings_invalid": "Die Portionenzahl muss größer als 0 und höchstens {{max}} sein.",
+    "share_invalid": "Dieser Anteil geht nicht: Jede Person an einer Mahlzeit behält mindestens 5 %."
   },
   "day": {
     "today": "Heute",
