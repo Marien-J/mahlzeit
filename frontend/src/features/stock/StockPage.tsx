@@ -43,13 +43,14 @@ export function StockPage() {
     <section className="stack stock">
       <header className="row spread">
         <h1>{t('stock.title')}</h1>
-        <div className="row">
-          <Link to="/stock/report">{t('report.title')}</Link>
-          <button type="button" className="primary" onClick={() => setAdding(true)}>
-            {t('purchase.add')}
-          </button>
-        </div>
+        <button type="button" className="primary" onClick={() => setAdding(true)}>
+          {t('purchase.add')}
+        </button>
       </header>
+      <nav className="row links">
+        <Link to="/list">{t('list.title')}</Link>
+        <Link to="/stock/report">{t('report.title')}</Link>
+      </nav>
       <ErrorMessage error={stock.error} />
       {!data ? <p className="muted">{t('app.loading')}</p> : null}
       {data && data.rows.length === 0 ? <p className="muted">{t('stock.empty')}</p> : null}
@@ -92,25 +93,25 @@ function AisleSection({
   const checked = data.checks.find((c) => c.category === aisle.category)
   return (
     <section className="aisle stock-aisle" aria-label={name}>
-      <div className="row spread wrap">
-        <h2>{name}</h2>
+      <div className="aisle-head">
+        <div>
+          <h2>{name}</h2>
+          {checked ? (
+            <small className="muted">
+              {t('stock.checkedOn', {
+                date: formatDate(checked.checked_at, { dateStyle: 'medium' }),
+              })}
+            </small>
+          ) : null}
+        </div>
         {checking ? null : (
-          <div className="row">
-            {checked ? (
-              <small className="muted">
-                {t('stock.checkedOn', {
-                  date: formatDate(checked.checked_at, { dateStyle: 'medium' }),
-                })}
-              </small>
-            ) : null}
-            <button
-              type="button"
-              aria-label={t('stock.checkAisle', { aisle: name })}
-              onClick={onCheck}
-            >
-              {t('stock.check')}
-            </button>
-          </div>
+          <button
+            type="button"
+            aria-label={t('stock.checkAisle', { aisle: name })}
+            onClick={onCheck}
+          >
+            {t('stock.check')}
+          </button>
         )}
       </div>
       {checking ? (

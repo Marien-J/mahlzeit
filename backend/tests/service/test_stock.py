@@ -112,6 +112,23 @@ class TestPurchases:
         assert again.id == first.id
         assert level(db, jonas, rice) == 500
 
+    def test_the_same_purchase_twice_at_once_is_recorded_once(
+        self, db: Session, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        jonas, _ = factories.household(db)
+        rice = food(db, jonas, RICE)
+        data = PurchaseInput(id=uuid7(), lines=[LineInput(item_id=rice.id, amount=500)])
+        stock.record_purchase(db, jonas.actor, data)
+        # The second request, in its own session, looked before the first one was committed.
+        db.expunge_all()
+        real_get = db.get
+        monkeypatch.setattr(
+            db, "get", lambda model, key, **kw: None if model is Purchase else real_get(model, key)
+        )
+        again = stock.record_purchase(db, jonas.actor, data)
+        assert again.id == data.id
+        assert level(db, jonas, rice) == 500
+
     def test_another_households_purchase_id_is_not_found(self, db: Session) -> None:
         jonas, _ = factories.household(db)
         other, _ = factories.household(db, "Kim", "Lou")

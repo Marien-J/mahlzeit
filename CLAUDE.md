@@ -61,7 +61,7 @@ scripts/init-env.sh             # once: .env with generated secrets
 docker compose up -d --build    # http://localhost
 docker compose exec -T -e MAHLZEIT_PASSWORD app mahlzeit create-admin --email you@example.org --name You
 docker compose exec app mahlzeit --help    # invite-household, reset-password, list-users, ...
-scripts/e2e.sh                  # Playwright on a phone viewport (smoke, track, list, plan); restarts the stack with the OFF stub
+scripts/e2e.sh                  # Playwright on a phone viewport (smoke, track, list, plan, stock); restarts the stack with the OFF stub
 scripts/backup.sh               # encrypted backup into ./backups
 scripts/restore.sh <file> <age key>
 scripts/restore-drill.sh        # full backup/wipe/restore check in a separate Compose project
@@ -107,6 +107,10 @@ Playwright needs `PW_CHROMIUM_PATH=/opt/pw-browsers/chromium`.
 - **Offers** change state only through `domain.offers.next_state`. A person's pending offers of a
   meal end when it stops being theirs to give: `day` calls `offers.withdraw_open` when a part is
   eaten, moved or removed. Pending offers of a past day read as expired; the hourly job writes it.
+- **Stock** is a ledger (`stock_movement`) written only by `services.stock`; the level is the sum
+  and is never shown below zero. Meals reach it through `stock.sync_entry`, which `services.day`
+  calls inside every write to an entry: a new way of changing entries must call it too. Purchases
+  are idempotent by their client-made id; status-only items keep no movements.
 - **Open Food Facts** is reached only through `off_client` behind `services.items` (rate limit,
   cache); tests use `tests/fakes.FakeOff`, end-to-end tests `scripts/offstub.py`.
 - **Definition of done** for a feature: UI path, registered tools (from M1), tests for both,

@@ -14,6 +14,7 @@ from datetime import date, timedelta
 from typing import Any
 
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, selectinload
 
 from mahlzeit import clock
@@ -381,7 +382,12 @@ def record_purchase(
         day=day,
         created_by=actor.user_id,
     )
-    db.add(purchase)
+    try:
+        with db.begin_nested():
+            db.add(purchase)
+            db.flush()
+    except IntegrityError:  # the same purchase arrived twice at once: the first one counts
+        return get_purchase(db, actor, data.id)
     listed = _listed(db, actor, [line.list_item_id for line in data.lines])
     bought: list[ShoppingListItem] = []
     for position, line in enumerate(data.lines):
