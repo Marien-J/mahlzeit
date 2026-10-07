@@ -25,6 +25,7 @@ from mahlzeit.api.routes import (
     push,
     recipes,
     shopping,
+    stock,
     system,
     targets,
 )
@@ -101,6 +102,7 @@ def create_app() -> FastAPI:
         plan.router,
         connector.router,
         shopping.router,
+        stock.router,
         event_routes.router,
     ):
         app.include_router(router, prefix="/api")

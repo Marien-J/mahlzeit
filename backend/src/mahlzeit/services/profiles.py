@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from mahlzeit import clock
 from mahlzeit.domain import accounts
+from mahlzeit.domain import stock as stock_rules
 from mahlzeit.domain.errors import Invalid
 from mahlzeit.domain.permissions import Actor
 from mahlzeit.models import Profile, User
@@ -58,16 +59,20 @@ def update_profile(
     share_ai_usage: bool | None = None,
     start_screen: str | None = None,
     push_offers: bool | None = None,
+    list_plan_days: int | None = None,
 ) -> Me:
     profile = db.get_one(Profile, actor.user_id)
     if start_screen is not None and start_screen not in START_SCREENS:
         raise Invalid("start_screen_invalid", allowed=list(START_SCREENS))
+    if list_plan_days is not None:
+        stock_rules.check_plan_days(list_plan_days)
     requested = {
         "show_workouts": show_workouts,
         "show_body": show_body,
         "share_ai_usage": share_ai_usage,
         "start_screen": start_screen,
         "push_offers": push_offers,
+        "list_plan_days": list_plan_days,
     }
     changes = {k: v for k, v in requested.items() if v is not None}
     if changes:

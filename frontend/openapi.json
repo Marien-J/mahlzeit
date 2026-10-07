@@ -84,9 +84,16 @@
             },
             "title": "Already Listed",
             "type": "array"
+          },
+          "in_stock": {
+            "items": {
+              "type": "string"
+            },
+            "title": "In Stock",
+            "type": "array"
           }
         },
-        "required": ["added", "already_listed"],
+        "required": ["added", "already_listed", "in_stock"],
         "title": "AddedToListOut",
         "type": "object"
       },
@@ -1478,6 +1485,23 @@
         "title": "ItemOut",
         "type": "object"
       },
+      "ItemStockOut": {
+        "properties": {
+          "movements": {
+            "items": {
+              "$ref": "#/components/schemas/StockMovementOut"
+            },
+            "title": "Movements",
+            "type": "array"
+          },
+          "stock": {
+            "$ref": "#/components/schemas/StockRowOut"
+          }
+        },
+        "required": ["stock", "movements"],
+        "title": "ItemStockOut",
+        "type": "object"
+      },
       "ListFieldsIn": {
         "description": "Only the fields that are sent are changed; send null to clear quantity or store.",
         "properties": {
@@ -2411,6 +2435,70 @@
         "title": "OfferResponseIn",
         "type": "object"
       },
+      "PantryCheckIn": {
+        "properties": {
+          "category": {
+            "maxLength": 20,
+            "title": "Category",
+            "type": "string"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "description": "Item id to what is there now.",
+            "maxProperties": 500,
+            "propertyNames": {
+              "format": "uuid"
+            },
+            "title": "Counts",
+            "type": "object"
+          },
+          "statuses": {
+            "additionalProperties": {
+              "enum": ["ok", "low", "out"],
+              "type": "string"
+            },
+            "maxProperties": 500,
+            "propertyNames": {
+              "format": "uuid"
+            },
+            "title": "Statuses",
+            "type": "object"
+          }
+        },
+        "required": ["category"],
+        "title": "PantryCheckIn",
+        "type": "object"
+      },
+      "PantryCheckOut": {
+        "properties": {
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "checked_at": {
+            "format": "date-time",
+            "title": "Checked At",
+            "type": "string"
+          },
+          "checked_by": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Checked By"
+          }
+        },
+        "required": ["category", "checked_at", "checked_by"],
+        "title": "PantryCheckOut",
+        "type": "object"
+      },
       "ParticipantOut": {
         "properties": {
           "display_name": {
@@ -2614,6 +2702,10 @@
       },
       "ProfileOut": {
         "properties": {
+          "list_plan_days": {
+            "title": "List Plan Days",
+            "type": "integer"
+          },
           "push_offers": {
             "title": "Push Offers",
             "type": "boolean"
@@ -2636,12 +2728,31 @@
             "type": "string"
           }
         },
-        "required": ["show_workouts", "show_body", "share_ai_usage", "start_screen", "push_offers"],
+        "required": [
+          "show_workouts",
+          "show_body",
+          "share_ai_usage",
+          "start_screen",
+          "push_offers",
+          "list_plan_days"
+        ],
         "title": "ProfileOut",
         "type": "object"
       },
       "ProfilePatch": {
         "properties": {
+          "list_plan_days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Days of plans the list suggestions look ahead (1 to 14).",
+            "title": "List Plan Days"
+          },
           "push_offers": {
             "anyOf": [
               {
@@ -2700,6 +2811,292 @@
           }
         },
         "title": "ProfilePatch",
+        "type": "object"
+      },
+      "PurchaseIn": {
+        "properties": {
+          "day": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Default: today.",
+            "title": "Day"
+          },
+          "id": {
+            "description": "Made by the client: the same purchase sent again counts once.",
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/PurchaseLineIn"
+            },
+            "maxItems": 200,
+            "title": "Lines",
+            "type": "array"
+          },
+          "store_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Id"
+          }
+        },
+        "required": ["id", "lines"],
+        "title": "PurchaseIn",
+        "type": "object"
+      },
+      "PurchaseLineIn": {
+        "description": "A catalogue item or free text (non-food included).",
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Into stock, in the item's unit (g or ml). Default: read from the quantity ('500 g', '2' packages), else one package.",
+            "title": "Amount"
+          },
+          "item_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Id"
+          },
+          "list_item_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The list item it was bought from; it leaves the list.",
+            "title": "List Item Id"
+          },
+          "price_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional.",
+            "title": "Price Cents"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "maxLength": 80,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "As on the list.",
+            "title": "Quantity"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Default: the item's name.",
+            "title": "Text"
+          }
+        },
+        "title": "PurchaseLineIn",
+        "type": "object"
+      },
+      "PurchaseLineOut": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "base_unit": {
+            "anyOf": [
+              {
+                "enum": ["g", "ml"],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Unit"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "item_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Id"
+          },
+          "list_item_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "List Item Id"
+          },
+          "price_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Price Cents"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "item_id",
+          "text",
+          "quantity",
+          "amount",
+          "base_unit",
+          "price_cents",
+          "list_item_id"
+        ],
+        "title": "PurchaseLineOut",
+        "type": "object"
+      },
+      "PurchaseOut": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/PurchaseLineOut"
+            },
+            "title": "Lines",
+            "type": "array"
+          },
+          "spend_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spend Cents"
+          },
+          "store_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Store Id"
+          }
+        },
+        "required": ["id", "day", "store_id", "created_by", "created_at", "lines", "spend_cents"],
+        "title": "PurchaseOut",
         "type": "object"
       },
       "PushKeys": {
@@ -3082,6 +3479,345 @@
         "title": "ShareIn",
         "type": "object"
       },
+      "StockAdjustIn": {
+        "description": "Exactly one of them.",
+        "properties": {
+          "add": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Found more than stock says.",
+            "title": "Add"
+          },
+          "count": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What is there now.",
+            "title": "Count"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": ["ok", "low", "out"],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "For status-only items.",
+            "title": "Status"
+          },
+          "waste": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Thrown away.",
+            "title": "Waste"
+          }
+        },
+        "title": "StockAdjustIn",
+        "type": "object"
+      },
+      "StockMovementOut": {
+        "properties": {
+          "amount": {
+            "title": "Amount",
+            "type": "number"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created By"
+          },
+          "day": {
+            "format": "date",
+            "title": "Day",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "reason": {
+            "enum": ["purchase", "consumption", "correction", "waste"],
+            "title": "Reason",
+            "type": "string"
+          },
+          "source": {
+            "enum": ["purchase", "entry", "shortfall", "pantry", "manual"],
+            "title": "Source",
+            "type": "string"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          }
+        },
+        "required": [
+          "id",
+          "amount",
+          "reason",
+          "source",
+          "source_id",
+          "day",
+          "created_by",
+          "created_at"
+        ],
+        "title": "StockMovementOut",
+        "type": "object"
+      },
+      "StockOut": {
+        "properties": {
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/PantryCheckOut"
+            },
+            "title": "Checks",
+            "type": "array"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/StockRowOut"
+            },
+            "title": "Rows",
+            "type": "array"
+          }
+        },
+        "required": ["rows", "checks"],
+        "title": "StockOut",
+        "type": "object"
+      },
+      "StockReportOut": {
+        "properties": {
+          "end": {
+            "format": "date",
+            "title": "End",
+            "type": "string"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/StockReportRowOut"
+            },
+            "title": "Rows",
+            "type": "array"
+          },
+          "spend_cents": {
+            "title": "Spend Cents",
+            "type": "integer"
+          },
+          "start": {
+            "format": "date",
+            "title": "Start",
+            "type": "string"
+          }
+        },
+        "required": ["start", "end", "rows", "spend_cents"],
+        "title": "StockReportOut",
+        "type": "object"
+      },
+      "StockReportRowOut": {
+        "properties": {
+          "base_unit": {
+            "enum": ["g", "ml"],
+            "title": "Base Unit",
+            "type": "string"
+          },
+          "corrected": {
+            "title": "Corrected",
+            "type": "number"
+          },
+          "item_id": {
+            "format": "uuid",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "logged": {
+            "title": "Logged",
+            "type": "number"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "purchased": {
+            "title": "Purchased",
+            "type": "number"
+          },
+          "shortfall": {
+            "title": "Shortfall",
+            "type": "number"
+          },
+          "spend_cents": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spend Cents"
+          },
+          "wasted": {
+            "title": "Wasted",
+            "type": "number"
+          }
+        },
+        "required": [
+          "item_id",
+          "name",
+          "base_unit",
+          "purchased",
+          "logged",
+          "wasted",
+          "corrected",
+          "shortfall",
+          "level",
+          "spend_cents"
+        ],
+        "title": "StockReportRowOut",
+        "type": "object"
+      },
+      "StockRowOut": {
+        "properties": {
+          "base_unit": {
+            "enum": ["g", "ml"],
+            "title": "Base Unit",
+            "type": "string"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "item_id": {
+            "format": "uuid",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "last_moved": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Moved"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "mode": {
+            "enum": ["counted", "status"],
+            "title": "Mode",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "package_size": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Package Size"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "enum": ["ok", "low", "out"],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "step": {
+            "title": "Step",
+            "type": "number"
+          }
+        },
+        "required": [
+          "item_id",
+          "name",
+          "category",
+          "base_unit",
+          "mode",
+          "level",
+          "status",
+          "step",
+          "package_size",
+          "last_moved"
+        ],
+        "title": "StockRowOut",
+        "type": "object"
+      },
       "StoreIn": {
         "properties": {
           "name": {
@@ -3130,6 +3866,76 @@
         },
         "required": ["id", "key", "name", "custom"],
         "title": "StoreOut",
+        "type": "object"
+      },
+      "SuggestionOut": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Amount"
+          },
+          "base_unit": {
+            "enum": ["g", "ml"],
+            "title": "Base Unit",
+            "type": "string"
+          },
+          "category": {
+            "title": "Category",
+            "type": "string"
+          },
+          "item_id": {
+            "format": "uuid",
+            "title": "Item Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "quantity": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quantity"
+          },
+          "reason": {
+            "enum": ["planned", "low", "out", "usual"],
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": ["item_id", "name", "category", "base_unit", "reason", "quantity", "amount"],
+        "title": "SuggestionOut",
+        "type": "object"
+      },
+      "SuggestionsOut": {
+        "properties": {
+          "plan_days": {
+            "title": "Plan Days",
+            "type": "integer"
+          },
+          "suggestions": {
+            "items": {
+              "$ref": "#/components/schemas/SuggestionOut"
+            },
+            "title": "Suggestions",
+            "type": "array"
+          }
+        },
+        "required": ["plan_days", "suggestions"],
+        "title": "SuggestionsOut",
         "type": "object"
       },
       "TargetPlanOut": {
@@ -3309,6 +4115,26 @@
         },
         "required": ["values", "incomplete"],
         "title": "TotalsOut",
+        "type": "object"
+      },
+      "TrackingModeIn": {
+        "properties": {
+          "mode": {
+            "anyOf": [
+              {
+                "enum": ["counted", "status"],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Track by amount or by status here; null goes back to the item's own.",
+            "title": "Mode"
+          }
+        },
+        "required": ["mode"],
+        "title": "TrackingModeIn",
         "type": "object"
       },
       "UserOut": {
@@ -4837,6 +5663,26 @@
         "tags": ["shopping list"]
       }
     },
+    "/api/list/suggestions": {
+      "get": {
+        "description": "Suggested for the list, never added by itself: what planned meals need beyond stock,\nstaples low or out, usual purchases not in stock.",
+        "operationId": "list_suggestions_api_list_suggestions_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuggestionsOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Suggestions",
+        "tags": ["stock"]
+      }
+    },
     "/api/me": {
       "patch": {
         "operationId": "update_me_api_me_patch",
@@ -5229,6 +6075,109 @@
         "tags": ["plan"]
       }
     },
+    "/api/purchases": {
+      "get": {
+        "description": "The latest purchases, newest first.",
+        "operationId": "list_purchases_api_purchases_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/PurchaseOut"
+                  },
+                  "title": "Response List Purchases Api Purchases Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Purchases",
+        "tags": ["stock"]
+      },
+      "post": {
+        "description": "One shop: 'Bought' from the checked list items, by barcode or by hand. Food goes into\nstock and the list items it came from leave the list. Sending it again changes nothing.",
+        "operationId": "record_purchase_api_purchases_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PurchaseOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Record Purchase",
+        "tags": ["stock"]
+      }
+    },
+    "/api/purchases/{purchase_id}": {
+      "get": {
+        "operationId": "get_purchase_api_purchases__purchase_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "purchase_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Purchase Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PurchaseOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Purchase",
+        "tags": ["stock"]
+      }
+    },
     "/api/push": {
       "get": {
         "operationId": "push_status_api_push_get",
@@ -5599,6 +6548,305 @@
         },
         "summary": "Add To List",
         "tags": ["recipes"]
+      }
+    },
+    "/api/stock": {
+      "get": {
+        "description": "What is in the house, aisle by aisle, and when each aisle was last checked.",
+        "operationId": "get_stock_api_stock_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "category",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Category"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Stock",
+        "tags": ["stock"]
+      }
+    },
+    "/api/stock/checks": {
+      "post": {
+        "description": "The pantry check of one aisle: the amounts and statuses fixed, the aisle marked checked.",
+        "operationId": "check_aisle_api_stock_checks_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PantryCheckIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PantryCheckOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Check Aisle",
+        "tags": ["stock"]
+      }
+    },
+    "/api/stock/items/{item_id}": {
+      "get": {
+        "description": "One item's stock and its latest movements.",
+        "operationId": "item_stock_api_stock_items__item_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemStockOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Item Stock",
+        "tags": ["stock"]
+      }
+    },
+    "/api/stock/items/{item_id}/adjust": {
+      "post": {
+        "description": "Fix one item: what is there now, what was thrown away, found more, or its status.",
+        "operationId": "adjust_stock_api_stock_items__item_id__adjust_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StockAdjustIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockRowOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Adjust Stock",
+        "tags": ["stock"]
+      }
+    },
+    "/api/stock/items/{item_id}/mode": {
+      "put": {
+        "operationId": "set_tracking_mode_api_stock_items__item_id__mode_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "item_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Item Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrackingModeIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockRowOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Set Tracking Mode",
+        "tags": ["stock"]
+      }
+    },
+    "/api/stock/report": {
+      "get": {
+        "description": "Purchased, logged, wasted and corrected per item; the last 30 days by default.",
+        "operationId": "stock_report_api_stock_report_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start"
+            }
+          },
+          {
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StockReportOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Stock Report",
+        "tags": ["stock"]
       }
     },
     "/api/stores": {

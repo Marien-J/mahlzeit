@@ -14,6 +14,7 @@ from mahlzeit.services.items import ItemInput
 from mahlzeit.services.offers import Counter
 from mahlzeit.services.recipes import UNSET, Ingredient, RecipeInput, RecipePatch
 from mahlzeit.services.shopping import Op
+from mahlzeit.services.stock import LineInput, PurchaseInput
 
 
 def item_input(body: schemas.ItemIn) -> ItemInput:
@@ -109,4 +110,13 @@ def counter(body: schemas.OfferResponseIn) -> Counter | None:
             portions=meal.portions,
             cooked_grams=meal.cooked_grams,
         ),
+    )
+
+
+def purchase_input(body: schemas.PurchaseIn) -> PurchaseInput:
+    return PurchaseInput(
+        id=body.id,
+        store_id=body.store_id,
+        day=body.day,
+        lines=[LineInput(**line.model_dump()) for line in body.lines],
     )

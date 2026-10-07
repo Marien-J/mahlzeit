@@ -593,6 +593,27 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/list/suggestions': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * List Suggestions
+     * @description Suggested for the list, never added by itself: what planned meals need beyond stock,
+     *     staples low or out, usual purchases not in stock.
+     */
+    get: operations['list_suggestions_api_list_suggestions_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/me': {
     parameters: {
       query?: never
@@ -736,6 +757,48 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/purchases': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * List Purchases
+     * @description The latest purchases, newest first.
+     */
+    get: operations['list_purchases_api_purchases_get']
+    put?: never
+    /**
+     * Record Purchase
+     * @description One shop: 'Bought' from the checked list items, by barcode or by hand. Food goes into
+     *     stock and the list items it came from leave the list. Sending it again changes nothing.
+     */
+    post: operations['record_purchase_api_purchases_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/purchases/{purchase_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /** Get Purchase */
+    get: operations['get_purchase_api_purchases__purchase_id__get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/push': {
     parameters: {
       query?: never
@@ -858,6 +921,123 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  '/api/stock': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Get Stock
+     * @description What is in the house, aisle by aisle, and when each aisle was last checked.
+     */
+    get: operations['get_stock_api_stock_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/stock/checks': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Check Aisle
+     * @description The pantry check of one aisle: the amounts and statuses fixed, the aisle marked checked.
+     */
+    post: operations['check_aisle_api_stock_checks_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/stock/items/{item_id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Item Stock
+     * @description One item's stock and its latest movements.
+     */
+    get: operations['item_stock_api_stock_items__item_id__get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/stock/items/{item_id}/adjust': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    /**
+     * Adjust Stock
+     * @description Fix one item: what is there now, what was thrown away, found more, or its status.
+     */
+    post: operations['adjust_stock_api_stock_items__item_id__adjust_post']
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/stock/items/{item_id}/mode': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    /** Set Tracking Mode */
+    put: operations['set_tracking_mode_api_stock_items__item_id__mode_put']
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/stock/report': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    /**
+     * Stock Report
+     * @description Purchased, logged, wasted and corrected per item; the last 30 days by default.
+     */
+    get: operations['stock_report_api_stock_report_get']
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   '/api/stores': {
     parameters: {
       query?: never
@@ -968,6 +1148,8 @@ export interface components {
       added: components['schemas']['ListItemOut'][]
       /** Already Listed */
       already_listed: string[]
+      /** In Stock */
+      in_stock: string[]
     }
     /** BarcodeOut */
     BarcodeOut: {
@@ -1492,6 +1674,12 @@ export interface components {
        */
       tracking_mode: 'counted' | 'status'
     }
+    /** ItemStockOut */
+    ItemStockOut: {
+      /** Movements */
+      movements: components['schemas']['StockMovementOut'][]
+      stock: components['schemas']['StockRowOut']
+    }
     /**
      * ListFieldsIn
      * @description Only the fields that are sent are changed; send null to clear quantity or store.
@@ -1806,6 +1994,34 @@ export interface components {
       /** @description Or with a new meal. */
       counter_meal?: components['schemas']['CounterMealIn'] | null
     }
+    /** PantryCheckIn */
+    PantryCheckIn: {
+      /** Category */
+      category: string
+      /**
+       * Counts
+       * @description Item id to what is there now.
+       */
+      counts?: {
+        [key: string]: number
+      }
+      /** Statuses */
+      statuses?: {
+        [key: string]: 'ok' | 'low' | 'out'
+      }
+    }
+    /** PantryCheckOut */
+    PantryCheckOut: {
+      /** Category */
+      category: string
+      /**
+       * Checked At
+       * Format: date-time
+       */
+      checked_at: string
+      /** Checked By */
+      checked_by: string | null
+    }
     /** ParticipantOut */
     ParticipantOut: {
       /** Display Name */
@@ -1892,6 +2108,8 @@ export interface components {
     }
     /** ProfileOut */
     ProfileOut: {
+      /** List Plan Days */
+      list_plan_days: number
       /** Push Offers */
       push_offers: boolean
       /** Share Ai Usage */
@@ -1908,6 +2126,11 @@ export interface components {
     }
     /** ProfilePatch */
     ProfilePatch: {
+      /**
+       * List Plan Days
+       * @description Days of plans the list suggestions look ahead (1 to 14).
+       */
+      list_plan_days?: number | null
       /** Push Offers */
       push_offers?: boolean | null
       /** Share Ai Usage */
@@ -1918,6 +2141,105 @@ export interface components {
       show_workouts?: boolean | null
       /** Start Screen */
       start_screen?: ('today' | 'list') | null
+    }
+    /** PurchaseIn */
+    PurchaseIn: {
+      /**
+       * Day
+       * @description Default: today.
+       */
+      day?: string | null
+      /**
+       * Id
+       * Format: uuid
+       * @description Made by the client: the same purchase sent again counts once.
+       */
+      id: string
+      /** Lines */
+      lines: components['schemas']['PurchaseLineIn'][]
+      /** Store Id */
+      store_id?: string | null
+    }
+    /**
+     * PurchaseLineIn
+     * @description A catalogue item or free text (non-food included).
+     */
+    PurchaseLineIn: {
+      /**
+       * Amount
+       * @description Into stock, in the item's unit (g or ml). Default: read from the quantity ('500 g', '2' packages), else one package.
+       */
+      amount?: number | null
+      /** Item Id */
+      item_id?: string | null
+      /**
+       * List Item Id
+       * @description The list item it was bought from; it leaves the list.
+       */
+      list_item_id?: string | null
+      /**
+       * Price Cents
+       * @description Optional.
+       */
+      price_cents?: number | null
+      /**
+       * Quantity
+       * @description As on the list.
+       */
+      quantity?: string | null
+      /**
+       * Text
+       * @description Default: the item's name.
+       */
+      text?: string | null
+    }
+    /** PurchaseLineOut */
+    PurchaseLineOut: {
+      /** Amount */
+      amount: number | null
+      /** Base Unit */
+      base_unit: ('g' | 'ml') | null
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Item Id */
+      item_id: string | null
+      /** List Item Id */
+      list_item_id: string | null
+      /** Price Cents */
+      price_cents: number | null
+      /** Quantity */
+      quantity: string | null
+      /** Text */
+      text: string
+    }
+    /** PurchaseOut */
+    PurchaseOut: {
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /** Created By */
+      created_by: string | null
+      /**
+       * Day
+       * Format: date
+       */
+      day: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /** Lines */
+      lines: components['schemas']['PurchaseLineOut'][]
+      /** Spend Cents */
+      spend_cents: number | null
+      /** Store Id */
+      store_id: string | null
     }
     /** PushKeys */
     PushKeys: {
@@ -2057,6 +2379,151 @@ export interface components {
        */
       share: number
     }
+    /**
+     * StockAdjustIn
+     * @description Exactly one of them.
+     */
+    StockAdjustIn: {
+      /**
+       * Add
+       * @description Found more than stock says.
+       */
+      add?: number | null
+      /**
+       * Count
+       * @description What is there now.
+       */
+      count?: number | null
+      /**
+       * Status
+       * @description For status-only items.
+       */
+      status?: ('ok' | 'low' | 'out') | null
+      /**
+       * Waste
+       * @description Thrown away.
+       */
+      waste?: number | null
+    }
+    /** StockMovementOut */
+    StockMovementOut: {
+      /** Amount */
+      amount: number
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string
+      /** Created By */
+      created_by: string | null
+      /**
+       * Day
+       * Format: date
+       */
+      day: string
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string
+      /**
+       * Reason
+       * @enum {string}
+       */
+      reason: 'purchase' | 'consumption' | 'correction' | 'waste'
+      /**
+       * Source
+       * @enum {string}
+       */
+      source: 'purchase' | 'entry' | 'shortfall' | 'pantry' | 'manual'
+      /** Source Id */
+      source_id: string | null
+    }
+    /** StockOut */
+    StockOut: {
+      /** Checks */
+      checks: components['schemas']['PantryCheckOut'][]
+      /** Rows */
+      rows: components['schemas']['StockRowOut'][]
+    }
+    /** StockReportOut */
+    StockReportOut: {
+      /**
+       * End
+       * Format: date
+       */
+      end: string
+      /** Rows */
+      rows: components['schemas']['StockReportRowOut'][]
+      /** Spend Cents */
+      spend_cents: number
+      /**
+       * Start
+       * Format: date
+       */
+      start: string
+    }
+    /** StockReportRowOut */
+    StockReportRowOut: {
+      /**
+       * Base Unit
+       * @enum {string}
+       */
+      base_unit: 'g' | 'ml'
+      /** Corrected */
+      corrected: number
+      /**
+       * Item Id
+       * Format: uuid
+       */
+      item_id: string
+      /** Level */
+      level: number | null
+      /** Logged */
+      logged: number
+      /** Name */
+      name: string
+      /** Purchased */
+      purchased: number
+      /** Shortfall */
+      shortfall: number
+      /** Spend Cents */
+      spend_cents: number | null
+      /** Wasted */
+      wasted: number
+    }
+    /** StockRowOut */
+    StockRowOut: {
+      /**
+       * Base Unit
+       * @enum {string}
+       */
+      base_unit: 'g' | 'ml'
+      /** Category */
+      category: string
+      /**
+       * Item Id
+       * Format: uuid
+       */
+      item_id: string
+      /** Last Moved */
+      last_moved: string | null
+      /** Level */
+      level: number | null
+      /**
+       * Mode
+       * @enum {string}
+       */
+      mode: 'counted' | 'status'
+      /** Name */
+      name: string
+      /** Package Size */
+      package_size: number | null
+      /** Status */
+      status: ('ok' | 'low' | 'out') | null
+      /** Step */
+      step: number
+    }
     /** StoreIn */
     StoreIn: {
       /** Name */
@@ -2075,6 +2542,39 @@ export interface components {
       key: string | null
       /** Name */
       name: string | null
+    }
+    /** SuggestionOut */
+    SuggestionOut: {
+      /** Amount */
+      amount: number | null
+      /**
+       * Base Unit
+       * @enum {string}
+       */
+      base_unit: 'g' | 'ml'
+      /** Category */
+      category: string
+      /**
+       * Item Id
+       * Format: uuid
+       */
+      item_id: string
+      /** Name */
+      name: string
+      /** Quantity */
+      quantity: string | null
+      /**
+       * Reason
+       * @enum {string}
+       */
+      reason: 'planned' | 'low' | 'out' | 'usual'
+    }
+    /** SuggestionsOut */
+    SuggestionsOut: {
+      /** Plan Days */
+      plan_days: number
+      /** Suggestions */
+      suggestions: components['schemas']['SuggestionOut'][]
     }
     /** TargetPlanOut */
     TargetPlanOut: {
@@ -2128,6 +2628,14 @@ export interface components {
       /** Incomplete */
       incomplete: string[]
       values: components['schemas']['NutrientsOut']
+    }
+    /** TrackingModeIn */
+    TrackingModeIn: {
+      /**
+       * Mode
+       * @description Track by amount or by status here; null goes back to the item's own.
+       */
+      mode: ('counted' | 'status') | null
     }
     /** UserOut */
     UserOut: {
@@ -3335,6 +3843,26 @@ export interface operations {
       }
     }
   }
+  list_suggestions_api_list_suggestions_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['SuggestionsOut']
+        }
+      }
+    }
+  }
   update_me_api_me_patch: {
     parameters: {
       query?: never
@@ -3612,6 +4140,90 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['PlanOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  list_purchases_api_purchases_get: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PurchaseOut'][]
+        }
+      }
+    }
+  }
+  record_purchase_api_purchases_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PurchaseIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PurchaseOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_purchase_api_purchases__purchase_id__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        purchase_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PurchaseOut']
         }
       }
       /** @description Validation Error */
@@ -3909,6 +4521,203 @@ export interface operations {
         }
         content: {
           'application/json': components['schemas']['AddedToListOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  get_stock_api_stock_get: {
+    parameters: {
+      query?: {
+        category?: string | null
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StockOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  check_aisle_api_stock_checks_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PantryCheckIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['PantryCheckOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  item_stock_api_stock_items__item_id__get: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        item_id: string
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['ItemStockOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  adjust_stock_api_stock_items__item_id__adjust_post: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        item_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StockAdjustIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StockRowOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  set_tracking_mode_api_stock_items__item_id__mode_put: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        item_id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TrackingModeIn']
+      }
+    }
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StockRowOut']
+        }
+      }
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['HTTPValidationError']
+        }
+      }
+    }
+  }
+  stock_report_api_stock_report_get: {
+    parameters: {
+      query?: {
+        start?: string | null
+        end?: string | null
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          'application/json': components['schemas']['StockReportOut']
         }
       }
       /** @description Validation Error */

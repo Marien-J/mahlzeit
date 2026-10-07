@@ -18,9 +18,10 @@ from sqlalchemy.orm import Session
 from mahlzeit import clock
 from mahlzeit.domain.day import Slot
 from mahlzeit.main import app
-from mahlzeit.services import day, invites, items, offers, shopping
+from mahlzeit.services import day, invites, items, offers, shopping, stock
 from mahlzeit.services.day import ComponentInput, EntryInput
 from mahlzeit.services.items import ItemInput
+from mahlzeit.services.stock import LineInput, PurchaseInput
 from tests import factories
 
 UNSAFE = {"post", "put", "patch", "delete"}
@@ -149,6 +150,18 @@ def _store(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[s
     return {"store_id": shopping.create_store(db, other.actor, "Hofladen").id}, {}
 
 
+def _purchase(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[str, Any]]:
+    bought = stock.record_purchase(
+        db, other.actor, PurchaseInput(id=uuid.uuid4(), lines=[LineInput(text="Brot")])
+    )
+    return {"purchase_id": bought.id}, {}
+
+
+def _stock_item(db: Session, other: factories.Member) -> tuple[dict[str, Any], dict[str, Any]]:
+    item = items.create(db, other.actor, ItemInput(names={"de": "Geheim"}))
+    return {"item_id": item.id}, {"count": 1, "mode": "status"}
+
+
 CROSS_HOUSEHOLD: dict[tuple[str, str], CrossCase] = {
     ("delete", "/api/household/invites/{invite_id}"): _invite,
     ("get", "/api/items/{item_id}"): _item,
@@ -170,6 +183,10 @@ CROSS_HOUSEHOLD: dict[tuple[str, str], CrossCase] = {
     ("delete", "/api/recipes/{recipe_id}"): _recipe,
     ("post", "/api/recipes/{recipe_id}/add-to-list"): _recipe,
     ("delete", "/api/stores/{store_id}"): _store,
+    ("get", "/api/purchases/{purchase_id}"): _purchase,
+    ("get", "/api/stock/items/{item_id}"): _stock_item,
+    ("post", "/api/stock/items/{item_id}/adjust"): _stock_item,
+    ("put", "/api/stock/items/{item_id}/mode"): _stock_item,
 }
 
 # Path parameters that are not household-owned ids: lookups by secret key or by value,

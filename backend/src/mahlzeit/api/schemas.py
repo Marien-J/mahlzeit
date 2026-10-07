@@ -48,6 +48,7 @@ class ProfileOut(Out):
     share_ai_usage: bool
     start_screen: Literal["today", "list"]
     push_offers: bool
+    list_plan_days: int
 
 
 class HouseholdBriefOut(Out):
@@ -107,6 +108,9 @@ class ProfilePatch(BaseModel):
     share_ai_usage: bool | None = None
     start_screen: Literal["today", "list"] | None = None
     push_offers: bool | None = None
+    list_plan_days: int | None = Field(
+        default=None, description="Days of plans the list suggestions look ahead (1 to 14)."
+    )
 
 
 class HouseholdPatch(BaseModel):
@@ -401,3 +405,57 @@ class OfferResponseIn(BaseModel):
         default=None, description="Counter with one of my own plans for the same slot."
     )
     counter_meal: CounterMealIn | None = Field(default=None, description="Or with a new meal.")
+
+
+# --- stock --------------------------------------------------------------------------------
+
+StatusName = Literal["ok", "low", "out"]
+
+
+class PurchaseLineIn(BaseModel):
+    """A catalogue item or free text (non-food included)."""
+
+    item_id: uuid.UUID | None = None
+    text: str | None = Field(default=None, max_length=200, description="Default: the item's name.")
+    quantity: str | None = Field(default=None, max_length=80, description="As on the list.")
+    amount: float | None = Field(
+        default=None,
+        description="Into stock, in the item's unit (g or ml). Default: read from "
+        "the quantity ('500 g', '2' packages), else one package.",
+    )
+    price_cents: int | None = Field(default=None, description="Optional.")
+    list_item_id: uuid.UUID | None = Field(
+        default=None, description="The list item it was bought from; it leaves the list."
+    )
+
+
+class PurchaseIn(BaseModel):
+    id: uuid.UUID = Field(
+        description="Made by the client: the same purchase sent again counts once."
+    )
+    store_id: uuid.UUID | None = None
+    day: date | None = Field(default=None, description="Default: today.")
+    lines: list[PurchaseLineIn] = Field(max_length=200)
+
+
+class StockAdjustIn(BaseModel):
+    """Exactly one of them."""
+
+    count: float | None = Field(default=None, description="What is there now.")
+    waste: float | None = Field(default=None, description="Thrown away.")
+    add: float | None = Field(default=None, description="Found more than stock says.")
+    status: StatusName | None = Field(default=None, description="For status-only items.")
+
+
+class TrackingModeIn(BaseModel):
+    mode: Literal["counted", "status"] | None = Field(
+        description="Track by amount or by status here; null goes back to the item's own."
+    )
+
+
+class PantryCheckIn(BaseModel):
+    category: str = Field(max_length=20)
+    counts: dict[uuid.UUID, float] = Field(
+        default_factory=dict, max_length=500, description="Item id to what is there now."
+    )
+    statuses: dict[uuid.UUID, StatusName] = Field(default_factory=dict, max_length=500)

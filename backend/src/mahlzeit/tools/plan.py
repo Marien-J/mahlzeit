@@ -207,8 +207,9 @@ def move_entry(ctx: ToolContext, args: MoveEntryIn) -> list[views.EntryOut]:
 
 @tool(
     "add_recipe_to_list",
-    "Put the ingredients of a recipe (for some portions) on the shopping list. Items already on "
-    "the list are left alone and named in already_listed.",
+    "Put what is missing for a recipe (for some portions) on the shopping list: what stock does "
+    "not cover. Items already on the list are named in already_listed, items in stock in "
+    "in_stock.",
     AddRecipeToListIn,
     writes=True,
 )

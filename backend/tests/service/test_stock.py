@@ -11,7 +11,7 @@ from mahlzeit.domain.errors import Invalid, NotFound
 from mahlzeit.domain.stock import Status
 from mahlzeit.ids import uuid7
 from mahlzeit.models import ChangeRecord, Item, Purchase, ShoppingListItem, StockMovement
-from mahlzeit.services import day, items, shopping, snapshot, stock
+from mahlzeit.services import day, items, profiles, shopping, snapshot, stock
 from mahlzeit.services.day import ComponentInput, EntryInput, EntryPatch
 from mahlzeit.services.items import ItemInput
 from mahlzeit.services.shopping import Op
@@ -463,7 +463,7 @@ class TestSuggestions:
         assert [(s.item.id, s.reason, s.amount, s.quantity) for s in found] == [
             (chicken.id, "planned", 300, "300 g")
         ]
-        stock.set_plan_days(db, jonas.actor, 4)
+        profiles.update_profile(db, jonas.actor, list_plan_days=4)
         assert stock.suggestions(db, jonas.actor)[0].amount == 800
 
     def test_items_on_the_list_and_eaten_meals_are_left_out(self, db: Session) -> None:
@@ -508,7 +508,7 @@ class TestSuggestions:
         jonas, _ = factories.household(db)
         for days in (0, 15):
             with pytest.raises(Invalid):
-                stock.set_plan_days(db, jonas.actor, days)
+                profiles.update_profile(db, jonas.actor, list_plan_days=days)
 
 
 class TestReport:

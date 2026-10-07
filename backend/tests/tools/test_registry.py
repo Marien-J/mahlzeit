@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date
@@ -16,11 +17,12 @@ from mahlzeit.domain.permissions import Client
 from mahlzeit.ids import uuid7
 from mahlzeit.models import ChangeRecord
 from mahlzeit.off_client import set_off_client
-from mahlzeit.services import day, items, offers, shopping
+from mahlzeit.services import day, items, offers, shopping, stock
 from mahlzeit.services.auth import actor_for
 from mahlzeit.services.day import ComponentInput, EntryInput
 from mahlzeit.services.items import ItemInput
 from mahlzeit.services.shopping import Op
+from mahlzeit.services.stock import LineInput, PurchaseInput
 from mahlzeit.tools import registry
 from mahlzeit.tools.registry import ToolContext, ToolError
 from tests import factories
@@ -105,6 +107,16 @@ class World:
         op = Op(kind="add", id=uuid7(), fields={"text": text})
         shopping.apply(self.db, (member or self.me).actor, [op])
         return str(op.id)
+
+    def olive_oil(self) -> str:
+        return str(factories.generic(self.db, self.me.actor, "Q120000").id)
+
+    def bought(self, item_id: str, amount: float) -> None:
+        stock.record_purchase(
+            self.db,
+            self.me.actor,
+            PurchaseInput(id=uuid7(), lines=[LineInput(item_id=uuid.UUID(item_id), amount=amount)]),
+        )
 
     def own_item(self, member: factories.Member | None = None) -> str:
         return str(
@@ -280,6 +292,51 @@ CASES: dict[str, Callable[[World], None]] = {
     "remove_list_items": lambda w: assert_(
         w.call("remove_list_items", {"ids": [w.list_item()]})["list"]["items"] == []
     ),
+    "record_purchase": lambda w: assert_(
+        [
+            (ln["amount"], ln["price_cents"])
+            for ln in w.call(
+                "record_purchase",
+                {
+                    "store": "lidl",
+                    "lines": [
+                        {"item_id": w.oats(), "quantity": "500 g", "price_cents": 129},
+                        {"text": "Kerzen"},
+                    ],
+                },
+            )["lines"]
+        ]
+        == [(500, 129), (None, None)]
+    ),
+    "get_stock": lambda w: (
+        w.bought(w.oats(), 500),
+        assert_(w.call("get_stock")["rows"][0]["level"] == 500),
+    ),
+    "adjust_stock": lambda w: (
+        w.bought(w.oats(), 500),
+        assert_(w.call("adjust_stock", {"item_id": w.oats(), "count": 300})["level"] == 300),
+    ),
+    "set_tracking_mode": lambda w: assert_(
+        w.call("set_tracking_mode", {"item_id": w.oats(), "mode": "status"})["status"] == "ok"
+    ),
+    "mark_pantry_checked": lambda w: (
+        w.bought(w.oats(), 500),
+        assert_(
+            w.call("mark_pantry_checked", {"category": "dry_goods", "counts": {w.oats(): 100}})[
+                "category"
+            ]
+            == "dry_goods"
+        ),
+        assert_(w.call("get_stock")["rows"][0]["level"] == 100),
+    ),
+    "get_list_suggestions": lambda w: (
+        w.call("adjust_stock", {"item_id": w.olive_oil(), "status": "out"}),
+        assert_([s["reason"] for s in w.call("get_list_suggestions")["suggestions"]] == ["out"]),
+    ),
+    "get_stock_report": lambda w: (
+        w.bought(w.oats(), 500),
+        assert_(w.call("get_stock_report")["rows"][0]["purchased"] == 500),
+    ),
 }
 
 
@@ -371,6 +428,10 @@ CROSS: dict[str, Callable[[World, factories.Member], dict[str, Any]]] = {
     "check_list_items": lambda w, s: {"ids": [w.list_item(s)]},
     "update_list_items": lambda w, s: {"changes": [{"id": w.list_item(s), "quantity": "9"}]},
     "remove_list_items": lambda w, s: {"ids": [w.list_item(s)]},
+    "record_purchase": lambda w, s: {"lines": [{"item_id": w.own_item(s), "amount": 1}]},
+    "adjust_stock": lambda w, s: {"item_id": w.own_item(s), "count": 1},
+    "set_tracking_mode": lambda w, s: {"item_id": w.own_item(s), "mode": "status"},
+    "mark_pantry_checked": lambda w, s: {"category": "other", "counts": {w.own_item(s): 1}},
 }
 
 

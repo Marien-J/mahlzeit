@@ -101,6 +101,6 @@ def call(ctx: ToolContext, name: str, arguments: dict[str, Any] | None) -> dict[
 
 def load_all() -> dict[str, Tool]:
     """Import the modules that register tools (idempotent)."""
-    from mahlzeit.tools import catalogue, day, plan, shopping  # noqa: F401
+    from mahlzeit.tools import catalogue, day, plan, shopping, stock  # noqa: F401
 
     return REGISTRY

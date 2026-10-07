@@ -22,8 +22,11 @@ from mahlzeit.models import (
     MealComponent,
     MealEntry,
     MealParticipant,
+    PantryCheck,
+    Purchase,
     Recipe,
     ShoppingListItem,
+    StockMovement,
     Store,
 )
 from mahlzeit.services import day as day_service
@@ -31,6 +34,7 @@ from mahlzeit.services import items as item_service
 from mahlzeit.services import offers as offer_service
 from mahlzeit.services import recipes
 from mahlzeit.services import shopping as shopping_service
+from mahlzeit.services import stock as stock_service
 from mahlzeit.services.snapshot import Snapshot
 from mahlzeit.services.targets import TargetPlan
 
@@ -193,6 +197,7 @@ class RecipeOut(BaseModel):
 class AddedToListOut(BaseModel):
     added: list[ListItemOut]
     already_listed: list[str]
+    in_stock: list[str]
 
 
 class PlanDayOut(BaseModel):
@@ -242,6 +247,7 @@ class SnapshotOut(BaseModel):
     tonight: list[EntryOut]
     offers: list[OfferOut]
     shopping_list: ListOut
+    stock: StockSummaryOut
     not_yet_available: list[str]
 
 
@@ -300,6 +306,114 @@ class ListOpResultOut(BaseModel):
 class ListOpsOut(BaseModel):
     results: list[ListOpResultOut]
     list: ListOut
+
+
+# --- stock --------------------------------------------------------------------------------
+
+Unit = Literal["g", "ml"]
+StatusName = Literal["ok", "low", "out"]
+
+
+class StockRowOut(BaseModel):
+    item_id: uuid.UUID
+    name: str
+    category: str
+    base_unit: Unit
+    mode: Literal["counted", "status"]
+    level: float | None  # counted items, never below zero
+    status: StatusName | None  # status-only items
+    step: float  # one tap of the pantry stepper
+    package_size: float | None
+    last_moved: date | None
+
+
+class PantryCheckOut(BaseModel):
+    category: str
+    checked_at: datetime
+    checked_by: uuid.UUID | None
+
+
+class StockOut(BaseModel):
+    rows: list[StockRowOut]
+    checks: list[PantryCheckOut]
+
+
+class StockMovementOut(BaseModel):
+    id: uuid.UUID
+    amount: float
+    reason: Literal["purchase", "consumption", "correction", "waste"]
+    source: Literal["purchase", "entry", "shortfall", "pantry", "manual"]
+    source_id: uuid.UUID | None
+    day: date
+    created_by: uuid.UUID | None
+    created_at: datetime
+
+
+class ItemStockOut(BaseModel):
+    stock: StockRowOut
+    movements: list[StockMovementOut]
+
+
+class StockSummaryOut(BaseModel):
+    in_stock: list[StockRowOut]
+    low: list[str]
+    out: list[str]
+
+
+class PurchaseLineOut(BaseModel):
+    id: uuid.UUID
+    item_id: uuid.UUID | None
+    text: str
+    quantity: str | None
+    amount: float | None
+    base_unit: Unit | None
+    price_cents: int | None
+    list_item_id: uuid.UUID | None
+
+
+class PurchaseOut(BaseModel):
+    id: uuid.UUID
+    day: date
+    store_id: uuid.UUID | None
+    created_by: uuid.UUID | None
+    created_at: datetime
+    lines: list[PurchaseLineOut]
+    spend_cents: int | None
+
+
+class SuggestionOut(BaseModel):
+    item_id: uuid.UUID
+    name: str
+    category: str
+    base_unit: Unit
+    reason: Literal["planned", "low", "out", "usual"]
+    quantity: str | None
+    amount: float | None
+
+
+class SuggestionsOut(BaseModel):
+    plan_days: int
+    suggestions: list[SuggestionOut]
+
+
+class StockReportRowOut(BaseModel):
+    item_id: uuid.UUID
+    name: str
+    base_unit: Unit
+    purchased: float
+    logged: float
+    wasted: float
+    corrected: float
+    shortfall: float
+    level: float | None
+    spend_cents: int | None
+
+
+class StockReportOut(BaseModel):
+    start: date
+    end: date
+    rows: list[StockReportRowOut]
+    spend_cents: int
 
 
 # --- converters ---------------------------------------------------------------------------
@@ -482,7 +596,11 @@ def recipe(r: Recipe, language: str) -> RecipeOut:
 
 
 def added_to_list(r: recipes.AddedToList) -> AddedToListOut:
-    return AddedToListOut(added=[list_item(i) for i in r.added], already_listed=r.already_listed)
+    return AddedToListOut(
+        added=[list_item(i) for i in r.added],
+        already_listed=r.already_listed,
+        in_stock=r.in_stock,
+    )
 
 
 def plan(
@@ -540,6 +658,7 @@ def snapshot(s: Snapshot, language: str, viewer: uuid.UUID) -> SnapshotOut:
         tonight=[entry(e, language) for e in s.tonight],
         offers=[offer(v, language, viewer) for v in s.offers],
         shopping_list=shopping_list(s.shopping_list, s.stores, clock.now()),
+        stock=stock_summary(s.stock),
         not_yet_available=list(s.not_yet_available),
     )
 
@@ -579,3 +698,115 @@ def list_memory(m: ListMemory) -> ListMemoryOut:
 
 def list_op_result(r: shopping_service.OpResult) -> ListOpResultOut:
     return ListOpResultOut(id=r.id, status=r.status, code=r.code)
+
+
+def _amount(value: float) -> float:
+    return round(value, 1)
+
+
+def stock_row(r: stock_service.StockRow) -> StockRowOut:
+    return StockRowOut(
+        item_id=r.item.id,
+        name=r.name,
+        category=r.item.category,
+        base_unit=r.item.base_unit,
+        mode=r.mode.value,
+        level=None if r.level is None else _amount(r.level),
+        status=r.status.value if r.status else None,
+        step=r.step,
+        package_size=r.item.package_size,
+        last_moved=r.last_moved,
+    )
+
+
+def pantry_check(c: PantryCheck) -> PantryCheckOut:
+    return PantryCheckOut(category=c.category, checked_at=c.checked_at, checked_by=c.checked_by)
+
+
+def stock_view(v: stock_service.StockView) -> StockOut:
+    return StockOut(
+        rows=[stock_row(r) for r in v.rows], checks=[pantry_check(c) for c in v.checks.values()]
+    )
+
+
+def stock_movement(m: StockMovement) -> StockMovementOut:
+    return StockMovementOut(
+        id=m.id,
+        amount=_amount(m.amount),
+        reason=m.reason,
+        source=m.source,
+        source_id=m.source_id,
+        day=m.day,
+        created_by=m.created_by,
+        created_at=m.created_at,
+    )
+
+
+def stock_summary(s: stock_service.Summary) -> StockSummaryOut:
+    return StockSummaryOut(in_stock=[stock_row(r) for r in s.in_stock], low=s.low, out=s.out)
+
+
+def purchase(p: Purchase) -> PurchaseOut:
+    prices = [ln.price_cents for ln in p.lines if ln.price_cents is not None]
+    return PurchaseOut(
+        id=p.id,
+        day=p.day,
+        store_id=p.store_id,
+        created_by=p.created_by,
+        created_at=p.created_at,
+        lines=[
+            PurchaseLineOut(
+                id=ln.id,
+                item_id=ln.item_id,
+                text=ln.text,
+                quantity=ln.quantity,
+                amount=None if ln.amount is None else _amount(ln.amount),
+                base_unit=ln.item.base_unit if ln.item else None,
+                price_cents=ln.price_cents,
+                list_item_id=ln.list_item_id,
+            )
+            for ln in p.lines
+        ],
+        spend_cents=sum(prices) if prices else None,
+    )
+
+
+def suggestions(plan_days: int, found: list[stock_service.Suggestion]) -> SuggestionsOut:
+    return SuggestionsOut(
+        plan_days=plan_days,
+        suggestions=[
+            SuggestionOut(
+                item_id=x.item.id,
+                name=x.name,
+                category=x.item.category,
+                base_unit=x.item.base_unit,
+                reason=x.reason,
+                quantity=x.quantity,
+                amount=None if x.amount is None else _amount(x.amount),
+            )
+            for x in found
+        ],
+    )
+
+
+def stock_report(r: stock_service.Report) -> StockReportOut:
+    return StockReportOut(
+        start=r.start,
+        end=r.end,
+        rows=[
+            StockReportRowOut(
+                item_id=x.item.id,
+                name=x.name,
+                base_unit=x.item.base_unit,
+                purchased=_amount(x.purchased),
+                logged=_amount(x.logged),
+                wasted=_amount(x.wasted),
+                corrected=_amount(x.corrected),
+                shortfall=_amount(x.shortfall),
+                level=None if x.level is None else _amount(x.level),
+                spend_cents=x.spend_cents,
+            )
+            for x in r.rows
+        ],
+        spend_cents=r.spend_cents,
+    )

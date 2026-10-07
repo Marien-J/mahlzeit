@@ -694,29 +694,10 @@ def check_category(
 # --- the list ---------------------------------------------------------------------------------
 
 
-def _plan_days(db: Session, actor: Actor) -> int:
+def plan_days(db: Session, actor: Actor) -> int:
+    """How many days of plans the list suggestions look ahead (a setting per person)."""
     profile = db.get(Profile, actor.user_id)
     return profile.list_plan_days if profile else rules.PLAN_DAYS_DEFAULT
-
-
-def set_plan_days(db: Session, actor: Actor, days: int) -> int:
-    """How many days of plans the list suggestions look ahead (for this person)."""
-    profile = db.get_one(Profile, actor.user_id)
-    before = profile.list_plan_days
-    profile.list_plan_days = rules.check_plan_days(days)
-    if before != days:
-        profile.updated_at = clock.now()
-        audit.record(
-            db,
-            actor=actor,
-            entity="profile",
-            entity_id=actor.user_id,
-            action="updated",
-            before={"list_plan_days": before},
-            after={"list_plan_days": days},
-        )
-        db.commit()
-    return days
 
 
 def suggestions(db: Session, actor: Actor, *, language: str = "de") -> list[Suggestion]:
@@ -739,7 +720,7 @@ def suggestions(db: Session, actor: Actor, *, language: str = "de") -> list[Sugg
     seen = set(on_list)
 
     # 1. Planned meals in the coming days, eaten at home and not eaten yet.
-    end = today + timedelta(days=_plan_days(db, actor) - 1)
+    end = today + timedelta(days=plan_days(db, actor) - 1)
     planned = db.scalars(
         select(MealEntry)
         .where(
