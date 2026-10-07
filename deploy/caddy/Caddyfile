@@ -16,8 +16,9 @@
 		-Server
 	}
 
-	# API, connector and live events go to the app. Streaming responses are flushed at once.
-	@backend path /api/* /mcp /mcp/* /events /events/*
+	# API (including the live event stream /api/events) and connector go to the app.
+	# Streaming responses are flushed at once.
+	@backend path /api/* /mcp /mcp/*
 	handle @backend {
 		reverse_proxy app:8000 {
 			flush_interval -1

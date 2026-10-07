@@ -182,7 +182,7 @@ def get_day(ctx: ToolContext, args: DayIn) -> views.DayOut:
 @tool(
     "get_household_snapshot",
     "Everything for 'what should we cook tonight' in one call: both people's remaining macros "
-    "today, tonight's dinner plans, and (in later versions) offers, shopping list and stock.",
+    "today, tonight's dinner plans, the shopping list, and (in later versions) offers and stock.",
     EmptyIn,
     writes=False,
 )

@@ -28,6 +28,7 @@ from mahlzeit.models.day import (
 )
 from mahlzeit.models.jobs import Job
 from mahlzeit.models.push import PushSubscription
+from mahlzeit.models.shopping import ListMemory, ShoppingListItem, Store
 
 __all__ = [
     "AuthSession",
@@ -40,6 +41,7 @@ __all__ = [
     "Item",
     "ItemBarcode",
     "Job",
+    "ListMemory",
     "LoginAttempt",
     "MealComponent",
     "MealEntry",
@@ -52,6 +54,8 @@ __all__ = [
     "Recipe",
     "RecipeIngredient",
     "ServingSize",
+    "ShoppingListItem",
+    "Store",
     "TargetSet",
     "User",
 ]

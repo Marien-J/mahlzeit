@@ -1,14 +1,13 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, Outlet, createBrowserRouter, useLocation } from 'react-router'
 import { OfflineBanner } from '../components/OfflineBanner'
-import { AboutPage } from '../features/about/AboutPage'
 import { JoinPage } from '../features/auth/JoinPage'
 import { LoginPage } from '../features/auth/LoginPage'
 import { ForgotPage, ResetPage } from '../features/auth/PasswordPages'
 import { useMe } from '../features/auth/session'
 import { DayPage } from '../features/day/DayPage'
-import { HouseholdPage } from '../features/household/HouseholdPage'
-import { SettingsPage } from '../features/settings/SettingsPage'
+import { ListPage } from '../features/list/ListPage'
 import { Shell } from './Shell'
 
 function Root() {
@@ -18,6 +17,32 @@ function Root() {
       <Outlet />
     </>
   )
+}
+
+const OPENED = 'mahlzeit.opened'
+
+/** Tests start a fresh app per render. */
+export function resetOpening(): void {
+  try {
+    sessionStorage.removeItem(OPENED)
+  } catch {
+    // no storage
+  }
+}
+
+/** Today, or the list for people who chose to open on it: only on the first screen of a visit. */
+function Home() {
+  const me = useMe().data
+  const [toList] = useState(() => {
+    try {
+      const first = sessionStorage.getItem(OPENED) === null
+      sessionStorage.setItem(OPENED, '1')
+      return first && me?.profile.start_screen === 'list'
+    } catch {
+      return false
+    }
+  })
+  return toList ? <Navigate to="/list" replace /> : <DayPage />
 }
 
 function RequireAuth() {
@@ -53,8 +78,9 @@ export const routes = [
       {
         element: <RequireAuth />,
         children: [
-          { path: '/', element: <DayPage /> },
+          { path: '/', element: <Home /> },
           { path: '/day/:day', element: <DayPage /> },
+          { path: '/list', element: <ListPage /> },
           {
             path: '/add',
             lazy: () => import('../features/log/AddPage').then((m) => ({ Component: m.AddPage })),
@@ -69,9 +95,25 @@ export const routes = [
             lazy: () =>
               import('../features/targets/TargetsPage').then((m) => ({ Component: m.TargetsPage })),
           },
-          { path: '/household', element: <HouseholdPage /> },
-          { path: '/settings', element: <SettingsPage /> },
-          { path: '/about', element: <AboutPage /> },
+          {
+            path: '/household',
+            lazy: () =>
+              import('../features/household/HouseholdPage').then((m) => ({
+                Component: m.HouseholdPage,
+              })),
+          },
+          {
+            path: '/settings',
+            lazy: () =>
+              import('../features/settings/SettingsPage').then((m) => ({
+                Component: m.SettingsPage,
+              })),
+          },
+          {
+            path: '/about',
+            lazy: () =>
+              import('../features/about/AboutPage').then((m) => ({ Component: m.AboutPage })),
+          },
         ],
       },
       { path: '*', element: <Navigate to="/" replace /> },

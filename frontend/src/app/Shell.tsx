@@ -1,9 +1,18 @@
+import { useQueryClient } from '@tanstack/react-query'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet } from 'react-router'
 import type { Me } from '../api/client'
+import { flush } from '../features/list/sync'
+import { useLiveEvents } from '../features/live/live'
 
 export function Shell({ me }: { me: Me }) {
   const { t } = useTranslation()
+  const client = useQueryClient()
+  const household = me.household.id
+  // On every (re)connect, send whatever the list queued while offline.
+  const onReady = useCallback(() => void flush(client, household), [client, household])
+  useLiveEvents(true, onReady)
   return (
     <div className="shell">
       <header className="topbar">
@@ -17,6 +26,7 @@ export function Shell({ me }: { me: Me }) {
         <NavLink to="/" end>
           {t('nav.today')}
         </NavLink>
+        <NavLink to="/list">{t('nav.list')}</NavLink>
         <NavLink to="/household">{t('nav.household')}</NavLink>
         <NavLink to="/settings">{t('nav.settings')}</NavLink>
       </nav>

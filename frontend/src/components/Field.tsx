@@ -1,6 +1,10 @@
-import { useId, type InputHTMLAttributes, type ReactNode } from 'react'
+import { useId, type InputHTMLAttributes, type ReactNode, type Ref } from 'react'
 
-type Props = InputHTMLAttributes<HTMLInputElement> & { label: string; hint?: ReactNode }
+type Props = InputHTMLAttributes<HTMLInputElement> & {
+  label: string
+  hint?: ReactNode
+  ref?: Ref<HTMLInputElement>
+}
 
 export function Field({ label, hint, ...input }: Props) {
   const id = useId()

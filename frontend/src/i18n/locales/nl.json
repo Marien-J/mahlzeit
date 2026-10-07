@@ -15,7 +15,8 @@
     "today": "Vandaag",
     "household": "Huishouden",
     "settings": "Instellingen",
-    "main": "Hoofdmenu"
+    "main": "Hoofdmenu",
+    "list": "Lijst"
   },
   "common": {
     "save": "Opslaan",
@@ -135,7 +136,10 @@
     "about": "Over Mahlzeit",
     "logout": "Uitloggen",
     "targets": "Doelen en dagtypes",
-    "foods": "Mijn producten en maaltijden"
+    "foods": "Mijn producten en maaltijden",
+    "startScreen": "App openen op",
+    "startToday": "Vandaag",
+    "startList": "Boodschappenlijst"
   },
   "about": {
     "title": "Over",
@@ -207,7 +211,17 @@
     "nothing_to_copy": "Er is op die dag niets om te kopiëren.",
     "saved_meal_empty": "Een opgeslagen maaltijd heeft minstens één product uit de catalogus nodig.",
     "saved_meal_name_required": "Geef de maaltijd een naam.",
-    "nothing_to_set": "Geef minstens één doel of een weekpatroon op."
+    "nothing_to_set": "Geef minstens één doel of een weekpatroon op.",
+    "category_unknown": "Deze afdeling bestaat niet.",
+    "id_invalid": "Deze id is ongeldig.",
+    "list_field_unknown": "Deze wijziging bevat een veld dat de lijst niet kent.",
+    "list_item_not_found": "Dit item staat niet meer op de lijst.",
+    "list_text_empty": "Typ wat je nodig hebt.",
+    "store_builtin": "Vaste winkels kunnen niet worden verwijderd.",
+    "store_name_empty": "Geef de winkel een naam.",
+    "store_name_taken": "Er is al een winkel met de naam {{name}}.",
+    "store_not_found": "Deze winkel bestaat niet.",
+    "too_many_operations": "Te veel wijzigingen tegelijk (maximaal {{max}})."
   },
   "day": {
     "today": "Vandaag",
@@ -399,5 +413,39 @@
   "unit": {
     "g": "g",
     "ml": "ml"
+  },
+  "store": {
+    "other": "Overig"
+  },
+  "list": {
+    "title": "Boodschappenlijst",
+    "add": "Op de lijst zetten",
+    "addButton": "Toevoegen",
+    "suggestions": "Suggesties",
+    "shop": "Boodschappen doen",
+    "doneShopping": "Klaar",
+    "storeFilter": "Winkel",
+    "allStores": "Alle",
+    "empty": "De lijst is leeg. Typ hierboven wat jullie nodig hebben.",
+    "pending_one": "{{count}} wijziging wacht op verbinding.",
+    "pending_other": "{{count}} wijzigingen wachten op verbinding.",
+    "done": "Afgevinkt",
+    "doneCount_one": "{{count}} afgevinkt",
+    "doneCount_other": "{{count}} afgevinkt",
+    "clearChecked": "Afgevinkte verwijderen",
+    "checked": "{{text}} afgevinkt",
+    "unchecked": "{{text}} weer op de lijst",
+    "removed_one": "{{count}} item verwijderd",
+    "removed_other": "{{count}} items verwijderd",
+    "undo": "Ongedaan maken",
+    "text": "Wat",
+    "quantity": "Hoeveelheid",
+    "store": "Winkel",
+    "anyStore": "Maakt niet uit",
+    "newStore": "Nieuwe winkel …",
+    "newStoreName": "Naam van de winkel",
+    "createStore": "Aanmaken",
+    "aisle": "Afdeling",
+    "remove": "Van de lijst halen"
   }
 }

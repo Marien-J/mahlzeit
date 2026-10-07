@@ -304,3 +304,35 @@ class SavedMealPatchIn(BaseModel):
 
 class SaveAsMealIn(BaseModel):
     name: str | None = Field(default=None, max_length=120)
+
+
+# --- shopping list ------------------------------------------------------------------------
+
+
+class ListFieldsIn(BaseModel):
+    """Only the fields that are sent are changed; send null to clear quantity or store."""
+
+    text: str | None = Field(default=None, max_length=200)
+    item_id: uuid.UUID | None = None
+    quantity: str | None = Field(default=None, max_length=80)
+    store_id: uuid.UUID | None = None
+    category: str | None = Field(default=None, max_length=20)
+    checked: bool | None = None
+    parse: bool | None = Field(
+        default=None, description="On add: split a quantity such as '2' or '500 g' off the text."
+    )
+
+
+class ListOpIn(BaseModel):
+    kind: Literal["add", "update", "remove"]
+    id: uuid.UUID = Field(description="The list item's id, made by the client on add.")
+    at: datetime | None = Field(default=None, description="When the change was made.")
+    fields: ListFieldsIn = Field(default_factory=ListFieldsIn)
+
+
+class ListOpsIn(BaseModel):
+    ops: list[ListOpIn] = Field(max_length=200)
+
+
+class StoreIn(BaseModel):
+    name: str = Field(max_length=80)
