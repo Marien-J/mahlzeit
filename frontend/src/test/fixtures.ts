@@ -121,3 +121,19 @@ export function person(over: Partial<Schemas['PersonDayOut']> = {}): Schemas['Pe
 export function dayOf(people: Schemas['PersonDayOut'][], day = TODAY()): Schemas['DayOut'] {
   return { day, people }
 }
+
+export function recipe(over: Partial<Schemas['RecipeOut']> = {}): Schemas['RecipeOut'] {
+  return {
+    id: '0192f1c4-0000-7000-8000-0000000000f1',
+    kind: 'recipe',
+    name: 'Chili',
+    servings: 4,
+    cooked_yield_g: null,
+    staple: true,
+    notes: null,
+    ingredients: [{ item_id: OATS.id, name: 'Haferflocken', amount: 200, base_unit: 'g' }],
+    per_serving: totals({ kcal: 480, protein: 35 }),
+    per_100g_cooked: null,
+    ...over,
+  }
+}

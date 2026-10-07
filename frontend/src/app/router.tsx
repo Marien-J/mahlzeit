@@ -86,6 +86,13 @@ export const routes = [
             lazy: () => import('../features/log/AddPage').then((m) => ({ Component: m.AddPage })),
           },
           {
+            path: '/recipes',
+            lazy: () =>
+              import('../features/recipes/RecipesPage').then((m) => ({
+                Component: m.RecipesPage,
+              })),
+          },
+          {
             path: '/foods',
             lazy: () =>
               import('../features/catalogue/FoodsPage').then((m) => ({ Component: m.FoodsPage })),

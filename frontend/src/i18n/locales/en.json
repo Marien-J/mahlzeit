@@ -16,7 +16,8 @@
     "household": "Household",
     "settings": "Settings",
     "main": "Main",
-    "list": "List"
+    "list": "List",
+    "plan": "Plan"
   },
   "common": {
     "save": "Save",
@@ -139,7 +140,8 @@
     "foods": "My foods and saved meals",
     "startScreen": "Open the app on",
     "startToday": "Today",
-    "startList": "Shopping list"
+    "startList": "Shopping list",
+    "recipes": "Recipes"
   },
   "about": {
     "title": "About",
@@ -468,5 +470,37 @@
     "createStore": "Create",
     "aisle": "Aisle",
     "remove": "Remove from list"
+  },
+  "recipes": {
+    "title": "Recipes",
+    "new": "New recipe",
+    "edit": "Edit recipe",
+    "none": "No recipes yet. Add one, and mark the ones you cook often as staples: they come first when planning.",
+    "staples": "Staples",
+    "others": "Other recipes",
+    "savedMeals": "See saved meals",
+    "servings": "Servings",
+    "servingsCount_one": "{{count}} serving",
+    "servingsCount_other": "{{count}} servings",
+    "perServing": "{{kcal}} kcal per serving",
+    "nutrition": "Per serving: {{kcal}} kcal, protein {{protein}} g",
+    "cookedYield": "Weight after cooking (g)",
+    "cookedYieldHint": "Optional. Lets you log a portion by weight.",
+    "cookedYieldValue": "{{grams}} g after cooking",
+    "staple": "Staple recipe",
+    "notes": "Notes",
+    "ingredients": "Ingredients",
+    "noIngredients": "Add at least one ingredient.",
+    "addIngredient": "Add ingredient",
+    "searchIngredient": "Search ingredient",
+    "removeIngredient": "Remove {{name}}",
+    "listPortions": "For how many portions?",
+    "addToList": "Add ingredients to list",
+    "addedToList_one": "{{count}} ingredient added to the list.",
+    "addedToList_other": "{{count}} ingredients added to the list.",
+    "alreadyListed": "Already on the list: {{names}}.",
+    "toList": "Go to the list",
+    "delete": "Delete recipe",
+    "confirmDelete": "Really delete"
   }
 }

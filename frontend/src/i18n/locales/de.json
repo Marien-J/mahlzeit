@@ -16,7 +16,8 @@
     "household": "Haushalt",
     "settings": "Einstellungen",
     "main": "Hauptmenü",
-    "list": "Liste"
+    "list": "Liste",
+    "plan": "Plan"
   },
   "common": {
     "save": "Speichern",
@@ -139,7 +140,8 @@
     "foods": "Meine Lebensmittel und Mahlzeiten",
     "startScreen": "App öffnen mit",
     "startToday": "Heute",
-    "startList": "Einkaufsliste"
+    "startList": "Einkaufsliste",
+    "recipes": "Rezepte"
   },
   "about": {
     "title": "Über",
@@ -468,5 +470,37 @@
     "createStore": "Anlegen",
     "aisle": "Abteilung",
     "remove": "Von der Liste nehmen"
+  },
+  "recipes": {
+    "title": "Rezepte",
+    "new": "Neues Rezept",
+    "edit": "Rezept bearbeiten",
+    "none": "Noch keine Rezepte. Lege eins an und markiere die, die ihr oft kocht, als Standardrezepte: Sie stehen beim Planen oben.",
+    "staples": "Standardrezepte",
+    "others": "Weitere Rezepte",
+    "savedMeals": "Gespeicherte Mahlzeiten ansehen",
+    "servings": "Portionen",
+    "servingsCount_one": "{{count}} Portion",
+    "servingsCount_other": "{{count}} Portionen",
+    "perServing": "{{kcal}} kcal pro Portion",
+    "nutrition": "Pro Portion: {{kcal}} kcal, Eiweiß {{protein}} g",
+    "cookedYield": "Gewicht nach dem Kochen (g)",
+    "cookedYieldHint": "Optional. Damit lässt sich eine Portion nach Gewicht eintragen.",
+    "cookedYieldValue": "{{grams}} g nach dem Kochen",
+    "staple": "Standardrezept",
+    "notes": "Notizen",
+    "ingredients": "Zutaten",
+    "noIngredients": "Füge mindestens eine Zutat hinzu.",
+    "addIngredient": "Zutat hinzufügen",
+    "searchIngredient": "Zutat suchen",
+    "removeIngredient": "{{name}} entfernen",
+    "listPortions": "Für wie viele Portionen?",
+    "addToList": "Zutaten auf die Liste",
+    "addedToList_one": "{{count}} Zutat auf die Liste gesetzt.",
+    "addedToList_other": "{{count}} Zutaten auf die Liste gesetzt.",
+    "alreadyListed": "Schon auf der Liste: {{names}}.",
+    "toList": "Zur Liste",
+    "delete": "Rezept löschen",
+    "confirmDelete": "Wirklich löschen"
   }
 }

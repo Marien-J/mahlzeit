@@ -16,7 +16,8 @@
     "household": "Huishouden",
     "settings": "Instellingen",
     "main": "Hoofdmenu",
-    "list": "Lijst"
+    "list": "Lijst",
+    "plan": "Plan"
   },
   "common": {
     "save": "Opslaan",
@@ -139,7 +140,8 @@
     "foods": "Mijn producten en maaltijden",
     "startScreen": "App openen op",
     "startToday": "Vandaag",
-    "startList": "Boodschappenlijst"
+    "startList": "Boodschappenlijst",
+    "recipes": "Recepten"
   },
   "about": {
     "title": "Over",
@@ -468,5 +470,37 @@
     "createStore": "Aanmaken",
     "aisle": "Afdeling",
     "remove": "Van de lijst halen"
+  },
+  "recipes": {
+    "title": "Recepten",
+    "new": "Nieuw recept",
+    "edit": "Recept bewerken",
+    "none": "Nog geen recepten. Voeg er een toe en markeer wat je vaak kookt als vast recept: die staan bij het plannen bovenaan.",
+    "staples": "Vaste recepten",
+    "others": "Andere recepten",
+    "savedMeals": "Opgeslagen maaltijden bekijken",
+    "servings": "Porties",
+    "servingsCount_one": "{{count}} portie",
+    "servingsCount_other": "{{count}} porties",
+    "perServing": "{{kcal}} kcal per portie",
+    "nutrition": "Per portie: {{kcal}} kcal, eiwit {{protein}} g",
+    "cookedYield": "Gewicht na het koken (g)",
+    "cookedYieldHint": "Optioneel. Zo kun je een portie op gewicht vastleggen.",
+    "cookedYieldValue": "{{grams}} g na het koken",
+    "staple": "Vast recept",
+    "notes": "Notities",
+    "ingredients": "Ingrediënten",
+    "noIngredients": "Voeg minstens één ingrediënt toe.",
+    "addIngredient": "Ingrediënt toevoegen",
+    "searchIngredient": "Ingrediënt zoeken",
+    "removeIngredient": "{{name}} verwijderen",
+    "listPortions": "Voor hoeveel porties?",
+    "addToList": "Ingrediënten op de lijst",
+    "addedToList_one": "{{count}} ingrediënt op de lijst gezet.",
+    "addedToList_other": "{{count}} ingrediënten op de lijst gezet.",
+    "alreadyListed": "Staat al op de lijst: {{names}}.",
+    "toList": "Naar de lijst",
+    "delete": "Recept verwijderen",
+    "confirmDelete": "Echt verwijderen"
   }
 }
