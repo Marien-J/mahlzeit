@@ -258,7 +258,9 @@ def add_to_list(
     Without stock (M4) 'missing' means not on the list yet: an item that is already there, ticked
     or not, is left alone and reported."""
     recipe = get(db, actor, recipe_id)
-    wanted = rules.check_portions(portions if portions is not None else recipe.servings)
+    wanted = rules.check_portions(
+        portions if portions is not None else recipe.servings, most=rules.MAX_SERVINGS
+    )
     amounts = rules.combine(
         rules.scale(
             [(i.item_id, i.amount) for i in recipe.ingredients],

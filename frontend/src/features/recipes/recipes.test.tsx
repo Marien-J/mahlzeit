@@ -42,6 +42,12 @@ describe('recipes', () => {
     expect(rows[0]).toHaveTextContent('4 Portionen · 480 kcal pro Portion')
   })
 
+  it('writes fractional servings the way the language does', async () => {
+    mockApi(routes({ 'GET /api/recipes': () => [recipe({ servings: 1.5 })] }))
+    renderApp('/recipes')
+    expect(await screen.findByRole('button', { name: /Chili/ })).toHaveTextContent('1,5 Portionen')
+  })
+
   it('puts the ingredients for some portions on the list', async () => {
     const server = mockApi(
       routes({

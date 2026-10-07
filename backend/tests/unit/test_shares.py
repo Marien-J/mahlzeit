@@ -105,3 +105,11 @@ class TestNormalize:
 
     def test_nothing_to_do_when_everyone_has_eaten(self) -> None:
         assert shares.normalize([part("a", 0.4, logged=True)]) == {}
+
+
+class TestRebalanceKeepsTheDishWhole:
+    def test_a_person_held_at_the_minimum_does_not_push_the_total_over_one(self) -> None:
+        parts = [part("a", 0.5), part("b", 0.45), part("c", 0.05)]
+        new = shares.rebalance(parts, who="a", share=0.85)
+        assert new == {"b": pytest.approx(0.10), "c": MIN_SHARE}
+        assert 0.85 + sum(new.values()) == pytest.approx(1.0)

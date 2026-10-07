@@ -63,7 +63,7 @@ export function useLiveEvents(enabled: boolean, onReady?: () => void): void {
     source.addEventListener('ready', () => {
       setConnected(true)
       // Whatever changed while the stream was down: fetch it now.
-      refetch([['list'], ['day']])
+      refetch([['list'], ['day'], ['plan'], ['offers'], ['recipes']])
       onReady?.()
     })
     source.addEventListener('change', (event) => {

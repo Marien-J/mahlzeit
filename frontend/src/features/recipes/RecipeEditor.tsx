@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ErrorMessage } from '../../components/ErrorMessage'
@@ -39,6 +39,7 @@ export function RecipeEditor({
     })),
   )
   const [picking, setPicking] = useState(false)
+  const client = useQueryClient()
 
   const valid =
     name.trim() !== '' &&
@@ -57,7 +58,10 @@ export function RecipeEditor({
       }
       return recipe ? updateRecipe(recipe.id, body) : createRecipe({ ...body, kind: 'recipe' })
     },
-    onSuccess: onDone,
+    onSuccess: async (saved) => {
+      await client.invalidateQueries({ queryKey: ['recipes'] })
+      onDone(saved)
+    },
   })
   const submit = (e: FormEvent) => {
     e.preventDefault()

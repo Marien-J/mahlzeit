@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import { ErrorMessage } from '../../components/ErrorMessage'
 import { formatDate } from '../../i18n/format'
 import { addDays, dayAsDate, hhmm, todayIn } from '../../lib/dates'
-import { grams, kcal } from '../../lib/nutrition'
+import { grams, kcalOf } from '../../lib/nutrition'
 import { useMe } from '../auth/session'
 import { usePlan, type Plan } from './api'
 
@@ -85,15 +85,15 @@ export function PlanPage() {
                           <span>{title(e)}</span>
                         </span>
                         <span className="kcal">
-                          {e.dish.values.kcal != null
-                            ? t('plan.dishKcal', { kcal: kcal(e.dish.values.kcal) })
-                            : '–'}
+                          {kcalOf(e.dish) === '–'
+                            ? '–'
+                            : t('plan.dishKcal', { kcal: kcalOf(e.dish) })}
                         </span>
                       </Link>
                       {offered.has(e.id) ? (
                         <small className="badge">{t('plan.offered')}</small>
                       ) : null}
-                      {e.dish.values.protein != null ? (
+                      {e.dish.values.protein && !e.dish.incomplete.includes('protein') ? (
                         <small className="muted">
                           {t('macro.short.protein')} {grams(e.dish.values.protein)}
                         </small>

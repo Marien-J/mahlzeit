@@ -49,12 +49,29 @@ def rebalance(parts: Sequence[PartShare], *, who: Hashable, share: float) -> dic
     open_parts = [p for p in others if not p.logged]
     if not open_parts:
         return {}
-    pool = 1 - share - sum(p.share for p in others if p.logged)
-    weight = sum(p.share for p in open_parts)
-    return {
-        p.key: max(pool * p.share / weight if weight > 0 else pool / len(open_parts), MIN_SHARE)
-        for p in open_parts
-    }
+    return _spread(1 - share - sum(p.share for p in others if p.logged), open_parts)
+
+
+def _spread(pool: float, open_parts: Sequence[PartShare]) -> dict[Hashable, float]:
+    """Share `pool` among `open_parts` in proportion to what they had. Nobody goes below the
+    minimum: whoever would is held there and the others share what is left."""
+    result: dict[Hashable, float] = {}
+    remaining = list(open_parts)
+    while remaining:
+        weight = sum(p.share for p in remaining)
+        trial = {
+            p.key: pool * p.share / weight if weight > 0 else pool / len(remaining)
+            for p in remaining
+        }
+        low = [p for p in remaining if trial[p.key] < MIN_SHARE]
+        if not low:
+            result.update(trial)
+            break
+        for p in low:
+            result[p.key] = MIN_SHARE
+            pool -= MIN_SHARE
+        remaining = [p for p in remaining if p not in low]
+    return result
 
 
 def joining(parts: Sequence[PartShare]) -> tuple[float, dict[Hashable, float]]:
@@ -81,5 +98,4 @@ def normalize(parts: Sequence[PartShare]) -> dict[Hashable, float]:
     if not open_parts:
         return {}
     room = max(1 - sum(p.share for p in parts if p.logged), MIN_SHARE)
-    weight = sum(p.share for p in open_parts)
-    return {p.key: min(max(room * p.share / weight, MIN_SHARE), 1.0) for p in open_parts}
+    return {k: min(v, 1.0) for k, v in _spread(room, open_parts).items()}

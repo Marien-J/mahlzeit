@@ -81,13 +81,16 @@ class TestLogging:
         assert b.at == time(8, 0)
         assert s.at == time(15, 17)
 
-    def test_future_days_are_planned_and_can_be_eaten(self, db: Session, clock) -> None:
+    def test_future_days_are_planned_and_eaten_when_the_day_comes(self, db: Session, clock) -> None:
         jonas, _ = factories.household(db)
         tomorrow = TODAY + timedelta(days=1)
         e = log(db, jonas, Slot.DINNER, ComponentInput(quick_name="Pizza", kcal=900), on=tomorrow)
         assert e.participants[0].state == EntryState.PLANNED
         assert day.get_day(db, jonas.actor, tomorrow).people[0].logged.values.kcal == 0
         assert day.get_day(db, jonas.actor, tomorrow).people[0].planned.values.kcal == 900
+        with pytest.raises(Invalid, match="eaten_in_future"):
+            day.set_state(db, jonas.actor, e.id, EntryState.LOGGED)
+        clock.advance(timedelta(days=1))
         day.set_state(db, jonas.actor, e.id, EntryState.LOGGED)
         assert day.get_day(db, jonas.actor, tomorrow).people[0].logged.values.kcal == 900
 

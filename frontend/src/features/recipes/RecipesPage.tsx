@@ -76,7 +76,7 @@ function RecipeList({
             <button type="button" className="result" onClick={() => onOpen(r)}>
               <span>{r.name}</span>
               <small className="muted">
-                {t('recipes.servingsCount', { count: r.servings })} ·{' '}
+                {t('recipes.servingsCount', { count: r.servings, n: formatNumber(r.servings) })} ·{' '}
                 {t('recipes.perServing', { kcal: kcal(r.per_serving.values.kcal) })}
               </small>
             </button>
@@ -116,7 +116,7 @@ function RecipeSheet({
     <Sheet title={recipe.name} onClose={onClose}>
       <div className="stack">
         <p className="muted">
-          {t('recipes.servingsCount', { count: recipe.servings })}
+          {t('recipes.servingsCount', { count: recipe.servings, n: formatNumber(recipe.servings) })}
           {recipe.cooked_yield_g != null
             ? ` · ${t('recipes.cookedYieldValue', { grams: formatNumber(recipe.cooked_yield_g) })}`
             : ''}

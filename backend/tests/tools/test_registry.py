@@ -164,7 +164,7 @@ CASES: dict[str, Callable[[World], None]] = {
         == "logged"
     ),
     "log_planned_meal": lambda w: assert_(
-        w.call("log_planned_meal", {"entry_id": w.entry(on=date(2026, 10, 8))})["state"] == "logged"
+        w.call("log_planned_meal", {"entry_id": str(w.planned().id)})["state"] == "logged"
     ),
     "update_entry": lambda w: assert_(
         w.call("update_entry", {"entry_id": w.entry(), "time": "07:45"})["at"] == "07:45:00"

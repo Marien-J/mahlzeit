@@ -246,7 +246,8 @@
     "range_invalid": "Choose a range of 1 to {{max}} days.",
     "recipe_empty": "A recipe needs at least one food from the catalogue.",
     "recipe_not_found": "This recipe does not exist (any more).",
-    "offer_receiver_required": "Say who the offer is for."
+    "offer_receiver_required": "Say who the offer is for.",
+    "eaten_in_future": "A meal on a later day cannot have been eaten yet."
   },
   "day": {
     "today": "Today",
@@ -324,7 +325,10 @@
       "skipped": "skipped"
     },
     "planOnly": "Only plan it (not eaten yet)",
-    "shareLine": "{{percent}} % · {{kcal}} kcal"
+    "shareLine": "{{percent}} % · {{kcal}} kcal",
+    "kcalOf": "Energy of {{name}}",
+    "kcalUnit": "kcal",
+    "notEaten": "Not eaten after all"
   },
   "log": {
     "title": "Add food",
@@ -509,8 +513,8 @@
     "others": "Other recipes",
     "savedMeals": "See saved meals",
     "servings": "Servings",
-    "servingsCount_one": "{{count}} serving",
-    "servingsCount_other": "{{count}} servings",
+    "servingsCount_one": "{{n}} serving",
+    "servingsCount_other": "{{n}} servings",
     "perServing": "{{kcal}} kcal per serving",
     "nutrition": "Per serving: {{kcal}} kcal, protein {{protein}} g",
     "cookedYield": "Weight after cooking (g)",

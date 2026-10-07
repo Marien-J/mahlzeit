@@ -46,9 +46,10 @@ def check_notes(notes: str | None) -> str | None:
     return (notes or "").strip()[:MAX_NOTES] or None
 
 
-def check_portions(portions: float) -> float:
-    if not 0 < portions <= MAX_PORTIONS:
-        raise Invalid("portions_invalid", max=MAX_PORTIONS)
+def check_portions(portions: float, *, most: float = MAX_PORTIONS) -> float:
+    """Portions eaten in one meal (at most 20), or bought for the list (`most`: a whole batch)."""
+    if not 0 < portions <= most:
+        raise Invalid("portions_invalid", max=most)
     return float(portions)
 
 

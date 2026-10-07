@@ -122,3 +122,8 @@ class TestRetime:
             retime(self.day, "dinner", before="elsewhere")
         with pytest.raises(Invalid, match="order_invalid"):
             retime(self.day, "elsewhere", before="lunch")
+
+
+def test_dropping_an_entry_on_itself_is_no_move() -> None:
+    order = [("a", t("08:00")), ("b", t("12:30"))]
+    assert retime(order, "b", before="b") == {}

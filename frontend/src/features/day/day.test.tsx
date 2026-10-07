@@ -12,6 +12,7 @@ import {
   sharedMeal,
   totals,
 } from '../../test/fixtures'
+import { addDays } from '../../lib/dates'
 import { renderApp } from '../../test/render'
 import { ME, mockApi, reply } from '../../test/server'
 
@@ -223,6 +224,84 @@ describe('day view', () => {
         entry_id: planned.id,
         to_user_id: PARTNER_ID,
         share: 0.75,
+      }),
+    )
+  })
+
+  it('offers no Eaten on a later day, which only holds plans', async () => {
+    const tomorrow = addDays(TODAY(), 1)
+    const planned = entry({ state: 'planned', slot: 'dinner', at: '19:00:00', day: tomorrow })
+    mockApi({
+      'GET /api/auth/me': () => ME,
+      [`GET /api/days/${tomorrow}`]: () =>
+        dayOf([person({ entries: [planned] }), partner], tomorrow),
+    })
+    renderApp(`/day/${tomorrow}`)
+    const user = userEvent.setup()
+    await user.click(await screen.findByRole('button', { name: /Abendessen.*Skyr Natur/ }))
+    expect(screen.queryByRole('button', { name: /als gegessen markieren/ })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Gegessen' })).toBeNull()
+  })
+
+  it('fills in the energy of a meal that was planned by name', async () => {
+    const pizza = entry({
+      name: 'Pizza',
+      slot: 'dinner',
+      at: '19:00:00',
+      components: [
+        {
+          id: '0192f1c4-0000-7000-8000-0000000000c9',
+          item_id: null,
+          name: 'Pizza',
+          amount: null,
+          base_unit: null,
+          serving_label: null,
+          serving_count: null,
+          quick: true,
+          nutrients: totals({}).values,
+        },
+      ],
+    })
+    const server = mockApi({
+      'GET /api/auth/me': () => ME,
+      [`GET /api/days/${TODAY()}`]: () => dayOf([person({ entries: [pizza] }), partner]),
+      [`PATCH /api/entries/${pizza.id}`]: () => pizza,
+    })
+    renderApp('/')
+    const user = userEvent.setup()
+    await user.click(await screen.findByRole('button', { name: /Abendessen.*Pizza/ }))
+    await user.type(screen.getByLabelText('Energie von Pizza'), '900')
+    await user.click(screen.getByRole('button', { name: 'Speichern' }))
+    await vi.waitFor(() =>
+      expect(server.calls.find((c) => c.method === 'PATCH')?.body).toMatchObject({
+        components: [{ quick_name: 'Pizza', kcal: 900 }],
+      }),
+    )
+  })
+
+  it('saves only what was changed, and undoes a tap on Eaten', async () => {
+    const logged = entry({ slot: 'dinner', at: '19:00:00' })
+    const server = mockApi({
+      'GET /api/auth/me': () => ME,
+      [`GET /api/days/${TODAY()}`]: () => dayOf([person({ entries: [logged] }), partner]),
+      [`PATCH /api/entries/${logged.id}`]: () => logged,
+      [`POST /api/entries/${logged.id}/state`]: () => logged,
+    })
+    renderApp('/')
+    const user = userEvent.setup()
+    await user.click(await screen.findByRole('button', { name: /Abendessen.*Skyr Natur/ }))
+    const time = screen.getByLabelText('Uhrzeit')
+    await user.clear(time)
+    await user.type(time, '18:30')
+    await user.click(screen.getByRole('button', { name: 'Speichern' }))
+    await vi.waitFor(() =>
+      expect(server.calls.find((c) => c.method === 'PATCH')?.body).toEqual({ at: '18:30' }),
+    )
+    await user.click(await screen.findByRole('button', { name: /Abendessen.*Skyr Natur/ }))
+    await user.click(screen.getByRole('button', { name: 'Doch nicht gegessen' }))
+    await vi.waitFor(() =>
+      expect(server.calls.find((c) => c.path.endsWith('/state'))?.body).toEqual({
+        state: 'planned',
       }),
     )
   })

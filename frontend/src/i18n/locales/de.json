@@ -246,7 +246,8 @@
     "range_invalid": "Wähle einen Zeitraum von 1 bis {{max}} Tagen.",
     "recipe_empty": "Ein Rezept braucht mindestens ein Lebensmittel aus dem Katalog.",
     "recipe_not_found": "Dieses Rezept gibt es nicht (mehr).",
-    "offer_receiver_required": "Gib an, für wen das Angebot ist."
+    "offer_receiver_required": "Gib an, für wen das Angebot ist.",
+    "eaten_in_future": "Eine Mahlzeit an einem späteren Tag kann noch nicht gegessen sein."
   },
   "day": {
     "today": "Heute",
@@ -324,7 +325,10 @@
       "skipped": "ausgelassen"
     },
     "planOnly": "Nur planen (noch nicht gegessen)",
-    "shareLine": "{{percent}} % · {{kcal}} kcal"
+    "shareLine": "{{percent}} % · {{kcal}} kcal",
+    "kcalOf": "Energie von {{name}}",
+    "kcalUnit": "kcal",
+    "notEaten": "Doch nicht gegessen"
   },
   "log": {
     "title": "Essen eintragen",
@@ -509,8 +513,8 @@
     "others": "Weitere Rezepte",
     "savedMeals": "Gespeicherte Mahlzeiten ansehen",
     "servings": "Portionen",
-    "servingsCount_one": "{{count}} Portion",
-    "servingsCount_other": "{{count}} Portionen",
+    "servingsCount_one": "{{n}} Portion",
+    "servingsCount_other": "{{n}} Portionen",
     "perServing": "{{kcal}} kcal pro Portion",
     "nutrition": "Pro Portion: {{kcal}} kcal, Eiweiß {{protein}} g",
     "cookedYield": "Gewicht nach dem Kochen (g)",

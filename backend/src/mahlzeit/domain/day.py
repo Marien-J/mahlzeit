@@ -78,6 +78,8 @@ def retime[K: Hashable](
     the entries after it move on by a minute. Returns only the times that change."""
     if moved not in dict(order) or (before is not None and before not in dict(order)):
         raise Invalid("order_invalid")
+    if before == moved:
+        return {}  # dropped on itself
     current = dict(order)
     rest = [(k, _minutes(a)) for k, a in order if k != moved]
     index = len(rest) if before is None else [k for k, _ in rest].index(before)

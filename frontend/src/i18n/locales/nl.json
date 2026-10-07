@@ -246,7 +246,8 @@
     "range_invalid": "Kies een periode van 1 tot {{max}} dagen.",
     "recipe_empty": "Een recept heeft minstens één levensmiddel uit de catalogus nodig.",
     "recipe_not_found": "Dit recept bestaat niet (meer).",
-    "offer_receiver_required": "Geef aan voor wie het voorstel is."
+    "offer_receiver_required": "Geef aan voor wie het voorstel is.",
+    "eaten_in_future": "Een maaltijd op een latere dag kan nog niet gegeten zijn."
   },
   "day": {
     "today": "Vandaag",
@@ -324,7 +325,10 @@
       "skipped": "overgeslagen"
     },
     "planOnly": "Alleen plannen (nog niet gegeten)",
-    "shareLine": "{{percent}} % · {{kcal}} kcal"
+    "shareLine": "{{percent}} % · {{kcal}} kcal",
+    "kcalOf": "Energie van {{name}}",
+    "kcalUnit": "kcal",
+    "notEaten": "Toch niet gegeten"
   },
   "log": {
     "title": "Eten toevoegen",
@@ -509,8 +513,8 @@
     "others": "Andere recepten",
     "savedMeals": "Opgeslagen maaltijden bekijken",
     "servings": "Porties",
-    "servingsCount_one": "{{count}} portie",
-    "servingsCount_other": "{{count}} porties",
+    "servingsCount_one": "{{n}} portie",
+    "servingsCount_other": "{{n}} porties",
     "perServing": "{{kcal}} kcal per portie",
     "nutrition": "Per portie: {{kcal}} kcal, eiwit {{protein}} g",
     "cookedYield": "Gewicht na het koken (g)",

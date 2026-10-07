@@ -1,11 +1,11 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ErrorMessage } from '../../components/ErrorMessage'
 import { SelectField, Toggle } from '../../components/Field'
 import { Sheet } from '../../components/Sheet'
 import { hhmm, type SlotName } from '../../lib/dates'
-import { grams, kcal } from '../../lib/nutrition'
+import { grams, kcal, kcalOf } from '../../lib/nutrition'
 import { OfferSheet } from '../offers/OfferSheet'
 import {
   copyEntry,
@@ -57,6 +57,14 @@ export function EntrySheet({
     ),
   )
   const [share, setShareValue] = useState(Math.round((mine?.share ?? 0.5) * 100))
+  // Energy of a food without a catalogue item, e.g. a plan that was just a name.
+  const [energy, setEnergy] = useState<Record<string, string>>(
+    Object.fromEntries(
+      entry.components
+        .filter((c) => c.quick)
+        .map((c) => [c.id, c.nutrients.kcal == null ? '' : String(c.nutrients.kcal)]),
+    ),
+  )
   const [saved, setSaved] = useState(false)
   const [offering, setOffering] = useState(false)
   const done = async () => {
@@ -67,16 +75,30 @@ export function EntrySheet({
     c.quick
       ? {
           quick_name: c.name,
-          kcal: c.nutrients.kcal,
+          kcal: (energy[c.id] ?? '').trim() === '' ? null : number(energy[c.id] ?? ''),
           protein: c.nutrients.protein,
           carbs: c.nutrients.carbs,
           fat: c.nutrients.fat,
         }
       : { item_id: c.item_id, amount: number(amounts[c.id] ?? '') },
   )
+  const myShare = Math.round((mine?.share ?? 0.5) * 100)
   const save = useMutation({
+    // Only what was changed here is sent, so a change the partner made meanwhile to another
+    // field of a shared meal is not written over.
     mutationFn: async () => {
-      await updateEntry(entry.id, { at, slot, eaten_out: eatenOut, components })
+      const patch: Parameters<typeof updateEntry>[1] = {}
+      if (at !== hhmm(entry.at)) patch.at = at
+      if (slot !== entry.slot) patch.slot = slot
+      if (eatenOut !== entry.eaten_out) patch.eaten_out = eatenOut
+      const foodsChanged = entry.components.some((c) =>
+        c.quick
+          ? (energy[c.id] ?? '') !== (c.nutrients.kcal == null ? '' : String(c.nutrients.kcal))
+          : (amounts[c.id] ?? '') !== (c.amount == null ? '' : String(c.amount)),
+      )
+      if (foodsChanged) patch.components = components
+      if (Object.keys(patch).length) await updateEntry(entry.id, patch)
+      if (entry.joint && share !== myShare) await setShare(entry.id, share / 100)
       const changes: Record<string, number | null> = {}
       for (const c of entry.components) {
         const was = mine?.exact_amounts[c.id]
@@ -97,6 +119,12 @@ export function EntrySheet({
     mutationFn: () => setEntryState(entry.id, 'logged'),
     onSuccess: done,
   })
+  // A tap on Eaten by mistake is undone here: my part goes back to planned.
+  const notEaten = useMutation({
+    mutationFn: () => setEntryState(entry.id, 'planned'),
+    onSuccess: done,
+  })
+  const client = useQueryClient()
   const remove = useMutation({ mutationFn: () => deleteEntry(entry.id), onSuccess: done })
   // Own entries repeat today; the partner's entry is copied to the same day for oneself.
   const copy = useMutation({
@@ -105,10 +133,19 @@ export function EntrySheet({
   })
   const asMeal = useMutation({
     mutationFn: () => saveAsMeal(entry.id),
-    onSuccess: () => setSaved(true),
+    onSuccess: () => {
+      setSaved(true)
+      void client.invalidateQueries({ queryKey: ['recipes'] })
+    },
   })
   const error =
-    save.error ?? newShare.error ?? eaten.error ?? remove.error ?? copy.error ?? asMeal.error
+    save.error ??
+    newShare.error ??
+    eaten.error ??
+    notEaten.error ??
+    remove.error ??
+    copy.error ??
+    asMeal.error
   // In a column the entry carries that person's state; in the plan, mine is in the participants.
   const state = entry.state ?? mine?.state
   const canOffer =
@@ -134,12 +171,24 @@ export function EntrySheet({
                   />
                   {c.base_unit}
                 </label>
+              ) : own && c.quick ? (
+                <label className="amount">
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    min={0}
+                    aria-label={t('entry.kcalOf', { name: c.name })}
+                    value={energy[c.id] ?? ''}
+                    onChange={(e) => setEnergy((v) => ({ ...v, [c.id]: e.target.value }))}
+                  />
+                  {t('entry.kcalUnit')}
+                </label>
               ) : (
                 <span className="muted">
                   {c.amount != null ? `${grams(c.amount)} ${c.base_unit ?? ''}` : ''}
                 </span>
               )}
-              <span className="kcal">{kcal(c.nutrients.kcal)}</span>
+              {own && c.quick ? null : <span className="kcal">{kcal(c.nutrients.kcal)}</span>}
               {own && entry.joint && !c.quick ? (
                 <label className="amount mine">
                   <span className="muted">{t('entry.iAte')}</span>
@@ -160,8 +209,8 @@ export function EntrySheet({
         </ul>
         {entry.intake ? (
           <p className="muted">
-            {t('totals.kcal', { value: kcal(entry.intake.values.kcal) })} ·{' '}
-            {t('macro.short.protein')} {grams(entry.intake.values.protein)}
+            {t('totals.kcal', { value: kcalOf(entry.intake) })} · {t('macro.short.protein')}{' '}
+            {grams(entry.intake.values.protein)}
           </p>
         ) : null}
         {entry.joint ? (
@@ -208,7 +257,7 @@ export function EntrySheet({
                 </label>
                 <button
                   type="button"
-                  disabled={newShare.isPending || share === Math.round((mine?.share ?? 0.5) * 100)}
+                  disabled={newShare.isPending || share === myShare}
                   onClick={() => newShare.mutate(share)}
                 >
                   {t('entry.applyShare')}
@@ -235,9 +284,14 @@ export function EntrySheet({
             <ErrorMessage error={error} />
             {saved ? <p role="status">{t('entry.savedAsMeal')}</p> : null}
             <div className="row wrap">
-              {state === 'planned' ? (
+              {state === 'planned' && entry.day <= today ? (
                 <button type="button" className="primary" onClick={() => eaten.mutate()}>
                   {t('entry.eaten')}
+                </button>
+              ) : null}
+              {state === 'logged' ? (
+                <button type="button" onClick={() => notEaten.mutate()}>
+                  {t('entry.notEaten')}
                 </button>
               ) : null}
               <button

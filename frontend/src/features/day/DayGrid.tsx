@@ -3,7 +3,7 @@ import {
   DndContext,
   DragOverlay,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
   pointerWithin,
   TouchSensor,
   useDndContext,
@@ -18,6 +18,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
+import { ErrorMessage } from '../../components/ErrorMessage'
 import { grams, kcal, MACROS } from '../../lib/nutrition'
 import { moveEntry, useRefreshDays, type Entry, type PersonDay } from './api'
 import { EntryCard, entryTitle, isOwn } from './EntryCard'
@@ -26,11 +27,10 @@ import { moveTarget } from './reorder'
 
 const END = 'end-of-day'
 
-// The pointer decides when there is one; the keyboard has none, so the nearest card wins.
-const collision: CollisionDetection = (args) => {
-  const hits = pointerWithin(args)
-  return hits.length ? hits : closestCenter(args)
-}
+// A mouse or finger drops on what is under it, and nowhere else (letting go elsewhere cancels).
+// The keyboard has no pointer, so the nearest card wins.
+const collision: CollisionDetection = (args) =>
+  args.pointerCoordinates ? pointerWithin(args) : closestCenter(args)
 
 type Props = {
   people: PersonDay[]
@@ -48,7 +48,12 @@ export function DayGrid({ people, day, me, onOpen }: Props) {
   const others = people.filter((p) => !p.is_me)
   if (!mine) return null
   const partner = others.length === 1 ? (others[0] ?? null) : null
-  if (others.length > 1) return <Columns people={people} day={day} me={me} onOpen={onOpen} />
+  if (others.length > 1)
+    return (
+      <Dragging mine={mine}>
+        <Columns people={people} day={day} me={me} onOpen={onOpen} />
+      </Dragging>
+    )
   const rows = layoutDay(mine, partner)
   return (
     <Dragging mine={mine}>
@@ -84,8 +89,9 @@ function Dragging({ mine, children }: { mine: PersonDay; children: React.ReactNo
   const { t } = useTranslation()
   const refresh = useRefreshDays()
   const [dragged, setDragged] = useState<Entry | null>(null)
+  // Mouse and touch apart: a finger must rest on the handle first, so a swipe still scrolls.
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
     useSensor(KeyboardSensor),
   )
@@ -129,6 +135,7 @@ function Dragging({ mine, children }: { mine: PersonDay; children: React.ReactNo
         },
       }}
     >
+      <ErrorMessage error={move.error} />
       {children}
       <DragOverlay>
         {dragged ? <EntryCard entry={dragged} me={mine.user_id} onOpen={() => undefined} /> : null}
@@ -326,6 +333,7 @@ function Totals({ person }: { person: PersonDay }) {
       ) : null}
       {person.projection && person.planned.values.kcal ? (
         <p className="muted projection">
+          {person.planned.incomplete.includes('kcal') ? '≈ ' : ''}
           {t('totals.projection', { kcal: kcal(person.projection.kcal) })}
         </p>
       ) : null}

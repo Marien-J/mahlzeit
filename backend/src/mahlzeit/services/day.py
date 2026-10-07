@@ -217,7 +217,10 @@ def get_plan(db: Session, actor: Actor, start: date, days: int) -> PlanResult:
     """Every entry of the household from `start` for `days` days, grouped by day."""
     if not 1 <= days <= MAX_PLAN_RANGE:
         raise Invalid("range_invalid", max=MAX_PLAN_RANGE)
-    end = start + timedelta(days=days - 1)
+    try:
+        end = start + timedelta(days=days - 1)
+    except OverflowError as err:  # past the end of the calendar
+        raise Invalid("range_invalid", max=MAX_PLAN_RANGE) from err
     rows = db.scalars(
         select(MealEntry)
         .where(MealEntry.household_id == actor.household_id, MealEntry.day.between(start, end))
@@ -272,10 +275,11 @@ def _now_local(db: Session, actor: Actor) -> tuple[date, time]:
 
 
 def _build_components(
-    db: Session, actor: Actor, inputs: Iterable[ComponentInput], *, planned: bool = False
+    db: Session, actor: Actor, inputs: Iterable[ComponentInput], *, allow_unknown: bool = False
 ) -> list[MealComponent]:
-    """Components from inputs. A plan may name a food without any numbers ('Pizza'); the day then
-    counts as incomplete until it is eaten and filled in."""
+    """Components from inputs. A food typed in to be logged needs its kcal; a plan, a copy and an
+    edit may name a food without numbers ('Pizza'), and the day then counts it as incomplete
+    until someone fills it in (logging is never blocked by missing data)."""
     built: list[MealComponent] = []
     for i, c in enumerate(inputs):
         if c.item_id is not None:
@@ -302,7 +306,7 @@ def _build_components(
             )
         else:
             name = (c.quick_name or "").strip()[:120]
-            if not name or (c.kcal is None and not planned):
+            if not name or (c.kcal is None and not allow_unknown):
                 raise Invalid("quick_add_invalid")
             if c.kcal is not None and not 0 <= c.kcal <= QUICK_KCAL_MAX:
                 raise Invalid("quick_add_invalid")
@@ -322,25 +326,35 @@ def _build_components(
     return built
 
 
+def _same_food(old: MealComponent, new: MealComponent) -> bool:
+    return old.item_id == new.item_id and (
+        new.item_id is not None or old.quick_name == new.quick_name
+    )
+
+
 def _sync_components(entry: MealEntry, built: list[MealComponent]) -> None:
-    """Replace an entry's components, keeping the rows whose item stays (a weighed amount belongs
-    to its component, so changing the time of a meal must not lose it)."""
+    """Replace an entry's components, keeping the rows whose food stays (a weighed amount belongs
+    to its component, so changing the time of a meal must not lose it). An unchanged component
+    is matched first, so with two of one item the right one keeps its weighed amount."""
     pool = list(entry.components)
     result: list[MealComponent] = []
+    matches: dict[int, MealComponent] = {}
     for i, new in enumerate(built):
-        match = next(
-            (
-                o
-                for o in pool
-                if o.item_id == new.item_id
-                and (new.item_id is not None or o.quick_name == new.quick_name)
-            ),
-            None,
-        )
+        same = next((o for o in pool if _same_food(o, new) and o.amount == new.amount), None)
+        if same is not None:
+            matches[i] = same
+            pool.remove(same)
+    for i, new in enumerate(built):
+        if i not in matches:
+            found = next((o for o in pool if _same_food(o, new)), None)
+            if found is not None:
+                matches[i] = found
+                pool.remove(found)
+    for i, new in enumerate(built):
+        match = matches.get(i)
         if match is None:
             result.append(new)
             continue
-        pool.remove(match)
         match.amount = new.amount
         match.serving_label = new.serving_label
         match.serving_count = new.serving_count
@@ -434,6 +448,15 @@ def _withdraw_offers(db: Session, actor: Actor, entry: MealEntry, user_id: uuid.
 def log_food(db: Session, actor: Actor, data: EntryInput) -> MealEntry:
     """Add an entry for the actor. Past days and today are logged and future days are planned;
     `plan` makes it a plan for today or later. `joint` shares it with the rest of the household."""
+    entry = _add_entry(db, actor, data)
+    db.commit()
+    return get_entry(db, actor, entry.id)
+
+
+def _add_entry(
+    db: Session, actor: Actor, data: EntryInput, *, allow_unknown: bool = False
+) -> MealEntry:
+    """log_food without the commit, so several entries can be added in one transaction."""
     today, now = _now_local(db, actor)
     if data.plan:
         rules.check_plan_date(data.day, today=today)
@@ -451,7 +474,9 @@ def log_food(db: Session, actor: Actor, data: EntryInput) -> MealEntry:
     name = (data.name or (recipe.name if recipe else "") or "").strip()[:120] or None
     if not component_inputs and planned and name:
         component_inputs = [ComponentInput(quick_name=name)]
-    components = _build_components(db, actor, component_inputs, planned=planned)
+    components = _build_components(
+        db, actor, component_inputs, allow_unknown=allow_unknown or planned
+    )
     if not components:
         raise Invalid("entry_empty")
     people = [actor.user_id]
@@ -492,8 +517,7 @@ def log_food(db: Session, actor: Actor, data: EntryInput) -> MealEntry:
         action="created",
         after=snapshot(entry) | {"state": state, "people": len(people)},
     )
-    db.commit()
-    return get_entry(db, actor, entry.id)
+    return entry
 
 
 def plan_meal(db: Session, actor: Actor, data: EntryInput) -> MealEntry:
@@ -524,8 +548,7 @@ def update_entry(db: Session, actor: Actor, entry_id: uuid.UUID, patch: EntryPat
     if patch.eaten_out is not None:
         entry.eaten_out = patch.eaten_out
     if patch.components is not None:
-        planned = any(p.state == EntryState.PLANNED for p in entry.participants)
-        components = _build_components(db, actor, patch.components, planned=planned)
+        components = _build_components(db, actor, patch.components, allow_unknown=True)
         if not components:
             raise Invalid("entry_empty")
         _sync_components(entry, components)
@@ -552,6 +575,8 @@ def set_state(db: Session, actor: Actor, entry_id: uuid.UUID, state: EntryState)
     entry, part = own_entry(db, actor, entry_id)
     before = part.state
     new = EntryState(state)
+    if new == EntryState.LOGGED and entry.day > _now_local(db, actor)[0]:
+        raise Invalid("eaten_in_future")  # a later day only holds plans
     part.state = new.value
     part.logged_at = clock.now() if new == EntryState.LOGGED else None
     also: list[str] = []
@@ -682,19 +707,52 @@ def move_entry(
     return changed
 
 
-def _copy_inputs(entry: MealEntry) -> list[ComponentInput]:
-    return [
-        ComponentInput(item_id=c.item_id, amount=c.amount)
-        if c.item_id is not None
-        else ComponentInput(
-            quick_name=c.quick_name,
-            kcal=c.quick_kcal,
-            protein=c.quick_protein,
-            carbs=c.quick_carbs,
-            fat=c.quick_fat,
-        )
-        for c in entry.components
-    ]
+def _copy_inputs(entry: MealEntry, part: MealParticipant | None) -> list[ComponentInput]:
+    """What one person ate of a meal, as foods: their share of each component, or what they
+    weighed. A copy of a shared dinner is one's own portion, not the whole pot."""
+    exact = exact_fractions(entry, part) if part else {}
+    share = part.share if part else 1.0
+
+    def part_of(value: float | None, fraction: float) -> float | None:
+        return None if value is None else value * fraction
+
+    inputs = []
+    for c in entry.components:
+        fraction = exact.get(str(c.id), share)
+        if c.item_id is not None and c.amount is not None:
+            inputs.append(ComponentInput(item_id=c.item_id, amount=c.amount * fraction))
+        else:
+            inputs.append(
+                ComponentInput(
+                    quick_name=c.quick_name,
+                    kcal=part_of(c.quick_kcal, fraction),
+                    protein=part_of(c.quick_protein, fraction),
+                    carbs=part_of(c.quick_carbs, fraction),
+                    fat=part_of(c.quick_fat, fraction),
+                )
+            )
+    return inputs
+
+
+def _copy_input(
+    source: MealEntry,
+    actor: Actor,
+    *,
+    day: date,
+    slot: Slot | None = None,
+    at: time | None = None,
+) -> EntryInput:
+    """The actor's own part, or for someone else's meal the part of the first person on it."""
+    part = participant_of(source, actor.user_id) or next(iter(source.participants), None)
+    target_slot = Slot(slot or source.slot)
+    return EntryInput(
+        day=day,
+        slot=target_slot,
+        at=at or (source.at if target_slot == source.slot else None),
+        name=source.name,
+        eaten_out=source.eaten_out,
+        components=_copy_inputs(source, part),
+    )
 
 
 def copy_entry(
@@ -708,26 +766,28 @@ def copy_entry(
 ) -> MealEntry:
     """Repeat an entry from the household (one's own or the partner's) for the actor."""
     source = get_entry(db, actor, entry_id)
-    target_slot = Slot(slot or source.slot)
-    return log_food(
-        db,
-        actor,
-        EntryInput(
-            day=day,
-            slot=target_slot,
-            at=at or (source.at if target_slot == source.slot else None),
-            name=source.name,
-            eaten_out=source.eaten_out,
-            components=_copy_inputs(source),
-        ),
+    entry = _add_entry(
+        db, actor, _copy_input(source, actor, day=day, slot=slot, at=at), allow_unknown=True
     )
+    db.commit()
+    return get_entry(db, actor, entry.id)
 
 
 def copy_day(db: Session, actor: Actor, *, source_day: date, day: date) -> list[MealEntry]:
-    """Repeat all of the actor's entries from one day on another."""
+    """Repeat all of the actor's entries from one day on another, all or nothing."""
     sources = [
         e for e in _entries(db, actor.household_id, source_day) if participant_of(e, actor.user_id)
     ]
     if not sources:
         raise Invalid("nothing_to_copy")
-    return [copy_entry(db, actor, e.id, day=day, slot=Slot(e.slot), at=e.at) for e in sources]
+    created = [
+        _add_entry(
+            db,
+            actor,
+            _copy_input(e, actor, day=day, slot=Slot(e.slot), at=e.at),
+            allow_unknown=True,
+        )
+        for e in sources
+    ]
+    db.commit()
+    return [get_entry(db, actor, e.id) for e in created]

@@ -65,8 +65,13 @@ class Counter:
 # --- reading ----------------------------------------------------------------------------------
 
 
-def _get(db: Session, actor: Actor, offer_id: uuid.UUID) -> Offer:
-    offer = db.get(Offer, offer_id)
+def _get(db: Session, actor: Actor, offer_id: uuid.UUID, *, lock: bool = False) -> Offer:
+    """An offer the actor is part of. `lock` holds the row until commit, so two answers to one
+    offer (accept on one phone, withdraw on the other) cannot both go through."""
+    query = select(Offer).where(Offer.id == offer_id)
+    if lock:
+        query = query.with_for_update().execution_options(populate_existing=True)
+    offer = db.scalars(query).first()
     if offer is None:
         raise NotFound("offer_not_found")
     require_household(actor, offer.household_id)
@@ -295,7 +300,7 @@ def send(
 
 
 def withdraw(db: Session, actor: Actor, offer_id: uuid.UUID) -> OfferView:
-    offer = _get(db, actor, offer_id)
+    offer = _get(db, actor, offer_id, lock=True)
     state = rules.effective_state(
         OfferState(offer.state), offer.day, today=_today(db, offer.to_user_id)
     )
@@ -307,7 +312,7 @@ def withdraw(db: Session, actor: Actor, offer_id: uuid.UUID) -> OfferView:
 
 def _answerable(db: Session, actor: Actor, offer_id: uuid.UUID, action: Action) -> Offer:
     """A pending offer the actor may answer. One whose day is over is written down as expired."""
-    offer = _get(db, actor, offer_id)
+    offer = _get(db, actor, offer_id, lock=True)
     today = _today(db, offer.to_user_id)
     if offer.state == OfferState.PENDING and rules.is_overdue(offer.day, today=today):
         _close(db, actor, offer, OfferState.EXPIRED, action="expired")
